@@ -45,7 +45,7 @@ Test read currenly selected antenna
 
 Test antenna switching 
 
-   /usr/local/bin/ms-s7-web 2
+    /usr/local/bin/ms-s7-web 2
    
 If antenna status reading and switching works ok, proceed installation
 
