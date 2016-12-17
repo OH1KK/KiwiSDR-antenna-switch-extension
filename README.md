@@ -76,11 +76,7 @@ Antenna switch failure or unknown status decription will be show to users if ant
 
 ### Usage
 
-Open your KiwiSDR as user
-
-Enable antenna switch extension from box right corner.
-
-Antenna switch will show. Click to select antenna.
+Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show. Click to select antenna.
 
 ### demo site
 
