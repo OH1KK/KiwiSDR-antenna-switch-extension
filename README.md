@@ -4,13 +4,13 @@ This MS-S7-WEB is antenna switch extension to KiwiSDR software defined radio.
 
 ### Depencies
 
-MS-S7-WEB script uses curl.
+MS-S7-WEB script uses curl. unzip is also needed on installation.
 
-Install it to your KiwiSDR
+open ssh connection to your KiwiSDR as root user.
+
+Install depencies to your KiwiSDR
 
     apt-get install curl unzip
-
-
 
 ### Installation
 
@@ -18,6 +18,7 @@ open ssh connection to your KiwiSDR as root user
 
 dowload files from github
 
+    cd /root
     curl -L https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/archive/master.zip > master.zip
 
 unzip files
