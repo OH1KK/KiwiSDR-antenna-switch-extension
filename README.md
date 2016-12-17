@@ -28,16 +28,34 @@ copy files from github to /root folder
 
 then
 
-    cp -varf KiwiSDR-antenna-switch-extension-master/extension/ant_switch /root/Beagle_SDR_GPS/extensions/
-    cp -varf KiwiSDR-antenna-switch-extension-master/web/extension/ant_switch /root/Beagle_SDR_GPS/web/extensions/
+    cp -varf KiwiSDR-antenna-switch-extension-master/extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
+    cp -varf KiwiSDR-antenna-switch-extension-master/web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
     cp KiwiSDR-antenna-switch-extension-master/ms-s7-web /usr/local/bin
     chmod a+rx /usr/local/bin/ms-s7-web
+
+edit /usr/local/bin/ms-s7-web script and change IPADDRESS if you dont use factory defaults 192.168.11.100.
+Save file
+
+Test read currenly selected antenna 
+  
+    /usr/local/bin/ms-s7-web s
+
+Test antenna switching 
+
+   /usr/local/bin/ms-s7-web 2
+   
+If antenna status reading and switching works ok, proceed installation
+
     cd /root/Beagle_SDR_GPS/extensions/
     make
     make install
+
+This will take some time. When finished, restart KiwiSDR
+
     m stop
     m start
- 
+
+
 ### More info
 
 About MS-S7-WEB antenna switch and MS-S7-WEB remote control unit: http://www.anteni.net
