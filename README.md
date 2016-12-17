@@ -33,6 +33,7 @@ then
 ### More info
 
 About MS-S7-WEB antenna switch and MS-S7-WEB remote control unit: http://www.anteni.net
-You can buy MS-S antenna switch and MS-S7-WEB remote control unit from  ebay.
 
-About KiwiSDR software defined receiver: http://www.kiwisdr.com/
+You can buy MS-S7 antenna switch and MS-S7-WEB remote control unit from  ebay.
+
+About KiwiSDR software defined receiver see http://www.kiwisdr.com/
