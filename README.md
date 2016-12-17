@@ -8,7 +8,7 @@ MS-S7-WEB script uses curl.
 
 Install it to your KiwiSDR
 
-apt-get install curl
+    apt-get install curl
 
 
 
