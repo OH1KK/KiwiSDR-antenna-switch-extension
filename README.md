@@ -8,9 +8,11 @@ You can buy MS-S7 and MS-S7-WEB hardware pieces from ebay.
 
 ### Depencies
 
-MS-S7-WEB script uses curl. unzip is also needed on installation.
+This is extension to KiwiSDR receiver.
 
-open ssh connection to your KiwiSDR as root user.
+ms-s7-web script uses curl for communication. unzip is needed during installation.
+
+Open ssh connection to your KiwiSDR as root user.
 
 Install depencies to your KiwiSDR
 
@@ -20,7 +22,7 @@ Install depencies to your KiwiSDR
 
 open ssh connection to your KiwiSDR as root user
 
-dowload files from github
+dowload KiwiSDR-antenna-switch-extension files from Github
 
     cd /root
     curl -L https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/archive/master.zip > master.zip
@@ -29,9 +31,7 @@ unzip files
 
     unzip master.zip
 
-copy files from github to /root folder
-
-then
+then copy files
 
     cp -varf KiwiSDR-antenna-switch-extension-master/extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
     cp -varf KiwiSDR-antenna-switch-extension-master/web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
@@ -66,7 +66,7 @@ This will take some time. When finished, restart KiwiSDR
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
-Describe your antennas 1-7. If you leave antenna description empty, antenna butoon won't be show to users.
+Describe your antennas 1-7. If you leave antenna description empty, antenna button won't be visible to users.
 
 Antenna switch failure or unknown status decription will be show to users if antenna switch is unreachable or malfunctioning. 
 
@@ -83,6 +83,7 @@ Antenna switch will show. Click to select antenna.
 TODO
 
 ### More info
+
 About KiwiSDR software defined receiver see http://www.kiwisdr.com/
 
-About MS-S antenna switch box and MS-S7-WEB remote control unit: http://www.anteni.net
+About MS-S7 antenna switch box and MS-S7-WEB remote control unit: http://www.anteni.net
