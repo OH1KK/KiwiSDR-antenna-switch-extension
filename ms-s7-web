@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+#
+#    ms-s7-web - bash script that controls ms-s7-web antenna switch from console
+#    Copyright (C) 2016 Kari Karvonen <oh1kk@toimii.fi>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#    15.12.2016 v0.3  automatic retries max 3 times
+#    15.12.2016 v0.2  query status only with s without changing settings
+#    15.12.2016 v0.1  first version. Basic functionality.
+
+IPADDRESS=192.168.11.100  # change this to your MS-S7-WEB IP-address 192.168.11.100
+
+
+###### do not change blow this line ######
+CURLOPTS=" --silent --connect-timeout 1"
+ANT=$(($1-1))
+
+if [ "x`which curl`" == "x" ]; then
+	echo "curl not found. Please install curl."
+	echo "sudo apt-get install curl"
+	exit 1
+else
+        curlexec=`which curl`
+fi
+
+GetMS7web () {
+	if [ -z "$1" ]
+	then
+		# zero legth
+		sleep 1
+	else
+		REPLY=`$curlexec $CURLOPTS $1`
+		if [ "x$REPLY" == "x" ]; then
+			# failed. Let's try again.
+			REPLY=`$curlexec $CURLOPTS $1`
+		fi
+		if [ "x$REPLY" == "x" ]; then
+			# failed again. One more shot.
+			REPLY=`$curlexec $CURLOPTS $1`
+		fi
+	fi
+}
+
+PostMS7web () {
+	if [ -z "$1" ]
+	then
+		# zero legth
+		sleep 1
+	else
+		REPLY=`$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		if [ "x$REPLY" == "x" ]; then
+			# failed, let's try again
+			REPLY=`$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		fi
+		if [ "x$REPLY" == "x" ]; then
+			# failed again, one more shot
+			REPLY=`$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		fi
+	fi
+}
+
+if [ \( \( "$ANT" -lt 0 \) -o \( "$ANT" -gt 6 \) \) -a \( "$1" != "s" \) ]; then
+	echo "Usage: $0 [1|2|3|4|5|6|7|s]"
+        echo ""
+	echo "Where"
+	for s in 1 2 3 4 5 6 7; do
+	        echo "$s = switch to antenna $s"
+	done
+	echo "s = read currently selected antenna"
+        exit 0
+fi
+
+# Test connectivity to MS-S7-WEB otherwise long timeouts
+GetMS7web "http://$IPADDRESS/widget.cgi"
+if [ "x$REPLY" == "x" ]; then
+	echo "Unable to connect MS-S7-WEB at $IPADDRESS"
+	echo "Please check network connectivity."
+	exit 1
+fi
+
+if [ $1 == "s" ]; then
+	# Read antenna status
+	GetMS7web "http://$IPADDRESS/io.cgi"
+	digits=`echo $REPLY | sed 's/[^0-9]*//g'`
+
+	antennafound=0
+	for s in 0 1 2 3 4 5 6; do
+		thisbit=${digits:${s}:1}
+		if [ "x$thisbit" == "x1" ]; then
+			selectedantenna=$(($s+1))
+			antennafound=$(($antennafound+1))
+		fi
+	done
+	if [ "$antennafound" != "1" ]; then
+		echo "Selected antenna: 0"
+	else
+		echo -n "Selected antenna: "
+		echo $selectedantenna
+	fi
+	exit 1
+else 
+	# Switch to another antenna
+	if [ \( "$ANT" -lt 0 \) -o \( "$ANT" -gt 6 \) ]; then
+		echo "Please select antenna between 1 - 7"
+		exit 1
+	fi
+	for s in 0 1 2 3 4 5 6; do
+		PostMS7web "-d pin=$s -d val=1 http://$IPADDRESS/dout.cgi"
+		#$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' -d pin=$s -d val=1 http://$IPADDRESS/dout.cgi > /dev/null
+	done
+	PostMS7web "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
+	exit 0
+fi
