@@ -2,7 +2,9 @@
 
 This MS-S7-WEB is antenna switch extension to KiwiSDR software defined radio.
 
-This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote control unit. You can buy both hardware pieces from ebay. Search for MS-S7 antenna switch and MS-S7-WEB remote control.
+This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote control unit. MS-S7 antenna switch has seven antenna connectors so you can select from several different listening antennas.
+
+You can buy MS-S7 and MS-S7-WEB hardware pieces from ebay.
 
 ### Depencies
 
