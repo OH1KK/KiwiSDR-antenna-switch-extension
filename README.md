@@ -83,4 +83,4 @@ TODO
 ### More info
 About KiwiSDR software defined receiver see http://www.kiwisdr.com/
 
-About MS-S7-WEB antenna switch and MS-S7-WEB remote control unit: http://www.anteni.net
+About MS-S antenna switch box and MS-S7-WEB remote control unit: http://www.anteni.net
