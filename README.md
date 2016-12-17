@@ -2,7 +2,7 @@
 
 This is antenna switch extension to KiwiSDR software defined radio.
 
-This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote control unit. MS-S7 antenna switch has seven antenna connectors so you can select wetween several different listening antennas.
+This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote control unit. MS-S7 antenna switch has seven antenna connectors so you can select between several different listening antennas.
 
 ### Required hardware
 
