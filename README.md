@@ -62,11 +62,11 @@ This will take some time. When finished, restart KiwiSDR
 
 ### Configuration
 
-Open your KiwiSDR admin panel. Then Extension -> Antenna Switch.
+Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
-Describe your antennas 1-7. If you leave antenna description empty, it won't be show to users.
+Describe your antennas 1-7. If you leave antenna description empty, antenna butoon won't be show to users.
 
-Antenna switch failure or unknown status decription is show to user if antenna switch is unreachable or malfunctioning. 
+Antenna switch failure or unknown status decription will be show to users if antenna switch is unreachable or malfunctioning. 
 
 ### Usage
 
