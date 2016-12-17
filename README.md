@@ -36,14 +36,16 @@ then
     cp KiwiSDR-antenna-switch-extension-master/ms-s7-web /usr/local/bin
     chmod a+rx /usr/local/bin/ms-s7-web
 
-edit /usr/local/bin/ms-s7-web script and change IPADDRESS if you dont use factory defaults 192.168.11.100.
-Save file
+If your antenna switch does not use factory default IP 192.168.11.100, you have to mofidy 
+/usr/local/bin/ms-s7-web script and change IPADDRESS. 
 
-Test read currenly selected antenna 
+At this point test that you can control script from KiwiSDR console.
+
+To read currently selected antenna 
   
     /usr/local/bin/ms-s7-web s
 
-Test antenna switching 
+To switch antenna to antenna 2
 
     /usr/local/bin/ms-s7-web 2
    
