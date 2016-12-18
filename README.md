@@ -12,16 +12,6 @@ You can buy KiwiSDR software receiver from Seed https://www.seeedstudio.com/Kiwi
 
 You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. Search by seller LZ2RR. http://www.ebay.com/sch/lz2rr/m.html?_nkw=&_armrs=1&_ipg=&_from=
 
-### Software depencies
-
-ms-s7-web script uses curl for communication. It is not installed on KiwiSDR by default.
-
-Open ssh connection to your KiwiSDR as root user.
-
-Install software depencies to your KiwiSDR
-
-    apt-get install curl
-
 ### Installation
 
 open ssh connection to your KiwiSDR as root user
