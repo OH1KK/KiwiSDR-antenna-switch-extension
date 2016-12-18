@@ -111,8 +111,8 @@ if valid_ip $IPADDRESS;  then
 	make
 	make install
 	echo "Restarting KiwiSDR"
-	./m stop
-	./m start
+	m stop
+	m start
 	echo "Installation finished."
 
 else 
