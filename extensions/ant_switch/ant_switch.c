@@ -31,39 +31,6 @@ struct ant_switch_t {
 
 static ant_switch_t ant_switch[RX_CHANS];
 
-static int exec_prog(const char **argv)
-{
-    pid_t   my_pid;
-    int     status, timeout /* unused ifdef WAIT_FOR_COMPLETION */;
-
-    if (0 == (my_pid = fork())) {
-            if (-1 == execve(argv[0], (char **)argv , NULL)) {
-                    perror("child process execve failed [%m]");
-                    return -1;
-            }
-    }
-
-    timeout = 1000;
-
-    while (0 == waitpid(my_pid , &status , WNOHANG)) {
-            if ( --timeout < 0 ) {
-                    perror("timeout");
-                    return -1;
-            }
-            sleep(1);
-    }
-
-    printf("%s WEXITSTATUS %d WIFEXITED %d [status %d]\n",
-            argv[0], WEXITSTATUS(status), WIFEXITED(status), status);
-
-    if (1 != WIFEXITED(status) || 0 != WEXITSTATUS(status)) {
-            perror("%s failed, halt system");
-            return -1;
-    }
-
-    return 0;
-}
-
 int ant_switch_queryantenna() {
 	pid_t pid = 0;
 	int pipefd[2];
@@ -71,8 +38,8 @@ int ant_switch_queryantenna() {
 	char line[256];
 	int status;
 	int n;
-	int selectedantenna = 0;
-
+        int selectedantenna = 0;
+        
 	pipe(pipefd); //create a pipe
 	pid = fork(); //span a child process
 	if (pid == 0) {
@@ -100,6 +67,39 @@ int ant_switch_queryantenna() {
 	return(selectedantenna);
 }
 
+int ant_switch_setantenna(int antenna) {
+	pid_t pid = 0;
+	int pipefd[2];
+	FILE* output;
+	char line[256];
+	int status;
+	int n;
+        char antennastr[15];
+        
+        sprintf(antennastr, "%d", antenna);
+	pipe(pipefd); //create a pipe
+	pid = fork(); //span a child process
+	if (pid == 0) {
+		// Child. Let's redirect its standard output to our pipe and replace process with tail
+		 close(pipefd[0]);
+		 dup2(pipefd[1], STDOUT_FILENO);
+		 dup2(pipefd[1], STDERR_FILENO);
+		 execl("/usr/local/bin/ms-s7-web", "/usr/local/bin/ms-s7-web", antennastr, (char*) NULL);
+	}
+	//Only parent gets here. Listen to what the tail says
+	close(pipefd[1]);
+	output = fdopen(pipefd[0], "r");
+
+	while(fgets(line, sizeof(line), output)) //listen to what tail writes to its standard output
+	{
+                if (ANT_SWITCH_DEBUG_MSG) printf("ant_switch_setantenna: %s\n",line);
+	}
+	//or wait for the child process to terminate
+	waitpid(pid, &status, 0);
+        return(status);
+}
+
+
 bool ant_switch_msgs(char *msg, int rx_chan)
 {
 	ant_switch_t *e = &ant_switch[rx_chan];
@@ -114,47 +114,20 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 		return true;
 	}
 
-	if (strcmp(msg, "SET Antenna=1") == 0) {
-        	const char *my_argv[128] = {"/usr/local/bin/ms-s7-web", "1", NULL};
-        	int rc = exec_prog(my_argv);
-        	return true;
-	}
-	if (strcmp(msg, "SET Antenna=2") == 0) {
-        	const char *my_argv[128] = {"/usr/local/bin/ms-s7-web", "2", NULL};
-        	int rc = exec_prog(my_argv);
-        	return true;
-	}
-	if (strcmp(msg, "SET Antenna=3") == 0) {
-        	const char *my_argv[128] = {"/usr/local/bin/ms-s7-web", "3", NULL};
-        	int rc = exec_prog(my_argv);
-        	return true;
-	}
-	if (strcmp(msg, "SET Antenna=4") == 0) {
-        	const char *my_argv[128] = {"/usr/local/bin/ms-s7-web", "4", NULL};
-        	int rc = exec_prog(my_argv);
-        	return true;
-	}
-	if (strcmp(msg, "SET Antenna=5") == 0) {
-        	const char *my_argv[128] = {"/usr/local/bin/ms-s7-web", "5", NULL};
-        	int rc = exec_prog(my_argv);
-        	return true;
-	}
-	if (strcmp(msg, "SET Antenna=6") == 0) {
-        	const char *my_argv[128] = {"/usr/local/bin/ms-s7-web", "6", NULL};
-        	int rc = exec_prog(my_argv);
-        	return true;
-	}
-	if (strcmp(msg, "SET Antenna=7") == 0) {
-        	const char *my_argv[128] = {"/usr/local/bin/ms-s7-web", "7", NULL};
-        	int rc = exec_prog(my_argv);
-        	return true;
-	}
+        n = sscanf(msg, "SET Antenna=%d", &antenna);
+        if (n == 1) {
+            if (antenna > 0 && antenna < 8) {
+                 ant_switch_setantenna(antenna);   
+            }
+        }
+
         if (strcmp(msg, "GET Antenna") == 0) {
             int selected_antenna = ant_switch_queryantenna();
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT Antenna=%d", selected_antenna);
             
             return true;
         }
+
     	return false;
 }
 
