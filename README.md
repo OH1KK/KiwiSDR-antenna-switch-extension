@@ -30,38 +30,10 @@ Dowload KiwiSDR-antenna-switch-extension files from Github
 
     cd /root
     git clone https://github.com/OH1KK/KiwiSDR-antenna-switch-extension.git
+    cd KiwiSDR-antenna-switch-extension
+    bash ./ms-s7-web-installer
 
-then copy files
-
-    cp -varf KiwiSDR-antenna-switch-extension/extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
-    cp -varf KiwiSDR-antenna-switch-extension/web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
-    cp KiwiSDR-antenna-switch-extension/etc/default/ms-s7-web /etc/default/
-    cp KiwiSDR-antenna-switch-extension/ms-s7-web /usr/local/bin
-    chmod a+rx /usr/local/bin/ms-s7-web
-
-If your antenna switch does not use factory default IP 192.168.11.100, you have to mofidy 
-/etc/default/ms-s7-web configuration file and change IPADDRESS. 
-
-At this point test that you can control script from KiwiSDR console.
-
-To read currently selected antenna 
-  
-    /usr/local/bin/ms-s7-web s
-
-To switch antenna to antenna 2
-
-    /usr/local/bin/ms-s7-web 2
-   
-If antenna status reading and switching works ok, proceed installation
-
-    cd /root/Beagle_SDR_GPS/
-    make clean
-    make
-    make install
-
-This will take some time. When finished, restart KiwiSDR
-
-    reboot
+Installer copies files recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
     
 ### Configuration
 
