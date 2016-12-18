@@ -58,6 +58,7 @@ To switch antenna to antenna 2
 If antenna status reading and switching works ok, proceed installation
 
     cd /root/Beagle_SDR_GPS/
+    make clean
     make
     make install
 
