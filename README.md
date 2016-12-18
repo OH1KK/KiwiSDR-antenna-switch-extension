@@ -10,7 +10,7 @@ You need hardware KiwiSDR software defined receiver, MS-S7 antenna switch and MS
 
 You can buy KiwiSDR software receiver from Seed https://www.seeedstudio.com/KiwiSDR-Board-p-2725.html
 
-You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay.
+You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. Search www.eBay.com by seller LZ2RR.
 
 ### Software depencies
 
