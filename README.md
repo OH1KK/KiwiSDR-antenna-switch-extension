@@ -16,8 +16,6 @@ You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. S
 
 open ssh connection to your KiwiSDR as root user
 
-Dowload KiwiSDR-antenna-switch-extension files from Github
-
     cd /root
     git clone https://github.com/OH1KK/KiwiSDR-antenna-switch-extension.git
     cd KiwiSDR-antenna-switch-extension
