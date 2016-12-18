@@ -6,9 +6,9 @@ This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote con
 
 ### Required hardware
 
-You need hardware KiwiSDR software defined receiver, MS-S7 antenna switch and MS-S7-WEB remote control unit.
+You need KiwiSDR is a software-defined radio (SDR) kit, MS-S7 antenna switch and MS-S7-WEB remote control unit.
 
-You can buy KiwiSDR software receiver from Seed https://www.seeedstudio.com/KiwiSDR-Board-p-2725.html
+You can buy KiwiSDR kit from Seed https://www.seeedstudio.com/KiwiSDR-Board-p-2725.html
 
 You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. Search by seller LZ2RR. http://www.ebay.com/sch/lz2rr/m.html?_nkw=&_armrs=1&_ipg=&_from=
 
