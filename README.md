@@ -86,3 +86,7 @@ Open your KiwiSDR as user. Enable ant_switch extension from extension drop down 
 
 TODO
 
+### LICENSE
+[The MIT License (MIT)](LICENSE)
+
+Copyright (c) 2016 Kari Karvonen
