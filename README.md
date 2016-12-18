@@ -64,12 +64,13 @@ If antenna status reading and switching works ok, proceed installation
 
 This will take some time. When finished, restart KiwiSDR
 
-    m stop
-    m start
-
+    reboot
+    
 ### Configuration
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
+
+![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface.png)
 
 Describe your antennas 1-7. If you leave antenna description empty, antenna button won't be visible to users.
 
@@ -78,6 +79,8 @@ Antenna switch failure or unknown status decription will be show to users if ant
 ### Usage
 
 Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show. Click to select antenna.
+
+![ant switch extenstion user interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface.png)
 
 ### demo site
 
