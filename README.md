@@ -40,7 +40,7 @@ then copy files
     chmod a+rx /usr/local/bin/ms-s7-web
 
 If your antenna switch does not use factory default IP 192.168.11.100, you have to mofidy 
-/etc/default/ms-s7-web script and change IPADDRESS. 
+/etc/default/ms-s7-web configuration file and change IPADDRESS. 
 
 At this point test that you can control script from KiwiSDR console.
 
