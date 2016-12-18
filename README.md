@@ -21,7 +21,7 @@ open ssh connection to your KiwiSDR as root user
     cd KiwiSDR-antenna-switch-extension
     bash ./ms-s7-web-installer
 
-Installer copies ant_switch files and place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
+Installer copies ant_switch files on place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
     
 ### Configuration
 
