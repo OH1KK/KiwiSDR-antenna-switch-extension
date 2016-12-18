@@ -1,5 +1,0 @@
-# /etc/default/ms-s7-web
-#
-# configuration file for ms-s7-web script
-
-IPADDRESS=192.168.11.100
