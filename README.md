@@ -14,7 +14,7 @@ You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. S
 
 ### Software depencies
 
-ms-s7-web script uses curl for communication. It is not istalled on KiwiSDR by default.
+ms-s7-web script uses curl for communication. It is not installed on KiwiSDR by default.
 
 Open ssh connection to your KiwiSDR as root user.
 
