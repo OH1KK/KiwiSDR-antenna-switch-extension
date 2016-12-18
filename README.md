@@ -20,26 +20,22 @@ Open ssh connection to your KiwiSDR as root user.
 
 Install software depencies to your KiwiSDR
 
-    apt-get install curl unzip
+    apt-get install curl
 
 ### Installation
 
 open ssh connection to your KiwiSDR as root user
 
-dowload KiwiSDR-antenna-switch-extension files from Github
+Dowload KiwiSDR-antenna-switch-extension files from Github
 
     cd /root
-    curl -L https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/archive/master.zip > master.zip
-
-unzip files
-
-    unzip master.zip
+    git clone https://github.com/OH1KK/KiwiSDR-antenna-switch-extension.git
 
 then copy files
 
-    cp -varf KiwiSDR-antenna-switch-extension-master/extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
-    cp -varf KiwiSDR-antenna-switch-extension-master/web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
-    cp KiwiSDR-antenna-switch-extension-master/ms-s7-web /usr/local/bin
+    cp -varf KiwiSDR-antenna-switch-extension/extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
+    cp -varf KiwiSDR-antenna-switch-extension/web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
+    cp KiwiSDR-antenna-switch-extension/ms-s7-web /usr/local/bin
     chmod a+rx /usr/local/bin/ms-s7-web
 
 If your antenna switch does not use factory default IP 192.168.11.100, you have to mofidy 
