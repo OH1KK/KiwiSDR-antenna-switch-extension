@@ -23,8 +23,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-IPADDRESS=192.168.11.100  # change this to your MS-S7-WEB IP-address 192.168.11.100
-
+IPADDRESS=192.168.11.100
+[ -r /etc/default/ms-s7-web ] && . /etc/default/ms-s7-web
 
 ###### do not change blow this line ######
 CURLOPTS=" --silent --connect-timeout 1"
