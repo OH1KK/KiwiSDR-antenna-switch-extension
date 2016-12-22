@@ -79,7 +79,7 @@ CONFFILE=/etc/default/ms-s7-web
 CURLOPTS=" --silent --connect-timeout 1"
 curlexec=`which curl`
 
-[ -r /etc/default/ms-s7-web ] && . /etc/default/ms-s7-web
+[ -r $CONFFILE ] && . $CONFFILE
 
 if [ "x$IPADDRESS" == "x" ]; then
 	echo "Please enter IP address of your MS-S7-WEB ?"
@@ -94,7 +94,7 @@ if valid_ip $IPADDRESS;  then
 	GetMS7web "http://$IPADDRESS/io.cgi"
 	if [ "x$REPLY" == "x" ]; then
 		if [ "x$USECONFIGFILE" == "xtrue" ]; then
-			echo "IP address was loaded from /etc/default/ms-s7-web config file"
+			echo "IP address was loaded from $CONFFILE config file"
 		fi
 		echo "No reply from MS-S7-WEB at address $IPADDRESS."
 		echo "Please check MS-S7-WEB network connectivity."
@@ -129,7 +129,7 @@ if valid_ip $IPADDRESS;  then
 	make clean
 	make
 	make install
-e	echo ""
+	echo ""
 	echo "$0 Restarting KiwiSDR"
 	echo ""
 	make stop
@@ -138,7 +138,7 @@ e	echo ""
 
 else 
 	if [ "x$USECONFIGFILE" == "xtrue" ]; then
-		echo "IP address was loaded from /etc/default/ms-s7-web config file"
+		echo "IP address was loaded from $CONFFILE config file"
 	fi
 	echo "Invalid IP address. Installation aborted."
 	exit 1
