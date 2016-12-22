@@ -79,43 +79,67 @@ CONFFILE=/etc/default/ms-s7-web
 CURLOPTS=" --silent --connect-timeout 1"
 curlexec=`which curl`
 
-echo "Please enter IP address of your MS-S7-WEB ?"
-read IPADDRESS
+[ -r /etc/default/ms-s7-web ] && . /etc/default/ms-s7-web
+
+if [ "x$IPADDRESS" == "x" ]; then
+	echo "Please enter IP address of your MS-S7-WEB ?"
+	USECONFIGFILE=false
+	read IPADDRESS
+else
+	USECONFIGFILE=true
+fi
+
 if valid_ip $IPADDRESS;  then 
 	# check that ms-s7-web is working
 	GetMS7web "http://$IPADDRESS/io.cgi"
 	if [ "x$REPLY" == "x" ]; then
+		if [ "x$USECONFIGFILE" == "xtrue" ]; then
+			echo "IP address was loaded from /etc/default/ms-s7-web config file"
+		fi
 		echo "No reply from MS-S7-WEB at address $IPADDRESS."
 		echo "Please check MS-S7-WEB network connectivity."
 		echo "Installation aborted."
 		exit 1
 	fi
 	echo "Connection to MS-S7-WEB at $IPADDRESS worked OK."
-	echo "# KiwiSDR MS-S7-WEB ant_switch extension" > $CONFFILE
-	echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
-	if [ -r $CONFFILE ]; then
-		echo "Created configuration file $CONFFILE"
-	else
-		echo "Configuration file $CONFFILE creation failed."
-		echo "Installation aborted."
-		exit 1
+
+	# Do config file if does not exist
+	if [ "x$USECONFIGFILE" == "xfalse" ]; then
+		echo "# KiwiSDR MS-S7-WEB ant_switch extension" > $CONFFILE
+		echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
+		if [ -r $CONFFILE ]; then
+			echo "Created configuration file $CONFFILE"
+		else
+			echo "Configuration file $CONFFILE creation failed."
+			echo "Installation aborted."
+			exit 1
+		fi
 	fi
-	echo "Copying ant switch files..."
+	echo ""
+	echo "$0 Copying ant_switch files to Beagle_SDR_GPS tree"
+	echo ""
 	cp -varf extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
 	cp -varf web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
 	cp ms-s7-web /usr/local/bin
 	chmod a+rx /usr/local/bin/ms-s7-web
-	echo "Rebuilding KiwiSDR"
+	echo ""
+	echo "$0 Rebuilding KiwiSDR"
+	echo ""
 	cd /root/Beagle_SDR_GPS
 	make clean
 	make
 	make install
-	echo "Restarting KiwiSDR"
-	m stop
-	m start
+e	echo ""
+	echo "$0 Restarting KiwiSDR"
+	echo ""
+	make stop
+	make start
 	echo "Installation finished."
 
 else 
+	if [ "x$USECONFIGFILE" == "xtrue" ]; then
+		echo "IP address was loaded from /etc/default/ms-s7-web config file"
+	fi
 	echo "Invalid IP address. Installation aborted."
 	exit 1
 fi
