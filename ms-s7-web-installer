@@ -102,7 +102,7 @@ if valid_ip $IPADDRESS;  then
 	fi
 	echo "Copying ant switch files..."
 	cp -varf extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
-	cp -varf extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
+	cp -varf web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
 	cp ms-s7-web /usr/local/bin
 	chmod a+rx /usr/local/bin/ms-s7-web
 	echo "Rebuilding KiwiSDR"
