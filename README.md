@@ -30,8 +30,6 @@ open ssh connection to your KiwiSDR as root user
 
 Installer copies ant_switch files on place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
 
-KiwiSDR automatic version update wipes this extension. You have to install this extension again every time KiwiSDR is updated. It is possible to turn off KiwiSDR auto updates on admin panel.
-
 ### Configuration
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
@@ -49,11 +47,12 @@ Open your KiwiSDR as user. Enable ant_switch extension from extension drop down 
 ![ant switch extenstion user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch.png)
 ![ant switch extenstion user interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface.png)
 
-### demo site
+### KiwiSDR automatic update
 
-TODO
+This extension will be wiped out on KiwiSDR updates. You have to install this again if KiwiSDR gets updated. You can disable KiwiSDR automatic updates from KiwiSDR admin panel.
 
 ### LICENSE
+
 [The MIT License (MIT)](LICENSE)
 
 Copyright (c) 2016 Kari Karvonen
