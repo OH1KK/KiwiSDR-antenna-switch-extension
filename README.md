@@ -14,6 +14,10 @@ You can buy KiwiSDR kit from Seed https://www.seeedstudio.com/KiwiSDR-Board-p-27
 
 You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. Search by seller LZ2RR. http://www.ebay.com/sch/lz2rr/m.html?_nkw=&_armrs=1&_ipg=&_from=
 
+### KiwiSDR version compability
+
+Tested with KiwiSDR v1.33. OK.
+
 ### Installation
 
 open ssh connection to your KiwiSDR as root user
@@ -24,7 +28,9 @@ open ssh connection to your KiwiSDR as root user
     bash ./ms-s7-web-installer
 
 Installer copies ant_switch files on place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
-    
+
+KiwiSDR automatic version update wipes this extension. You have to install this extension again every time KiwiSDR is updated. It is possible to turn off KiwiSDR auto updates on admin panel.
+
 ### Configuration
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
