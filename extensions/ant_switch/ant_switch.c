@@ -4,6 +4,11 @@
 //  sudo apt-get install snmp
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
+// Needed if not defined in Beagle_SDR_GPS/extensions/ext.h
+#if 1
+ #define EXT_ANT_ANT_SWITCH
+#endif
+
 #ifndef EXT_ANT_SWITCH
 	void ant_switch_main() {}
 #else
