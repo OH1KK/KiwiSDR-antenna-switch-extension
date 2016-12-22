@@ -6,7 +6,7 @@
 
 // Needed if not defined in Beagle_SDR_GPS/extensions/ext.h
 #if 1
- #define EXT_ANT_ANT_SWITCH
+ #define EXT_ANT_SWITCH
 #endif
 
 #ifndef EXT_ANT_SWITCH
