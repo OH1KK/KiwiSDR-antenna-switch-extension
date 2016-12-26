@@ -3,6 +3,7 @@
 var ant_switch_ext_name = 'ant_switch';		// NB: must match ant_switch.c:ant_switch_ext.name
 var ant_switch_first_time = true;
 var ant_switch_poll_interval;
+var ant_switch_exantenna=0; // to avoid console.log spam on timerupdates
 
 function ant_switch_main()
 {
@@ -59,31 +60,22 @@ function ant_switch_recv(data)
 function ant_switch_controls_setup()
 {
   
+   var buttons_html = '';
    var antdesc = [ ];
-   antdesc[1] = ext_get_cfg_param_string('ant_switch.ant1desc', '');
-   antdesc[2] = ext_get_cfg_param_string('ant_switch.ant2desc', '');
-   antdesc[3] = ext_get_cfg_param_string('ant_switch.ant3desc', '');
-   antdesc[4] = ext_get_cfg_param_string('ant_switch.ant4desc', '');
-   antdesc[5] = ext_get_cfg_param_string('ant_switch.ant5desc', '');
-   antdesc[6] = ext_get_cfg_param_string('ant_switch.ant6desc', '');
-   antdesc[7] = ext_get_cfg_param_string('ant_switch.ant7desc', '');
-
-   var buttons_html = ''
-   
    var tmp;
+   for (tmp=1; tmp<8; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '');
    console.log('ant_switch: Antenna configuration');
    for (tmp = 1; tmp<8; tmp++) {
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
            }  else {
-                buttons_html+=w3_divs('','', w3_inline('', '', w3_btn('Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
+                buttons_html+=w3_divs('','', w3_inline('', '', w3_btn('Antenna '+tmp, 'ant_switch_select'),antdesc[tmp]));
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
 
    buttons_html+=w3_inline('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
    console.log('ant_switch: Antenna g: Ground all antennas');
-      
    var data_html =
       '<div id="id-ant_switch-data"></div>';
 	var controls_html =
@@ -100,7 +92,6 @@ function ant_switch_controls_setup()
 	ext_panel_show(controls_html, null, null);
 	ant_switch_visible(1);
         ant_switch_poll();
- 	//ant_display_update();
 }
 
 function ant_switch_blur()
@@ -139,32 +130,9 @@ function ant_switch_visible(v)
 	visible_block('id-ant_switch-data', v);
 }
 
-function ant_switch_select_1(path,val) {
-        ant_switch_select_antenna('1');
-}
-
-function ant_switch_select_2(path,val) {
-        ant_switch_select_antenna('2');
-}
-
-function ant_switch_select_3(path,val) {
-        ant_switch_select_antenna('3');
-}
-
-function ant_switch_select_4(path,val) {
-        ant_switch_select_antenna('4');
-}
-
-function ant_switch_select_5(path,val) {
-        ant_switch_select_antenna('5');
-}
-
-function ant_switch_select_6(path,val) {
-        ant_switch_select_antenna('6');
-}
-
-function ant_switch_select_7(path,val) {
-        ant_switch_select_antenna('7');
+function ant_switch_select(path,val) {
+        var antenna = parseInt(path.slice(-1))+1;
+        ant_switch_select_antenna(antenna);
 }
 
 function ant_switch_select_groundall(path,val) {
@@ -180,13 +148,20 @@ function ant_switch_select_antenna(ant) {
 
 function ant_switch_poll() {
         kiwi_clearInterval(ant_switch_poll_interval);
-        ant_switch_poll_interval = setInterval(ant_switch_poll, 5000);
+        ant_switch_poll_interval = setInterval(ant_switch_poll, 10000);
         ext_send('GET Antenna');
 }
 
 
 function ant_switch_process_reply(ant) {
         ant_selected_antenna = ant;
+
+        var need_to_inform = false;
+        if (ant_switch_exantenna != ant) {
+                // antenna changed.
+                need_to_inform = true;
+                ant_switch_exantenna = ant;
+        }
         
         for (var tmp=0; tmp<7; tmp++) {
                 var elid='cl-id-btn-grp-'+tmp;
@@ -194,10 +169,10 @@ function ant_switch_process_reply(ant) {
         }
 
         if (ant == 'g') {
-                console.log('ant_switch: all antennas grouded');
+                if (need_to_inform) console.log('ant_switch: all antennas grouded');
                 ant_display_update('Thunderstorm mode. All antennas are grounded.');
         } else {
-                console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
+                if (need_to_inform) console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
                 ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', ''));
                 for (tmp=0; tmp<6; tmp++) {
                         if (ant == (tmp+1)) {
