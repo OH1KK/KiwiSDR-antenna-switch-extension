@@ -24,11 +24,11 @@
 # SOFTWARE.
 
 IPADDRESS=192.168.11.100
-[ -r /etc/default/ms-s7-web ] && . /etc/default/ms-s7-web
-
-###### do not change blow this line ######
+VERSION=1.0
 CURLOPTS=" --silent --connect-timeout 1"
 ANT=$(($1-1))
+CONFFILE=/etc/default/ms-s7-web
+[ -r $CONFFILE ] && . $CONFFILE
 
 if [ "x`which curl`" == "x" ]; then
 	echo "curl not found. Please install curl."
@@ -84,16 +84,28 @@ MS7_GroundAll() {
 
 
 MS7_ShowUsage() {
+	echo "ms-s7-web - script that controls MS-S7-WEB antenna switch from console"
+	echo "Version $VERSION Copyright (c) 2016 Kari Karvonen"
+	echo ""
 	echo "Usage: $0 command"
         echo ""
-	echo "Where command"
+	echo "Basic antenna switching commands"
 	for s in 1 2 3 4 5 6 7; do
-	        echo "$s = switch to antenna $s"
+	        echo "$s = Switch to antenna $s"
 	done
-	echo "+x = Antenna mixing, add antenna x"
-	echo "-x = Antenna mixing, remove antenna x"
-	echo "g = ground all antennas"
-	echo "s = status. Show currently selected antennas"
+	echo "g = Ground all antennas"
+	echo ""
+	echo "Status query commands"
+	echo "s = Status. Show currently selected antennas"
+	echo "q = Query. Alias to status"
+	echo ""
+	echo "Advanced antenna switching commands"
+	echo "+x = Antenna mixing. Add simultanious antenna x"
+	echo "-x = Antenna mixing, Remove simultanous antenna x"
+	echo ""
+	echo "Configuration commands"
+	echo "i = IP-address. Show configured MS-S7-WEB controller IP-address"
+	echo "c = Configure. Configure MS-S7-WEB IP-address"
 }
 
 MS7_VerifyConnectivity() {
@@ -142,6 +154,42 @@ MS7_ShowSelected() {
 	echo $selectedantennas
 }
 
+MS7_Configure() {
+	echo "Current IP address is $IPADDRESS"
+	echo "Enter new IP address or CTRL-C to abort"
+	read IPADDRESS
+	if valid_ip $IPADDRESS; then 
+		MS7_VerifyConnectivity
+		echo "# KiwiSDR MS-S7-WEB ant_switch extension" > $CONFFILE
+		echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
+		if [ -r $CONFFILE ]; then
+			echo "Created configuration file $CONFFILE"
+		else
+			echo "Configuration file $CONFFILE creation failed. Installation aborted."
+			exit 1
+		fi
+	else
+		echo "Invalid IP address. Configuration not saved."
+		exit 1
+	fi
+}
+
+function valid_ip() {
+    local  ip=$1
+    local  stat=1
+
+    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        OIFS=$IFS
+        IFS='.'
+        ip=($ip)
+        IFS=$OIFS
+        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
+            && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+        stat=$?
+    fi
+    return $stat
+}
+
 case $1 in
 	1|2|3|4|5|6|7)
 		MS7_VerifyConnectivity
@@ -162,9 +210,15 @@ case $1 in
 		MS7_VerifyConnectivity
 		MS7_GroundAll
 		;;
-	s)
+	s|q)
 		MS7_VerifyConnectivity
 		MS7_ShowSelected
+		;;
+	c)
+		MS7_Configure
+		;;
+	i)
+		echo "MS-S7-WEB controller IP-address is $IPADDRESS"
 		;;
 	*)
 		MS7_ShowUsage
