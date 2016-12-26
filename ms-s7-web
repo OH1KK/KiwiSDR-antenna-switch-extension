@@ -84,12 +84,14 @@ MS7_GroundAll() {
 
 
 MS7_ShowUsage() {
-	echo "Usage: $0 [1|2|3|4|5|6|7|s]"
+	echo "Usage: $0 command"
         echo ""
-	echo "Where"
+	echo "Where command"
 	for s in 1 2 3 4 5 6 7; do
 	        echo "$s = switch to antenna $s"
 	done
+	echo "+x = Antenna mixing, add antenna x"
+	echo "-x = Antenna mixing, remove antenna x"
 	echo "s = read currently selected antenna"
 	echo "g = ground all antennas"
 }
@@ -104,10 +106,14 @@ MS7_VerifyConnectivity() {
 	fi
 }
 
-
 MS7_SelectAntenna() {
 	ANT=$(($1-1))
 	MS7_Post "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
+}
+
+MS7_DeSelectAntenna() {
+	ANT=$(($1-1))
+	MS7_Post "-d pin=$ANT -d val=1 http://$IPADDRESS/dout.cgi"
 }
 
 MS7_ShowSelected() {
@@ -143,6 +149,16 @@ case $1 in
 		MS7_VerifyConnectivity
                 MS7_GroundAll
 		MS7_SelectAntenna $1
+		;;
+	+1|+2|+3|+4|+5|+6|+7)
+		MS7_VerifyConnectivity
+		antadd=${1//+} 
+		MS7_SelectAntenna $antadd
+		;;
+	-1|-2|-3|-4|-5|-6|-7)
+		MS7_VerifyConnectivity
+		antremove=${1//-} 
+		MS7_DeSelectAntenna $antremove
 		;;
 	g)
 		MS7_VerifyConnectivity
