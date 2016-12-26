@@ -47,12 +47,11 @@ Open your KiwiSDR as user. Enable ant_switch extension from extension drop down 
 ![ant switch extension user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch.png)
 ![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_v1.png)
 
-### Uninstalling
+### Uninstalling extension
 
 open ssh connection to your KiwiSDR as root user
 
-    cd /root
-    cd KiwiSDR-antenna-switch-extension
+    cd /root/KiwiSDR-antenna-switch-extension
     bash ./ms-s7-web-uninstaller
 
 ### KiwiSDR automatic update
