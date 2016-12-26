@@ -43,7 +43,7 @@ int ant_switch_queryantenna() {
 	char line[256];
 	int status;
 	int n;
-        int selectedantenna = 0;
+        char selectedantenna = '0';
         
 	pipe(pipefd); //create a pipe
 	pid = fork(); //span a child process
@@ -61,7 +61,7 @@ int ant_switch_queryantenna() {
 
 	while(fgets(line, sizeof(line), output)) //listen to what tail writes to its standard output
 	{
-		n = sscanf(line, "Selected antenna: %d", &selectedantenna);
+		n = sscanf(line, "Selected antenna: %c", &selectedantenna);
 		/*
 		if you need to kill the tail application, just kill it:
 		if(something_goes_wrong) kill(pid, SIGKILL);
@@ -82,6 +82,8 @@ int ant_switch_setantenna(int antenna) {
         char antennastr[15];
         
         sprintf(antennastr, "%d", antenna);
+        if (antenna == 8) sprintf(antennastr, "g"); // 8 = ground all atennas
+
 	pipe(pipefd); //create a pipe
 	pid = fork(); //span a child process
 	if (pid == 0) {
@@ -124,6 +126,11 @@ bool ant_switch_msgs(char *msg, int rx_chan)
             if (antenna > 0 && antenna < 8) {
                  ant_switch_setantenna(antenna);   
             }
+        }
+
+        if (strcmp(msg, "SET Antenna=g") == 0) {
+            // 8 = ground all atennas
+            ant_switch_setantenna(8);
         }
 
         if (strcmp(msg, "GET Antenna") == 0) {
