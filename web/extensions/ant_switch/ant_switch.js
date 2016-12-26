@@ -1,8 +1,8 @@
 // Copyright (c) 2016 Kari Karvonen, OH1KK
 
 var ant_switch_ext_name = 'ant_switch';		// NB: must match ant_switch.c:ant_switch_ext.name
-
 var ant_switch_first_time = true;
+var ant_switch_poll_interval;
 
 function ant_switch_main()
 {
@@ -99,12 +99,13 @@ function ant_switch_controls_setup()
 
 	ext_panel_show(controls_html, null, null);
 	ant_switch_visible(1);
-	ext_send('GET Antenna');
-	ant_display_update();
+        ant_switch_poll();
+ 	//ant_display_update();
 }
 
 function ant_switch_blur()
 {
+        kiwi_clearInterval(ant_switch_poll_interval);
 	console.log('### ant_switch_blur');
 	ant_switch_visible(0);		// hook to be called when controls panel is closed
 }
@@ -176,6 +177,13 @@ function ant_switch_select_antenna(ant) {
 	ext_send('SET Antenna='+ant);
         ext_send('GET Antenna');
 }
+
+function ant_switch_poll() {
+        kiwi_clearInterval(ant_switch_poll_interval);
+        ant_switch_poll_interval = setInterval(ant_switch_poll, 5000);
+        ext_send('GET Antenna');
+}
+
 
 function ant_switch_process_reply(ant) {
         ant_selected_antenna = ant;
