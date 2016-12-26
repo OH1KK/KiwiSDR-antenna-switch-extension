@@ -92,8 +92,8 @@ MS7_ShowUsage() {
 	done
 	echo "+x = Antenna mixing, add antenna x"
 	echo "-x = Antenna mixing, remove antenna x"
-	echo "s = read currently selected antenna"
 	echo "g = ground all antennas"
+	echo "s = status. Show currently selected antennas"
 }
 
 MS7_VerifyConnectivity() {
@@ -122,13 +122,15 @@ MS7_ShowSelected() {
 	digits=`echo $REPLY | sed 's/[^0-9]*//g'`
 
 	antennafound=0
+	selectedantennas=''
 	for s in 0 1 2 3 4 5 6; do
 		thisbit=${digits:${s}:1}
 		if [ "x$thisbit" == "x1" ]; then
-			selectedantenna=$(($s+1))
+			selectedantennas="${selectedantennas}$(($s+1)),"
 			antennafound=$(($antennafound+1))
 		fi
 	done
+	selectedantennas=${selectedantennas::-1}
 	thisbits=${digits:0:6}
 	if [ "x$thisbits" == "x000000" ]; then
 		# All antenna inputs are grounded
@@ -136,12 +138,8 @@ MS7_ShowSelected() {
 		selectedantenna=g
 	fi
 
-	if [ "$antennafound" != "1" ]; then
-		echo "Selected antenna: 0"
-	else
-		echo -n "Selected antenna: "
-		echo $selectedantenna
-	fi
+	echo -n "Selected antenna: "
+	echo $selectedantennas
 }
 
 case $1 in
