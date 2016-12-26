@@ -38,7 +38,7 @@ else
         curlexec=`which curl`
 fi
 
-GetMS7web () {
+MS7_Get () {
 	if [ -z "$1" ]
 	then
 		# zero legth
@@ -56,7 +56,7 @@ GetMS7web () {
 	fi
 }
 
-PostMS7web () {
+MS7_Post () {
 	if [ -z "$1" ]
 	then
 		# zero legth
@@ -74,7 +74,16 @@ PostMS7web () {
 	fi
 }
 
-if [ \( \( "$ANT" -lt 0 \) -o \( "$ANT" -gt 6 \) \) -a \( "$1" != "s" \) ]; then
+
+MS7_GroundAll() {
+	for s in 0 1 2 3 4 5 6; do
+		MS7_Post "-d pin=$s -d val=1 http://$IPADDRESS/dout.cgi"
+		#$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' -d pin=$s -d val=1 http://$IPADDRESS/dout.cgi > /dev/null
+	done
+}
+
+
+MS7_ShowUsage() {
 	echo "Usage: $0 [1|2|3|4|5|6|7|s]"
         echo ""
 	echo "Where"
@@ -82,20 +91,28 @@ if [ \( \( "$ANT" -lt 0 \) -o \( "$ANT" -gt 6 \) \) -a \( "$1" != "s" \) ]; then
 	        echo "$s = switch to antenna $s"
 	done
 	echo "s = read currently selected antenna"
-        exit 0
-fi
+	echo "g = ground all antennas"
+}
 
-# Test connectivity to MS-S7-WEB otherwise long timeouts
-GetMS7web "http://$IPADDRESS/widget.cgi"
-if [ "x$REPLY" == "x" ]; then
-	echo "Unable to connect MS-S7-WEB at $IPADDRESS"
-	echo "Please check network connectivity."
-	exit 1
-fi
+MS7_VerifyConnectivity() {
+	# Test connectivity to MS-S7-WEB otherwise long timeouts
+	MS7_Get "http://$IPADDRESS/widget.cgi"
+	if [ "x$REPLY" == "x" ]; then
+		echo "Unable to connect MS-S7-WEB at $IPADDRESS"
+		echo "Please check network connectivity."
+		exit 1
+	fi
+}
 
-if [ $1 == "s" ]; then
+
+MS7_SelectAntenna() {
+	ANT=$(($1-1))
+	MS7_Post "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
+}
+
+MS7_ShowSelected() {
 	# Read antenna status
-	GetMS7web "http://$IPADDRESS/io.cgi"
+	MS7_Get "http://$IPADDRESS/io.cgi"
 	digits=`echo $REPLY | sed 's/[^0-9]*//g'`
 
 	antennafound=0
@@ -112,17 +129,23 @@ if [ $1 == "s" ]; then
 		echo -n "Selected antenna: "
 		echo $selectedantenna
 	fi
-	exit 1
-else 
-	# Switch to another antenna
-	if [ \( "$ANT" -lt 0 \) -o \( "$ANT" -gt 6 \) ]; then
-		echo "Please select antenna between 1 - 7"
-		exit 1
-	fi
-	for s in 0 1 2 3 4 5 6; do
-		PostMS7web "-d pin=$s -d val=1 http://$IPADDRESS/dout.cgi"
-		#$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' -d pin=$s -d val=1 http://$IPADDRESS/dout.cgi > /dev/null
-	done
-	PostMS7web "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
-	exit 0
-fi
+}
+
+case $1 in
+	1|2|3|4|5|6|7)
+		MS7_VerifyConnectivity
+                MS7_GroundAll
+		MS7_SelectAntenna $1
+		;;
+	g)
+		MS7_VerifyConnectivity
+		MS7_GroundAll
+		;;
+	s)
+		MS7_VerifyConnectivity
+		MS7_ShowSelected
+		;;
+	*)
+		MS7_ShowUsage
+		;;
+esac
