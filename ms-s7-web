@@ -123,6 +123,13 @@ MS7_ShowSelected() {
 			antennafound=$(($antennafound+1))
 		fi
 	done
+	thisbits=${digits:0:6}
+	if [ "x$thisbits" == "x000000" ]; then
+		# All antenna inputs are grounded
+		antennafound=1
+		selectedantenna=g
+	fi
+
 	if [ "$antennafound" != "1" ]; then
 		echo "Selected antenna: 0"
 	else
