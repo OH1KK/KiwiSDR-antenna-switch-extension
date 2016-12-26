@@ -101,7 +101,7 @@ MS7_ShowUsage() {
 	echo ""
 	echo "Advanced antenna switching commands"
 	echo "+x = Antenna mixing. Add simultanious antenna x"
-	echo "-x = Antenna mixing, Remove simultanous antenna x"
+	echo "-x = Antenna mixing. Remove simultanous antenna x"
 	echo ""
 	echo "Configuration commands"
 	echo "i = IP-address. Show configured MS-S7-WEB controller IP-address"
