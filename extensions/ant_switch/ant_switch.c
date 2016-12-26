@@ -125,18 +125,19 @@ bool ant_switch_msgs(char *msg, int rx_chan)
         if (n == 1) {
             if (antenna > 0 && antenna < 8) {
                  ant_switch_setantenna(antenna);   
+                 return true;
             }
         }
 
         if (strcmp(msg, "SET Antenna=g") == 0) {
             // 8 = ground all atennas
             ant_switch_setantenna(8);
+            return true;
         }
 
         if (strcmp(msg, "GET Antenna") == 0) {
             int selected_antenna = ant_switch_queryantenna();
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT Antenna=%d", selected_antenna);
-            
             return true;
         }
 
