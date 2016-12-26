@@ -45,7 +45,7 @@ function ant_switch_recv(data)
 				break;
 
 			case "Antenna":
-				var arg = parseInt(param[1]);
+				var arg = String.fromCharCode(param[1]).charAt(0);
                                 ant_switch_process_reply(arg);
 				break;
 
@@ -83,7 +83,9 @@ function ant_switch_controls_setup()
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
-   
+   buttons_html+=w3_half('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), w3_divs('', '','Ground all antennas.'));
+   console.log('ant_switch: Antenna g: Ground all antennas');
+      
    var data_html =
       '<div id="id-ant_switch-data"></div>';
 	var controls_html =
@@ -140,37 +142,42 @@ function ant_switch_visible(v)
 
 function ant_switch_select_1(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna(1);
+        ant_switch_select_antenna('1');
 }
 
 function ant_switch_select_2(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna(2);
+        ant_switch_select_antenna('2');
 }
 
 function ant_switch_select_3(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna(3);
+        ant_switch_select_antenna('3');
 }
 
 function ant_switch_select_4(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna(4);
+        ant_switch_select_antenna('4');
 }
 
 function ant_switch_select_5(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna(5);
+        ant_switch_select_antenna('5');
 }
 
 function ant_switch_select_6(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna(6);
+        ant_switch_select_antenna('6');
 }
 
 function ant_switch_select_7(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna(7);
+        ant_switch_select_antenna('7');
+}
+
+function ant_switch_select_groundall(path,val) {
+        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
+        ant_switch_select_antenna('g');
 }
 
 function ant_switch_select_antenna(ant) {
@@ -181,8 +188,13 @@ function ant_switch_select_antenna(ant) {
 
 function ant_switch_process_reply(ant) {
         ant_selected_antenna = ant;
-        console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
-        ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', ''));
+        if (ant == 'g') {
+                console.log('ant_switch: all antennas grouded');
+                ant_display_update('Thunderstorm mode. All antennas are grounded.');
+        } else {
+                console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
+                ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', ''));
+        }
 }
 
 function ant_display_update(ant) {
