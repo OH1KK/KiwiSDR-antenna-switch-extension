@@ -76,14 +76,12 @@ function ant_switch_controls_setup()
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
            }  else {
-                buttons_html+=w3_half('', '',
-                        w3_btn('Antenna '+tmp, 'ant_switch_select_'+tmp),
-                        w3_divs('', '',antdesc[tmp])
-                        );
+                buttons_html+=w3_divs('','', w3_inline('', '', w3_btn('Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
-   buttons_html+=w3_half('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), w3_divs('', '','Ground all antennas.'));
+
+   buttons_html+=w3_inline('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
    console.log('ant_switch: Antenna g: Ground all antennas');
       
    var data_html =
@@ -141,37 +139,30 @@ function ant_switch_visible(v)
 }
 
 function ant_switch_select_1(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
         ant_switch_select_antenna('1');
 }
 
 function ant_switch_select_2(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
         ant_switch_select_antenna('2');
 }
 
 function ant_switch_select_3(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
         ant_switch_select_antenna('3');
 }
 
 function ant_switch_select_4(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
         ant_switch_select_antenna('4');
 }
 
 function ant_switch_select_5(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
         ant_switch_select_antenna('5');
 }
 
 function ant_switch_select_6(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
         ant_switch_select_antenna('6');
 }
 
 function ant_switch_select_7(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
         ant_switch_select_antenna('7');
 }
 
@@ -188,12 +179,24 @@ function ant_switch_select_antenna(ant) {
 
 function ant_switch_process_reply(ant) {
         ant_selected_antenna = ant;
+        
+        for (var tmp=0; tmp<7; tmp++) {
+                var elid='cl-id-btn-grp-'+tmp;
+                if (w3_el_id(elid) !=  null) w3_unhighlight(elid);
+        }
+
         if (ant == 'g') {
                 console.log('ant_switch: all antennas grouded');
                 ant_display_update('Thunderstorm mode. All antennas are grounded.');
         } else {
                 console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
                 ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', ''));
+                for (tmp=0; tmp<6; tmp++) {
+                        if (ant == (tmp+1)) {
+                                 var elid='cl-id-btn-grp-'+tmp;
+                                 if (w3_el_id(elid) != null) w3_highlight(elid);
+                        }
+                }
         }
 }
 
