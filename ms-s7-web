@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
-#
+#	
 # ms-s7-web - script that controls MS-S7-WEB antenna switch from console
 #
 # Copyright (c) 2016 Kari Karvonen
@@ -142,13 +142,13 @@ MS7_ShowSelected() {
 			antennafound=$(($antennafound+1))
 		fi
 	done
-	selectedantennas=${selectedantennas::-1}
 	thisbits=${digits:0:6}
 	if [ "x$thisbits" == "x000000" ]; then
 		# All antenna inputs are grounded
 		antennafound=1
-		selectedantenna=g
+		selectedantennas="g,"
 	fi
+	selectedantennas=${selectedantennas::-1}
 
 	echo -n "Selected antenna: "
 	echo $selectedantennas
