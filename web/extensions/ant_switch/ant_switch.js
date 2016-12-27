@@ -69,7 +69,7 @@ function ant_switch_controls_setup()
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
            }  else {
-                buttons_html+=w3_divs('','', w3_inline('', '', w3_btn('Antenna '+tmp, 'ant_switch_select'),antdesc[tmp]));
+                buttons_html+=w3_divs('','', w3_inline('', '', w3_btn('Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
@@ -130,9 +130,26 @@ function ant_switch_visible(v)
 	visible_block('id-ant_switch-data', v);
 }
 
-function ant_switch_select(path,val) {
-        var antenna = parseInt(path.slice(-1))+1;
-        ant_switch_select_antenna(antenna);
+function ant_switch_select_1(path,val) {
+        ant_switch_select_antenna('1');
+}
+function ant_switch_select_2(path,val) {
+        ant_switch_select_antenna('2');
+}
+function ant_switch_select_3(path,val) {
+        ant_switch_select_antenna('3');
+}
+function ant_switch_select_4(path,val) {
+        ant_switch_select_antenna('4');
+}
+function ant_switch_select_5(path,val) {
+        ant_switch_select_antenna('5');
+}
+function ant_switch_select_6(path,val) {
+        ant_switch_select_antenna('6');
+}
+function ant_switch_select_7(path,val) {
+        ant_switch_select_antenna('7');
 }
 
 function ant_switch_select_groundall(path,val) {
@@ -163,24 +180,27 @@ function ant_switch_process_reply(ant) {
                 ant_switch_exantenna = ant;
         }
         
-        for (var tmp=0; tmp<7; tmp++) {
-                var elid='cl-id-btn-grp-'+tmp;
-                if (w3_el_id(elid) !=  null) w3_unhighlight(elid);
-        }
-
         if (ant == 'g') {
                 if (need_to_inform) console.log('ant_switch: all antennas grouded');
                 ant_display_update('Thunderstorm mode. All antennas are grounded.');
         } else {
                 if (need_to_inform) console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
                 ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', ''));
-                for (tmp=0; tmp<6; tmp++) {
-                        if (ant == (tmp+1)) {
-                                 var elid='cl-id-btn-grp-'+tmp;
-                                 if (w3_el_id(elid) != null) w3_highlight(elid);
-                        }
+        }
+
+        // update highlights
+        var inputs = document.getElementsByTagName("button");
+        for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].textContent == 'Antenna '+ant) {
+                        // highlight
+                        w3_highlight(inputs[i]);
+                } else {
+                        // unhighlight
+                        var re=/^Antenna ([1-7])/i; 
+                        if (inputs[i].textContent.match(re)) w3_unhighlight(inputs[i]);
                 }
         }
+
 }
 
 function ant_display_update(ant) {
