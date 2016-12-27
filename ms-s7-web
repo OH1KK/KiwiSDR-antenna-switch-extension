@@ -142,8 +142,8 @@ MS7_ShowSelected() {
 			antennafound=$(($antennafound+1))
 		fi
 	done
-	thisbits=${digits:0:6}
-	if [ "x$thisbits" == "x000000" ]; then
+	thisbits=${digits:0:7}
+	if [ "x$thisbits" == "x0000000" ]; then
 		# All antenna inputs are grounded
 		antennafound=1
 		selectedantennas="g,"
