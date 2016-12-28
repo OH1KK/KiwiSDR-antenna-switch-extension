@@ -14,7 +14,7 @@ You can buy KiwiSDR kit from Seed https://www.seeedstudio.com/KiwiSDR-Board-p-27
 
 You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. Search by seller LZ2RR. http://www.ebay.com/sch/lz2rr/m.html?_nkw=&_armrs=1&_ipg=&_from=
 
-### Version compability
+## Version compability
 
 * Tested to work with KiwiSDR v1.36 
 * Tested to work with MS-S7-WEB firmware v1.01
