@@ -53,6 +53,8 @@ open ssh connection to your KiwiSDR as root user
 
     cd /root/KiwiSDR-antenna-switch-extension
     bash ./ms-s7-web-uninstaller
+    cd /root
+    rm -rf KiwiSDR-antenna-switch-extension
 
 ## KiwiSDR automatic update
 
