@@ -6,7 +6,7 @@ This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote con
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
-### Required hardware
+## Required hardware
 
 You need KiwiSDR is a software-defined radio (SDR) kit, MS-S7 antenna switch and MS-S7-WEB remote control unit.
 
@@ -19,7 +19,7 @@ You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. S
 * Tested to work with KiwiSDR v1.36 
 * Tested to work with MS-S7-WEB firmware v1.01
 
-### Installation
+## Installation
 
 open ssh connection to your KiwiSDR as root user
 
@@ -30,7 +30,7 @@ open ssh connection to your KiwiSDR as root user
 
 Installer copies ant_switch files on place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
 
-### Configuration
+## Configuration
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
@@ -40,25 +40,25 @@ Describe your antennas 1-7. If you leave antenna description empty, antenna butt
 
 Antenna switch failure or unknown status decription will be show to users if antenna switch is unreachable or malfunctioning. 
 
-### Usage
+## Usage
 
 Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show. Click to select antenna.
 
 ![ant switch extension user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch.png)
 ![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_v1.png)
 
-### Uninstalling extension
+## Uninstalling extension
 
 open ssh connection to your KiwiSDR as root user
 
     cd /root/KiwiSDR-antenna-switch-extension
     bash ./ms-s7-web-uninstaller
 
-### KiwiSDR automatic update
+## KiwiSDR automatic update
 
 This extension will be wiped out on KiwiSDR updates. You have to install this again if KiwiSDR gets updated. You can disable KiwiSDR automatic updates from KiwiSDR admin panel.
 
-### LICENSE
+## LICENSE
 
 [The MIT License (MIT)](LICENSE)
 
