@@ -16,7 +16,7 @@ You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. S
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.36 
+* Tested to work with KiwiSDR v1.38 
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
