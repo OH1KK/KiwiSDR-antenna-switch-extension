@@ -36,8 +36,8 @@ if [ "x$ok" == "xy" ]; then
         # remove executable
         rm /usr/local/bin/ms-s7-web
         # Remove extension files
-        rm -rf /root/Beagle_SDR_GPS/extensions/ant_switch
-        rm -rf /root/Beagle_SDR_GPS/web/extensions/ant_switch
+        rm -rf /root/extensions/ant_switch
+        rm -rf /root/web/extensions/ant_switch
         echo ""
         echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
         echo ""
