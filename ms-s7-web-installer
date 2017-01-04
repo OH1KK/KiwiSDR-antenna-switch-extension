@@ -22,6 +22,7 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 function valid_ip()
 {
@@ -114,14 +115,16 @@ if valid_ip $IPADDRESS;  then
 	fi
 	echo "$0 Copying ant_switch files to Beagle_SDR_GPS tree"
 	echo ""
-	cp -varf extensions/ant_switch/ /root/Beagle_SDR_GPS/extensions/
-	cp -varf web/extensions/ant_switch /root/Beagle_SDR_GPS/web/extensions/
+	mkdir -p /root/extensions/ant_switch/extensions/ant_switch
+	cp -vaf extensions/ant_switch/* /root/extensions/ant_switch/extensions/ant_switch
+	cp -vaf web/extensions/ant_switch/* /root/extensions/ant_switch
 	cp ms-s7-web /usr/local/bin
 	chmod a+rx /usr/local/bin/ms-s7-web
 	echo ""
 	echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
 	echo ""
 	cd /root/Beagle_SDR_GPS
+	make stop
 	make clean
 	make
 	make install
@@ -130,7 +133,6 @@ if valid_ip $IPADDRESS;  then
 	read ok
 	if [ "x$ok" == "xy" ]; then
 		echo "$0 Restarting KiwiSDR"
-		make stop
 		make start
 	else 
 		echo "$0 Not restarting."
