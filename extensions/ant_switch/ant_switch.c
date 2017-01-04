@@ -31,19 +31,9 @@ int ant_switch_queryantenna() {
 	char line[256], *cp, *cp2;
 	int n;
 	char selectedantenna = '0';
-	
 	non_blocking_cmd("/usr/local/bin/ms-s7-web s", line, sizeof(line), NULL);
-	
-	// find last line of output
-	int slen = strlen(line);
-	cp = &line[slen-1];
-	if (slen >= 2 && *cp == '\n') {
-		cp2 = rindex(cp-1, '\n') + 1;
-		if (cp2) cp = cp2;
-		n = sscanf(cp, "Selected antenna: %c", &selectedantenna);
-		if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", line);
-	}
-	
+	n = sscanf(line, "Selected antenna: %c", &selectedantenna);
+	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", line);
 	return(selectedantenna);
 }
 
