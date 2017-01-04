@@ -45,7 +45,7 @@ if [ "x$ok" == "xy" ]; then
         make
         make install
         echo ""
-        echo "$0 Install finished."
+        echo "$0 Uninstall finished."
 else
         echo "$0 Uninstall aborted."
         exit 1
