@@ -8,6 +8,8 @@ but crashes KiwiSDR if KiwiSDR is started from Makefile
 
    root@sdr:~/Beagle_SDR_GPS# make start
 
+Starting this way procudes "404 not found" error on ant_switch.js and ant_switch.css files.
+
 
 # KiwiSDR-antenna-switch-extension
 
