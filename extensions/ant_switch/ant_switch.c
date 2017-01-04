@@ -4,15 +4,6 @@
 //  sudo apt-get install snmp
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
-// Needed if not defined in Beagle_SDR_GPS/extensions/ext.h
-#if 1
- #define EXT_ANT_SWITCH
-#endif
-
-#ifndef EXT_ANT_SWITCH
-	void ant_switch_main() {}
-#else
-
 #include "kiwi.h"
 
 #include <stdio.h>
@@ -37,73 +28,40 @@ struct ant_switch_t {
 static ant_switch_t ant_switch[RX_CHANS];
 
 int ant_switch_queryantenna() {
-	pid_t pid = 0;
-	int pipefd[2];
-	FILE* output;
-	char line[256];
-	int status;
+	char line[256], *cp, *cp2;
 	int n;
-        char selectedantenna = '0';
-        
-	pipe(pipefd); //create a pipe
-	pid = fork(); //span a child process
-	if (pid == 0) {
-		// Child. Let's redirect its standard output to our pipe and replace process with tail
-		 close(pipefd[0]);
-		 dup2(pipefd[1], STDOUT_FILENO);
-		 dup2(pipefd[1], STDERR_FILENO);
-		 execl("/usr/local/bin/ms-s7-web", "/usr/local/bin/ms-s7-web", "s", (char*) NULL);
+	char selectedantenna = '0';
+	
+	non_blocking_cmd("/usr/local/bin/ms-s7-web s", line, sizeof(line), NULL);
+	
+	// find last line of output
+	int slen = strlen(line);
+	cp = &line[slen-1];
+	if (slen >= 2 && *cp == '\n') {
+		cp2 = rindex(cp-1, '\n') + 1;
+		if (cp2) cp = cp2;
+		n = sscanf(cp, "Selected antenna: %c", &selectedantenna);
+		if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", line);
 	}
-
-	//Only parent gets here. Listen to what the tail says
-	close(pipefd[1]);
-	output = fdopen(pipefd[0], "r");
-
-	while(fgets(line, sizeof(line), output)) //listen to what tail writes to its standard output
-	{
-		n = sscanf(line, "Selected antenna: %c", &selectedantenna);
-		/*
-		if you need to kill the tail application, just kill it:
-		if(something_goes_wrong) kill(pid, SIGKILL);
-		*/
-	}
-	//or wait for the child process to terminate
-	waitpid(pid, &status, 0);
+	
 	return(selectedantenna);
 }
 
 int ant_switch_setantenna(int antenna) {
-	pid_t pid = 0;
-	int pipefd[2];
-	FILE* output;
 	char line[256];
 	int status;
 	int n;
-        char antennastr[15];
-        
-        sprintf(antennastr, "%d", antenna);
-        if (antenna == 8) sprintf(antennastr, "g"); // 8 = ground all atennas
-
-	pipe(pipefd); //create a pipe
-	pid = fork(); //span a child process
-	if (pid == 0) {
-		// Child. Let's redirect its standard output to our pipe and replace process with tail
-		 close(pipefd[0]);
-		 dup2(pipefd[1], STDOUT_FILENO);
-		 dup2(pipefd[1], STDERR_FILENO);
-		 execl("/usr/local/bin/ms-s7-web", "/usr/local/bin/ms-s7-web", antennastr, (char*) NULL);
-	}
-	//Only parent gets here. Listen to what the tail says
-	close(pipefd[1]);
-	output = fdopen(pipefd[0], "r");
-
-	while(fgets(line, sizeof(line), output)) //listen to what tail writes to its standard output
-	{
-                if (ANT_SWITCH_DEBUG_MSG) printf("ant_switch_setantenna: %s\n",line);
-	}
-	//or wait for the child process to terminate
-	waitpid(pid, &status, 0);
-        return(status);
+	char *antennastr;
+	
+	if (antenna == 8)
+		asprintf(&antennastr, "/usr/local/bin/ms-s7-web g"); // 8 = ground all antennas
+	else
+		asprintf(&antennastr, "/usr/local/bin/ms-s7-web %d", antenna);
+	line[0] = '\0';
+	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
+	if (ANT_SWITCH_DEBUG_MSG) printf("ant_switch_setantenna: %s\n",line);
+	free(antennastr);
+    return(status);
 }
 
 
@@ -162,5 +120,3 @@ void ant_switch_main()
 {
 	ext_register(&ant_switch_ext);
 }
-
-#endif
