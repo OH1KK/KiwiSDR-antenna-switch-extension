@@ -29,23 +29,23 @@ echo "$0 Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
 read ok
 if [ "x$ok" == "xy" ]; then
         echo ""
-        echo "$0 Removing files"
+        echo "$0 Removing ant_switch extension files"
         # remove config
         rm /etc/default/ms-s7-web
         # remove executable
         rm /usr/local/bin/ms-s7-web
         # Remove extension files
         rm -rf /root/extensions/ant_switch
-        echo ""
-        echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
-        echo ""
-        cd /root/Beagle_SDR_GPS
+        echo "$0 Stopping KiwiSDR"
         make stop
+        echo "$0 Rebuilding KiwiSDR without ant_switch extension"
+        cd /root/Beagle_SDR_GPS
         make clean
         make
         make install
-        echo ""
-        echo "$0 Uninstall finished."
+        echo "$0 Compile finished. Starting KiwiSDR"
+        make start
+        echo "$0 ant_switch extension uninstall finished."
 else
         echo "$0 Uninstall aborted."
         exit 1
