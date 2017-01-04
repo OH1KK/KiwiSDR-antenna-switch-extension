@@ -37,24 +37,16 @@ if [ "x$ok" == "xy" ]; then
         rm /usr/local/bin/ms-s7-web
         # Remove extension files
         rm -rf /root/extensions/ant_switch
-        rm -rf /root/web/extensions/ant_switch
         echo ""
         echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
         echo ""
         cd /root/Beagle_SDR_GPS
+        make stop
         make clean
         make
         make install
         echo ""
-        echo "$0 Compile finished. Restart needed. Do you want to restart KiwiSDR now (y/n)?"
-        read ok
-        if [ "x$ok" == "xy" ]; then
-                echo "$0 Restarting KiwiSDR"
-                make stop
-                make start
-        else
-                echo "$0 Not restarting."
-        fi
+        echo "$0 Install finished."
 else
         echo "$0 Uninstall aborted."
         exit 1
