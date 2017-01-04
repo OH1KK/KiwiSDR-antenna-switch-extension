@@ -56,10 +56,6 @@ open ssh connection to your KiwiSDR as root user
     cd /root
     rm -rf KiwiSDR-antenna-switch-extension
 
-## KiwiSDR automatic update
-
-This extension will be wiped out on KiwiSDR updates. You have to install this again if KiwiSDR gets updated. You can disable KiwiSDR automatic updates from KiwiSDR admin panel.
-
 ## LICENSE
 
 [The MIT License (MIT)](LICENSE)
