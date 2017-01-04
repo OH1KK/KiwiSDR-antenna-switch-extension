@@ -63,7 +63,7 @@ function ant_switch_controls_setup()
    var buttons_html = '';
    var antdesc = [ ];
    var tmp;
-   for (tmp=1; tmp<8; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '');
+   for (tmp=1; tmp<8; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
    console.log('ant_switch: Antenna configuration');
    for (tmp = 1; tmp<8; tmp++) {
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
@@ -111,14 +111,14 @@ function ant_switch_config_html()
 			'<hr>' +
 			w3_third('', 'w3-container',
 				w3_divs('', 'w3-margin-bottom',
-					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'admin_string_cb'),
-					w3_input_get_param('Antenna 2 description', 'ant_switch.ant2desc', 'admin_string_cb'),
-					w3_input_get_param('Antenna 3 description', 'ant_switch.ant3desc', 'admin_string_cb'),
-					w3_input_get_param('Antenna 4 description', 'ant_switch.ant4desc', 'admin_string_cb'),
-					w3_input_get_param('Antenna 5 description', 'ant_switch.ant5desc', 'admin_string_cb'),
-					w3_input_get_param('Antenna 6 description', 'ant_switch.ant6desc', 'admin_string_cb'),
-					w3_input_get_param('Antenna 7 description', 'ant_switch.ant7desc', 'admin_string_cb'),
-					w3_input_get_param('Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'admin_string_cb')
+					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 2 description', 'ant_switch.ant2desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 3 description', 'ant_switch.ant3desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 4 description', 'ant_switch.ant4desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 5 description', 'ant_switch.ant5desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 6 description', 'ant_switch.ant6desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 7 description', 'ant_switch.ant7desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb')
 				), '', ''
 			)
 		)
@@ -185,7 +185,7 @@ function ant_switch_process_reply(ant) {
                 ant_display_update('Thunderstorm mode. All antennas are grounded.');
         } else {
                 if (need_to_inform) console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
-                ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', ''));
+                ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', '', EXT_NO_SAVE));
         }
 
         // update highlights
