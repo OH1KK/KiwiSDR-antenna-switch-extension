@@ -1,6 +1,6 @@
 # BROKEN IN V1.40
 
-This extension is broken at this time. This works if you run from console
+This extension is broken at this time. Please wait for fixed version. This works if you run from console
 
    root@sdr:~/Beagle_SDR_GPS# ./kiwi.bin 
 
@@ -8,7 +8,7 @@ but crashes KiwiSDR if KiwiSDR is started from Makefile
 
    root@sdr:~/Beagle_SDR_GPS# make start
 
-Starting this way procudes "404 not found" error on ant_switch.js and ant_switch.css files.
+Starting this way produces "404 not found" error on ant_switch.js and ant_switch.css files.
 
 
 # KiwiSDR-antenna-switch-extension
