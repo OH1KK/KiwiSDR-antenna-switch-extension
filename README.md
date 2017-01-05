@@ -1,16 +1,3 @@
-# BROKEN IN V1.40
-
-This extension is broken at this time. Please wait for fixed version. This works if you start KiwiSDR from console
-
-   root@sdr:~/Beagle_SDR_GPS# ./kiwi.bin 
-
-but crashes KiwiSDR if KiwiSDR is started from Makefile
-
-   root@sdr:~/Beagle_SDR_GPS# make start
-
-Starting this way produces "404 not found" error on ant_switch.js and ant_switch.css files. And crash if ant_switch extension is activated.
-
-
 # KiwiSDR-antenna-switch-extension
 
 This is antenna switch extension to KiwiSDR software defined radio.
@@ -29,7 +16,7 @@ You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. S
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.38 
+* Tested to work with KiwiSDR v1.41
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
