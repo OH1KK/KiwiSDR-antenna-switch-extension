@@ -49,7 +49,9 @@ function ant_switch_recv(data)
 				var arg = String.fromCharCode(param[1]).charAt(0);
                                 ant_switch_process_reply(arg);
 				break;
-
+                        case "DenySwitching":
+                                var arg = String.fromCharCode(param[1]).charAt(0);
+                                ant_switch_denyswitching(arg);
 			default:
 				console.log('ant_switch_recv: UNKNOWN CMD '+ param[0]);
 				break;
@@ -82,8 +84,9 @@ function ant_switch_controls_setup()
 		w3_divs('id-ant_display-controls w3-text-white', '',
 			data_html,
         		w3_divs('w3-container', 'w3-tspace-8',
-			        w3_divs('', 'w3-medium w3-text-aqua', '<b>MS-S7-WEB Antenna switch</b>'),
+			        w3_divs('', 'w3-medium w3-text-aqua', '<b>Antenna switch</b>'),
                                 w3_divs('id-ant-display-selected', '','Selected antenna: unknown'),
+                                w3_divs('id-ant-display-denyswitching', '',''),
                                 w3_divs('', '',buttons_html),
                                 w3_divs('', '','')
                         )
@@ -104,13 +107,20 @@ function ant_switch_blur()
 // called to display HTML for configuration parameters in admin interface
 function ant_switch_config_html()
 {
+        var denyswitching = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE);
 	ext_admin_config(ant_switch_ext_name, 'Antenna switch',
 		w3_divs('id-ant_switch w3-text-teal w3-hide', '',
-			'<b>MS-S7-WEB Antenna switch configuration</b>' +
-			'<br/>Leave Antenna description field empty if you want to disable antenna' + 
+			'<b>Antenna switch configuration</b>' +
 			'<hr>' +
 			w3_third('', 'w3-container',
 				w3_divs('', 'w3-margin-bottom',
+                                        w3_divs('', '', '<b>Deny antenna switching?</b> ' +
+                                                w3_radio_btn('No', 'ant_switch.denyswitching', denyswitching? 0:1, 'ant_denyswitching') +
+                                                w3_radio_btn('Yes', 'ant_switch.denyswitching', denyswitching? 1:0, 'ant_denyswitching')
+                                        ),
+                                        w3_divs('', '','<br>If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /usr/local/bin/ms-s7-web script.'),
+                                        w3_divs('', '','<hr><b>Antenna buttons configuration</b><br>'),
+                                        w3_divs('', '','Leave Antenna description field empty if you want to hide antenna button from users<br>'),
 					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna 2 description', 'ant_switch.ant2desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna 3 description', 'ant_switch.ant3desc', 'w3_string_set_cfg_cb'),
@@ -169,11 +179,11 @@ function ant_switch_poll() {
         ext_send('GET Antenna');
 }
 
-
 function ant_switch_process_reply(ant) {
         ant_selected_antenna = ant;
-
         var need_to_inform = false;
+                
+        
         if (ant_switch_exantenna != ant) {
                 // antenna changed.
                 need_to_inform = true;
@@ -200,13 +210,28 @@ function ant_switch_process_reply(ant) {
                         if (inputs[i].textContent.match(re)) w3_unhighlight(inputs[i]);
                 }
         }
-
+        var status_denyswitching = ext_get_cfg_param('ant_switch.denyswitching', '');
+        if (status_denyswitching == 1) {
+                // lock buttons
+                html('id-ant-display-denyswitching').innerHTML = 'Antenna switching disallowed by admin';
+        } else {
+                // unlock buttons
+                html('id-ant-display-denyswitching').innerHTML = 'Antenna switching normal operation';
+        }
+ 
 }
 
 function ant_display_update(ant) {
+        // FIXME: How to notify other users about antenna changes?
         html('id-ant-display-selected').innerHTML = ant;
+        /*
         var el = html('rx-antenna');
         if (el != undefined && ant) {
                 el.innerHTML = ant;
         }
+        */
+}
+
+function ant_denyswitching(id, idx) {
+        var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
 }
