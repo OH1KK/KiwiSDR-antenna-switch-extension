@@ -56,6 +56,10 @@ open ssh connection to your KiwiSDR as root user
     cd /root
     rm -rf KiwiSDR-antenna-switch-extension
 
+## Demo site
+
+KiwiSDR Kaustinen http://sdr.vy.fi
+
 ## LICENSE
 
 [The MIT License (MIT)](LICENSE)
