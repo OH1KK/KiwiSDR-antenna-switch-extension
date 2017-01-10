@@ -24,7 +24,7 @@
 # SOFTWARE.
 
 IPADDRESS=192.168.11.100
-VERSION=1.01
+VERSION=1.02
 CURLOPTS=" --silent --connect-timeout 1"
 CONFFILE=/etc/default/ms-s7-web
 [ -r $CONFFILE ] && . $CONFFILE
