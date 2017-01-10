@@ -26,7 +26,6 @@
 IPADDRESS=192.168.11.100
 VERSION=1.01
 CURLOPTS=" --silent --connect-timeout 1"
-ANT=$(($1-1))
 CONFFILE=/etc/default/ms-s7-web
 [ -r $CONFFILE ] && . $CONFFILE
 
@@ -102,6 +101,8 @@ MS7_ShowUsage() {
 	echo "Advanced antenna switching commands"
 	echo "+x = Antenna mixing. Add simultanious antenna x"
 	echo "-x = Antenna mixing. Remove simultanous antenna x"
+	echo "tx = Antenna mixing. Toggle simultanous antenna x"
+	echo "     Example: t2 = toggles Antenna 2 state on/off"
 	echo ""
 	echo "Configuration commands"
 	echo "i = IP-address. Show configured MS-S7-WEB controller IP-address"
@@ -128,6 +129,19 @@ MS7_DeSelectAntenna() {
 	MS7_Post "-d pin=$ANT -d val=1 http://$IPADDRESS/dout.cgi"
 }
 
+MS7_ToggleAntenna() {
+	ANT=$(($1-1))
+	# Read antenna status
+        MS7_Get "http://$IPADDRESS/io.cgi"
+        digits=`echo $REPLY | sed 's/[^0-9]*//g'`
+        thisbits=${digits:$ANT:1}
+	if [ "x$thisbits" == "x0" ]; then
+		MS7_SelectAntenna $1
+	else
+		MS7_DeSelectAntenna $1 
+	fi
+}
+
 MS7_ShowSelected() {
 	# Read antenna status
 	MS7_Get "http://$IPADDRESS/io.cgi"
@@ -150,7 +164,7 @@ MS7_ShowSelected() {
 	fi
 	selectedantennas=${selectedantennas::-1}
 
-	echo -n "Selected antenna: "
+	echo -n "Selected antennas: "
 	echo $selectedantennas
 }
 
@@ -205,6 +219,11 @@ case $1 in
 		MS7_VerifyConnectivity
 		antremove=${1//-} 
 		MS7_DeSelectAntenna $antremove
+		;;
+	t1|t2|t3|t4|t4|t6|t7)
+		MS7_VerifyConnectivity
+                anttoggle=${1//t}
+		MS7_ToggleAntenna $anttoggle
 		;;
 	g)
 		MS7_VerifyConnectivity
