@@ -3,7 +3,7 @@
 var ant_switch_ext_name = 'ant_switch';		// NB: must match ant_switch.c:ant_switch_ext.name
 var ant_switch_first_time = true;
 var ant_switch_poll_interval;
-var ant_switch_exantenna=0; // to avoid console.log spam on timerupdates
+var ant_switch_exantennas=0; // to avoid console.log spam on timerupdates
 
 function ant_switch_main()
 {
@@ -46,7 +46,7 @@ function ant_switch_recv(data)
 				break;
 
 			case "Antenna":
-				var arg = String.fromCharCode(param[1]).charAt(0);
+				var arg = param[1];
                                 ant_switch_process_reply(arg);
 				break;
                         case "DenySwitching":
@@ -182,12 +182,11 @@ function ant_switch_poll() {
 function ant_switch_process_reply(ant) {
         ant_selected_antenna = ant;
         var need_to_inform = false;
-                
         
-        if (ant_switch_exantenna != ant) {
+        if (ant_switch_exantennas != ant) {
                 // antenna changed.
                 need_to_inform = true;
-                ant_switch_exantenna = ant;
+                ant_switch_exantennas = ant;
         }
         
         if (ant == 'g') {
@@ -195,28 +194,33 @@ function ant_switch_process_reply(ant) {
                 ant_display_update('Thunderstorm mode. All antennas are grounded.');
         } else {
                 if (need_to_inform) console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
-                ant_display_update('Antenna '+ant_selected_antenna + ": "+ext_get_cfg_param_string('ant_switch.ant'+ant_selected_antenna+'desc', '', EXT_NO_SAVE));
+                ant_display_update('Selected antennas are now: '+ant_selected_antenna);
         }
 
-        // update highlights
+        // update highlight
+	var selected_antennas_list = ant.match(/([0-9])/g);
         var inputs = document.getElementsByTagName("button");
         for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].textContent == 'Antenna '+ant) {
-                        // highlight
-                        w3_highlight(inputs[i]);
-                } else {
-                        // unhighlight
-                        var re=/^Antenna ([1-7])/i; 
-                        if (inputs[i].textContent.match(re)) w3_unhighlight(inputs[i]);
+                var re=/^Antenna ([1-7])/i; 
+                if (inputs[i].textContent.match(re)) {
+                        w3_unhighlight(inputs[i]);
+                        for (var tmp=1; tmp<8; tmp++) {
+                                var chr = String.fromCharCode(48 + tmp);
+        		        if (selected_antennas_list.indexOf(chr) >= 0) {
+			                 if (inputs[i].textContent == 'Antenna '+tmp) w3_highlight(inputs[i]);
+                                }
+                        }
                 }
-        }
-        var status_denyswitching = ext_get_cfg_param('ant_switch.denyswitching', '');
+	}
+
+        var status_denyswitching = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE);
         if (status_denyswitching == 1) {
-                // lock buttons
+                // ant_switch_lock_buttons()
                 html('id-ant-display-denyswitching').innerHTML = 'Antenna switching disallowed by admin';
         } else {
-                // unlock buttons
-                html('id-ant-display-denyswitching').innerHTML = 'Antenna switching normal operation';
+                // ant_switch_unlock_buttons()
+                // if mixing allowed, show it too
+                html('id-ant-display-denyswitching').innerHTML = 'Antenna switching '+'and mixing '+ 'is allowed';
         }
  
 }
@@ -224,12 +228,6 @@ function ant_switch_process_reply(ant) {
 function ant_display_update(ant) {
         // FIXME: How to notify other users about antenna changes?
         html('id-ant-display-selected').innerHTML = ant;
-        /*
-        var el = html('rx-antenna');
-        if (el != undefined && ant) {
-                el.innerHTML = ant;
-        }
-        */
 }
 
 function ant_denyswitching(id, idx) {
