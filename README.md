@@ -6,6 +6,13 @@ This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote con
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
+## Features
+
+* Allow basic antenna switching, eg, select antenna 1-7
+* Admin can lock/unlock antenna switching from admin panel
+* Thunderstorm mode. All antennas are grounded.
+* Allow antenna mixing. You can select many antennas simultaniously
+
 ## Required hardware
 
 You need KiwiSDR is a software-defined radio (SDR) kit, MS-S7 antenna switch and MS-S7-WEB remote control unit.
