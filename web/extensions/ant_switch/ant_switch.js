@@ -95,7 +95,7 @@ function ant_switch_controls_setup()
         		w3_divs('w3-container', 'w3-tspace-8',
 			        w3_divs('', 'w3-medium w3-text-aqua', '<b>Antenna switch</b>'),
                                 w3_divs('id-ant-display-selected', '','Selected antenna: unknown'),
-                                w3_divs('id-ant-display-permissions', '',''),
+                                w3_divs('id-ant-display-permissions', '','Permissions: unknown'),
                                 w3_divs('', '',buttons_html),
                                 w3_divs('', '','')
                         )
@@ -122,18 +122,18 @@ function ant_switch_config_html()
 		w3_divs('id-ant_switch w3-text-teal w3-hide', '',
 			'<b>Antenna switch configuration</b>' +
 			'<hr>' +
-			w3_third('', 'w3-container',
+			w3_divs('', 'w3-container',
 				w3_divs('', 'w3-margin-bottom',
-                                        w3_divs('', '', '<b>Deny antenna switching?</b> ' +
-                                                w3_radio_btn('No', 'ant_switch.denyswitching', denyswitching? 0:1, 'ant_denyswitching') +
-                                                w3_radio_btn('Yes', 'ant_switch.denyswitching', denyswitching? 1:0, 'ant_denyswitching')
-                                        ),
                                         w3_divs('', '','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /usr/local/bin/ms-s7-web script.'),
-                                        w3_divs('', '', '<b>Deny antenna mixing?</b> ' +
-                                                w3_radio_btn('No', 'ant_switch.denymixing', denymixing? 0:1, 'ant_denymixing') +
-                                                w3_radio_btn('Yes', 'ant_switch.denymixing', denymixing? 1:0, 'ant_denymixing')
+                                        w3_divs('', '', '<b>Deny antenna switching?</b> ' +
+                                                w3_radio_btn('No', 'ant_switch.denyswitching', denyswitching? 0:1, 'ant_switch_conf_denyswitching') +
+                                                w3_radio_btn('Yes', 'ant_switch.denyswitching', denyswitching? 1:0, 'ant_switch_conf_denyswitching')
                                         ),
                                         w3_divs('', '','If antenna mixing is denied then users can select only one antenna at time.'),
+                                        w3_divs('', '', '<b>Deny antenna mixing?</b> ' +
+                                                w3_radio_btn('No', 'ant_switch.denymixing', denymixing? 0:1, 'ant_switch_conf_denymixing') +
+                                                w3_radio_btn('Yes', 'ant_switch.denymixing', denymixing? 1:0, 'ant_switch_conf_denymixing')
+                                        ),
                                         w3_divs('', '','<hr><b>Antenna buttons configuration</b><br>'),
                                         w3_divs('', '','Leave Antenna description field empty if you want to hide antenna button from users<br>'),
 					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb'),
@@ -206,10 +206,10 @@ function ant_switch_process_reply(ant) {
         
         if (ant == 'g') {
                 if (need_to_inform) console.log('ant_switch: all antennas grouded');
-                ant_display_update('Thunderstorm mode. All antennas are grounded.');
+                ant_switch_display_update('Thunderstorm mode. All antennas are grounded.');
         } else {
                 if (need_to_inform) console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
-                ant_display_update('Selected antennas are now: '+ant_selected_antenna);
+                ant_switch_display_update('Selected antennas are now: '+ant_selected_antenna);
         }
 
         // update highlight
@@ -268,14 +268,14 @@ function ant_switch_showpermissions() {
         }
 }
 
-function ant_display_update(ant) {
+function ant_switch_display_update(ant) {
         // FIXME: How to notify other users about antenna changes?
         html('id-ant-display-selected').innerHTML = ant;
 }
 
-function ant_denyswitching(id, idx) {
+function ant_switch_conf_denyswitching(id, idx) {
         var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
 }
-function ant_denymixing(id, idx) {
+function ant_switch_conf_denymixing(id, idx) {
         var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
 }
