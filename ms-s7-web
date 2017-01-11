@@ -90,13 +90,15 @@ MS7_ShowUsage() {
         echo ""
 	echo "Basic antenna switching commands"
 	for s in 1 2 3 4 5 6 7; do
-	        echo "$s = Switch to antenna $s"
+	        echo "$s  = Switch to antenna $s"
 	done
-	echo "g = Ground all antennas"
+	echo "g  = Ground all antennas"
+	echo "tg = Ground all antennas. Alias to g."
+
 	echo ""
 	echo "Status query commands"
-	echo "s = Status. Show currently selected antennas"
-	echo "q = Query. Alias to status"
+	echo "s  = Status. Show currently selected antennas"
+	echo "q  = Query. Alias to status"
 	echo ""
 	echo "Advanced antenna switching commands"
 	echo "+x = Antenna mixing. Add simultanious antenna x"
@@ -105,8 +107,8 @@ MS7_ShowUsage() {
 	echo "     Example: t2 = toggles Antenna 2 state on/off"
 	echo ""
 	echo "Configuration commands"
-	echo "i = IP-address. Show configured MS-S7-WEB controller IP-address"
-	echo "c = Configure. Configure MS-S7-WEB IP-address"
+	echo "i  = IP-address. Show configured MS-S7-WEB controller IP-address"
+	echo "c  = Configure. Configure MS-S7-WEB IP-address"
 }
 
 MS7_VerifyConnectivity() {
@@ -220,12 +222,12 @@ case $1 in
 		antremove=${1//-} 
 		MS7_DeSelectAntenna $antremove
 		;;
-	t1|t2|t3|t4|t4|t6|t7)
+	t1|t2|t3|t4|t5|t6|t7)
 		MS7_VerifyConnectivity
                 anttoggle=${1//t}
 		MS7_ToggleAntenna $anttoggle
 		;;
-	g)
+	tg|g)
 		MS7_VerifyConnectivity
 		MS7_GroundAll
 		;;
