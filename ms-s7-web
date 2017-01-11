@@ -3,7 +3,7 @@
 #	
 # ms-s7-web - script that controls MS-S7-WEB antenna switch from console
 #
-# Copyright (c) 2016 Kari Karvonen
+# Copyright (c) 2017 Kari Karvonen
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -84,7 +84,7 @@ MS7_GroundAll() {
 
 MS7_ShowUsage() {
 	echo "ms-s7-web - script that controls MS-S7-WEB antenna switch from console"
-	echo "Version $VERSION Copyright (c) 2016 Kari Karvonen"
+	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
 	echo ""
 	echo "Usage: $0 command"
         echo ""
