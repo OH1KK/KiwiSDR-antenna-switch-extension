@@ -53,10 +53,16 @@ Antenna switch failure or unknown status decription will be show to users if ant
 
 ## Usage
 
-Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show. Click to select antenna.
+Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show.
 
 ![ant switch extension user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch.png)
 ![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface-20170110.png)
+
+Single antenna mode: Click to select antenna. 
+
+Antenna mixing mode: you can select multiple antennas simultaniously. Click antennas on/off. 
+
+If admin has disable antenna switching, buttons are grey and you cannot click them.
 
 ## Uninstalling extension
 
