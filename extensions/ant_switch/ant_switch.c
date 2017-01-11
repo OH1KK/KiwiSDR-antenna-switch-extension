@@ -1,10 +1,11 @@
-// Copyright (c) 2016 Kari Karvonen, OH1KK
+// Copyright (c) 2017 Kari Karvonen, OH1KK
 //
 // You need snmpget and snmpset external commands
 //  sudo apt-get install snmp
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
 #include "kiwi.h"
+#include "cfg.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -42,14 +43,54 @@ int ant_switch_setantenna(char* antenna) {
 	int status;
 	int n;
 	char *antennastr;
-        asprintf(&antennastr, "/usr/local/bin/ms-s7-web t%s", antenna);
+        asprintf(&antennastr, "/usr/local/bin/ms-s7-web %s", antenna);
 	line[0] = '\0';
-        //if (ANT_SWITCH_DEBUG_MSG) printf("command to be executed: \"%s\"\n",antennastr);
 	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
 	free(antennastr);
 	return(status);
 }
 
+int ant_switch_toggleantenna(char* antenna) {
+	char line[256];
+	int status;
+	int n;
+	char *antennastr;
+        asprintf(&antennastr, "/usr/local/bin/ms-s7-web t%s", antenna);
+	line[0] = '\0';
+	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
+	free(antennastr);
+	return(status);
+}
+
+int ant_switch_validate_cmd(char *cmd) {
+	int is_valid_cmd = false;
+	// FIXME. Clean this. To array or preg_match
+	if (strcmp(cmd, "1") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "2") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "3") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "4") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "5") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "6") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "7") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "g") == 0) is_valid_cmd=true;
+	return(is_valid_cmd);
+}
+
+bool ant_switch_read_denyswitching() {
+     bool error;
+     char cfgparam[26]="ant_switch.denyswitching\0";
+     int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+     // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
+     if (result == 1) return true; else return false;
+}
+
+bool ant_switch_read_denymixing() {
+     bool error;
+     char cfgparam[26]="ant_switch.denymixing\0";
+     int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+     // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
+     if (result == 1) return true; else return false;
+}
 
 bool ant_switch_msgs(char *msg, int rx_chan)
 {
@@ -68,19 +109,44 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 
         n = sscanf(msg, "SET Antenna=%s", &antenna);
         if (n == 1) {
-            // fixme or toggleantenna if allowed
-            ant_switch_setantenna(antenna);
+                if (ant_switch_read_denyswitching()==true) {
+                    ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
+                    return true;            
+                } else {
+                    ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=0");                 
+                }
+                // FIXME: or toggleantenna if antenna mixig is allowed
+		if (ant_switch_validate_cmd(antenna)) {
+		        if (ant_switch_read_denymixing() == 1) {
+		            ant_switch_setantenna(antenna);
+                        } else {
+		            ant_switch_toggleantenna(antenna);
+                        }
+		} else {
+			ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "Command not valid SET Antenna=%s",antenna);   
+		}
             return true;
         }
 
         if (strcmp(msg, "GET Antenna") == 0) {
             char *selected_antennas = ant_switch_queryantennas();
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT Antenna=%s", selected_antennas);
+            if (ant_switch_read_denyswitching()==true) {
+            	ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
+	    } else {
+            	ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=0");
+            }
+            if (ant_switch_read_denymixing()==true) {
+            	ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenyMixing=1");
+	    } else {
+            	ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenyMixing=0");
+            }
             return true;
         }
 
     	return false;
 }
+
 
 void ant_switch_close(int rx_chan)
 {
