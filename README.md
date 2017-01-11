@@ -6,6 +6,14 @@ This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote con
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
+## Features
+
+* Allow basic antenna switching
+* Admin can lock/unlock antenna switching from admin panel
+* Thunderstorm mode. Grounded all antennas.
+* Allow antenna mixing. You can select many antennas simultaniously.
+* Antenna switching can be scheluded using Beaglebone's crontab. Use /usr/local/bin/ms-s7-web script to switch antennas
+
 ## Required hardware
 
 You need KiwiSDR is a software-defined radio (SDR) kit, MS-S7 antenna switch and MS-S7-WEB remote control unit.
@@ -16,7 +24,7 @@ You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. S
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.42
+* Tested to work with KiwiSDR v1.43
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
@@ -34,7 +42,9 @@ Installer copies ant_switch files on place, creates configuration file and recom
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
-![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface.png)
+![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface-20170110.png)
+
+By default users can switch antennas and select multiple simultanoius antennas.
 
 Describe your antennas 1-7. If you leave antenna description empty, antenna button won't be visible to users.
 
@@ -45,7 +55,7 @@ Antenna switch failure or unknown status decription will be show to users if ant
 Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show. Click to select antenna.
 
 ![ant switch extension user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch.png)
-![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_v1.png)
+![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface-20170110.png)
 
 ## Uninstalling extension
 
@@ -64,4 +74,4 @@ KiwiSDR Kaustinen http://sdr.vy.fi
 
 [The MIT License (MIT)](LICENSE)
 
-Copyright (c) 2016 Kari Karvonen
+Copyright (c) 2017 Kari Karvonen
