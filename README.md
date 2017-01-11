@@ -8,11 +8,12 @@ This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote con
 
 ## Features
 
-* Allow basic antenna switching
+* Basic antenna switching
+* Antenna mixing
+* Thunderstorm mode. In thunderstorm mode all antennas are grounded.
 * Admin can lock/unlock antenna switching from admin panel
-* Thunderstorm mode. Grounded all antennas.
-* Allow antenna mixing. You can select many antennas simultaniously.
-* Antenna switching can be scheluded using Beaglebone's crontab. Use /usr/local/bin/ms-s7-web script to switch antennas
+* Admin can disallow antenna mixing from admin panel
+* Antenna switching can be scheluded using Beaglebone's crontab. See readme.crontab
 
 ## Required hardware
 
