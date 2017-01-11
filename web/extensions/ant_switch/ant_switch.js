@@ -229,13 +229,37 @@ function ant_switch_process_reply(ant) {
 	}
 }
 
+function ant_switch_lock_buttons(lock) {
+        var inputs = document.getElementsByTagName("button");
+        for (var i = 0; i < inputs.length; i++) {
+                // ant 1-7
+                var re=/^Antenna ([1-7])/i;
+                if (inputs[i].textContent.match(re)) {
+                        if (lock == true) {
+                                inputs[i].disabled = true; 
+                        } else {
+                                inputs[i].disabled = false; 
+                        }
+                }
+                // Ground All
+                var re=/^Ground all$/i;
+                if (inputs[i].textContent.match(re)) {
+                        if (lock == true) {
+                                inputs[i].disabled = true;
+                        } else {
+                                inputs[i].disabled = false; 
+                        }
+                }
+
+        }                
+}
+
 function ant_switch_showpermissions() {
         if (ant_switch_denyswitching == 1) {
-                // ant_switch_lock_buttons()
+                ant_switch_lock_buttons(true);
                 html('id-ant-display-permissions').innerHTML = 'Antenna switching is disabled by admin';
         } else {
-                // ant_switch_unlock_buttons()
-                // if mixing allowed, show it too 'Antenna switching '+'and mixing '+ 'is allowed'
+                ant_switch_lock_buttons(false);
                 if (ant_switch_denymixing == 1) {
                         html('id-ant-display-permissions').innerHTML = 'Antenna switching is allowed.';
                 } else {
