@@ -9,7 +9,7 @@ This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote con
 ## Features
 
 * Basic antenna switching
-* Antenna mixing
+* Antenna mixing. In antenna mix mode multiple antennas can be selected simultanoiusly.
 * Thunderstorm mode. In thunderstorm mode all antennas are grounded.
 * Admin can lock/unlock antenna switching from admin panel
 * Admin can disallow antenna mixing from admin panel
