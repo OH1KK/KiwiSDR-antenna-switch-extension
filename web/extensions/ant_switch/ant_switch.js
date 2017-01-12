@@ -221,7 +221,7 @@ function ant_switch_process_reply(ant) {
                         w3_unhighlight(inputs[i]);
                         for (var tmp=1; tmp<8; tmp++) {
                                 var chr = String.fromCharCode(48 + tmp);
-        		        if (selected_antennas_list.indexOf(chr) >= 0) {
+        		        if (selected_antennas_list != null && selected_antennas_list.indexOf(chr) >= 0) {
 			                 if (inputs[i].textContent == 'Antenna '+tmp) w3_highlight(inputs[i]);
                                 }
                         }
