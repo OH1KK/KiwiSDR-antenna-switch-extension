@@ -119,7 +119,7 @@ if valid_ip $IPADDRESS;  then
 	cp -varf extensions/ /root/
 	cp -varf backends/ /root/ant_switch_backends
 	chmod a+rx /root/ant_switch_backends/*
-	ln -s /root/ant_switch_backends/ms-s7-web /usr/local/bin/ant_switch_backend
+	ln -s /root/ant_switch_backends/ms-s7-web-backend /usr/local/bin/ant_switch_backend
 	echo ""
 	echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
 	echo ""
