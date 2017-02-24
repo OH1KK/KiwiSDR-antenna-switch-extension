@@ -32,7 +32,7 @@ char * ant_switch_queryantennas() {
 	char line[256];
 	int n;
 	char selected_antennas[256];
-	non_blocking_cmd("/usr/local/bin/ms-s7-web s", line, sizeof(line), NULL);
+	non_blocking_cmd("/usr/local/bin/and_switch_backend s", line, sizeof(line), NULL);
 	n = sscanf(line, "Selected antennas: %s", &selected_antennas);
 	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", line);
 	return(selected_antennas);
@@ -43,7 +43,7 @@ int ant_switch_setantenna(char* antenna) {
 	int status;
 	int n;
 	char *antennastr;
-        asprintf(&antennastr, "/usr/local/bin/ms-s7-web %s", antenna);
+        asprintf(&antennastr, "/usr/local/bin/ant_switch_backend %s", antenna);
 	line[0] = '\0';
 	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
 	free(antennastr);
@@ -55,7 +55,7 @@ int ant_switch_toggleantenna(char* antenna) {
 	int status;
 	int n;
 	char *antennastr;
-        asprintf(&antennastr, "/usr/local/bin/ms-s7-web t%s", antenna);
+        asprintf(&antennastr, "/usr/local/bin/ant_switch_backend t%s", antenna);
 	line[0] = '\0';
 	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
 	free(antennastr);
