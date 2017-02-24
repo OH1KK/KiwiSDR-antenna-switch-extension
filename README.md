@@ -2,7 +2,7 @@
 
 This is antenna switch extension to KiwiSDR software defined radio.
 
-This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote control unit. MS-S7 antenna switch has seven antenna connectors so you can select between several different listening antennas.
+Antenna switch and control out-of-stock antenna switches, like LZ2RR's MS-S7-WEB, Homemade antenna switches (Beagle GPIO), External relay boards etc.
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
@@ -17,11 +17,12 @@ This extensions controls LZ2RR's MS-S7 antenna switch using MS-S7-WEB remote con
 
 ## Required hardware
 
-You need KiwiSDR is a software-defined radio (SDR) kit, MS-S7 antenna switch and MS-S7-WEB remote control unit.
+You need KiwiSDR is a software-defined radio (SDR) kit
 
-You can buy KiwiSDR kit from Seed https://www.seeedstudio.com/KiwiSDR-Board-p-2725.html
+## Available backends
 
-You can buy MS-S7 antenna switch and MS-S7-WEB remote control units from ebay. Search by seller LZ2RR. http://www.ebay.com/sch/lz2rr/m.html?_nkw=&_armrs=1&_ipg=&_from=
+* ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
+* xxx for controlling Beaglebone GPIO pins
 
 ## Version compability
 
@@ -35,7 +36,7 @@ open ssh connection to your KiwiSDR as root user
     cd /root
     git clone https://github.com/OH1KK/KiwiSDR-antenna-switch-extension.git
     cd KiwiSDR-antenna-switch-extension
-    bash ./ms-s7-web-installer
+    bash ./ant-switch-extension-installer
 
 Installer copies ant_switch files on place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
 
@@ -69,7 +70,7 @@ If admin has disable antenna switching, buttons are grey and you cannot click th
 open ssh connection to your KiwiSDR as root user
 
     cd /root/KiwiSDR-antenna-switch-extension
-    bash ./ms-s7-web-uninstaller
+    bash ./antenna-switch-extension-uninstaller
     cd /root
     rm -rf KiwiSDR-antenna-switch-extension
 
