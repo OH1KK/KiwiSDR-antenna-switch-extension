@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+#
+# The MIT License (MIT)
+#
+# ms-s7-web-installer - installer for ms-s7-web                                   
+#
+# Copyright (c) 2016 Kari Karvonen
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+function valid_ip()
+{
+    local  ip=$1
+    local  stat=1
+
+    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        OIFS=$IFS
+        IFS='.'
+        ip=($ip)
+        IFS=$OIFS
+        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
+            && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+        stat=$?
+    fi
+    return $stat
+}
+
+GetMS7web () {
+	if [ -z "$1" ]
+	then
+		# zero legth
+		sleep 1
+	else
+		REPLY=`$curlexec $CURLOPTS $1`
+		if [ "x$REPLY" == "x" ]; then
+			# failed. Let's try again.
+			REPLY=`$curlexec $CURLOPTS $1`
+		fi
+		if [ "x$REPLY" == "x" ]; then
+			# failed again. One more shot.
+			REPLY=`$curlexec $CURLOPTS $1`
+		fi
+	fi
+}
+
+echo "$0 Welcome to MS-S7-WEB ant_switch extension installer"
+echo ""
+
+if [ "x`which curl`" == "x" ]; then
+	echo "$0 curl not found. Do you want to install it now (y/n) ?"
+	read ok
+	if [ "x$ok" == "xy" ]; then
+		apt-get install curl
+		if [ "x`which curl`" == "x" ]; then
+			echo "$0 Installation failed. Installation aborted."
+			exit 1
+		fi
+	else
+		echo "$0 Curl not installed. Installation aborted."
+		exit 1
+	fi
+fi
+CONFFILE=/etc/default/ms-s7-web
+CURLOPTS=" --silent --connect-timeout 1"
+curlexec=`which curl`
+
+[ -r $CONFFILE ] && . $CONFFILE
+
+if [ "x$IPADDRESS" == "x" ]; then
+	echo "$0 Please enter IP address of your MS-S7-WEB ?"
+	USECONFIGFILE=false
+	read IPADDRESS
+else
+	USECONFIGFILE=true
+fi
+
+if valid_ip $IPADDRESS;  then 
+	# check that ms-s7-web is working
+	GetMS7web "http://$IPADDRESS/io.cgi"
+	if [ "x$REPLY" == "x" ]; then
+		if [ "x$USECONFIGFILE" == "xtrue" ]; then
+			echo "$0 IP address was loaded from $CONFFILE config file"
+		fi
+		echo "$0 No reply from MS-S7-WEB at address $IPADDRESS. Please check MS-S7-WEB network connectivity. Installation aborted."
+		exit 1
+	fi
+	echo "$0 Connection to MS-S7-WEB at $IPADDRESS worked OK."
+	echo ""
+	# Do config file if does not exist
+	if [ "x$USECONFIGFILE" == "xfalse" ]; then
+		echo "# KiwiSDR MS-S7-WEB ant_switch extension" > $CONFFILE
+		echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
+		if [ -r $CONFFILE ]; then
+			echo "$0 Created configuration file $CONFFILE"
+		else
+			echo "$0 Configuration file $CONFFILE creation failed. Installation aborted."
+			exit 1
+		fi
+	fi
+	echo "$0 Copying ant_switch files to Beagle_SDR_GPS tree"
+	echo ""
+	mkdir -p /root/extensions/ant_switch/extensions/ant_switch
+	cp -vaf extensions/ant_switch/* /root/extensions/ant_switch/extensions/ant_switch
+	cp -vaf web/extensions/ant_switch/* /root/extensions/ant_switch
+	cp ms-s7-web /usr/local/bin
+	chmod a+rx /usr/local/bin/ms-s7-web
+	echo ""
+	echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
+	echo ""
+	cd /root/Beagle_SDR_GPS
+	make stop
+	make clean
+	make
+	make install
+	make start
+	echo "$0 Installation finished."
+
+else 
+	if [ "x$USECONFIGFILE" == "xtrue" ]; then
+		echo "$0 IP address was loaded from $CONFFILE config file"
+	fi
+	echo "$0 Invalid IP address. Installation aborted."
+	exit 1
+fi
