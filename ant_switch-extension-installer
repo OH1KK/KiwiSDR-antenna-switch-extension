@@ -116,10 +116,10 @@ if valid_ip $IPADDRESS;  then
 	echo "$0 Copying ant_switch files to Beagle_SDR_GPS tree"
 	echo ""
 	mkdir -p /root/extensions/ant_switch/extensions/ant_switch
-	cp -vaf extensions/ant_switch/* /root/extensions/ant_switch/extensions/ant_switch
-	cp -vaf web/extensions/ant_switch/* /root/extensions/ant_switch
-	cp ms-s7-web /usr/local/bin
-	chmod a+rx /usr/local/bin/ms-s7-web
+	cp -varf extensions/ /root/
+	cp -varf backends/ /root/ant_switch_backends
+	chmod a+rx /root/ant_switch_backends/*
+	ln -s /root/ant_switch_backends/ms-s7-web /usr/local/bin/ant_switch_backend
 	echo ""
 	echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
 	echo ""
