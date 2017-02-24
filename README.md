@@ -5,7 +5,7 @@ This brach is for development purposes only. This most likely code does not work
 
 This is antenna switch extension to KiwiSDR software defined radio.
 
-Antenna switch and control out-of-stock antenna switches, like LZ2RR's MS-S7-WEB, Homemade antenna switches (Beagle GPIO). You can also write your own backend to control external relay boards etc.
+Antenna switch and control out-of-stock antenna switches, like LZ2RR's MS-S7-WEB, Homemade antenna switches using Beaglebone  GPIO pins. You can also write your own backend.
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
@@ -28,6 +28,7 @@ You need antenna switch hardware.
 
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
 * beagle-gpio-control for controlling Beaglebone GPIO pins
+* example-backend is example script for your own backend development
 
 ## Version compability
 
