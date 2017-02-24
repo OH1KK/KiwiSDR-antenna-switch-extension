@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
 #	
-# beagle-gpio-control - script that controls gpio pins from console
+# beagle-gpio-backend - backend script to antenna switch extension. Uses Beaglebone GPIOs
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -26,7 +26,7 @@
 VERSION=0.1
 
 BeagleGPIO_ShowUsage() {
-	echo "beagle-gpio-control"
+	echo "beagle-gpio-backend"
 	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
 	echo ""
 	echo "Usage: $0 command"
