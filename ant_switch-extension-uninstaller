@@ -2,7 +2,7 @@
 #
 # The MIT License (MIT)
 #
-# ms-s7-web-installer - installer for ms-s7-web
+# ant_switch-uninstaller - uninstaller for KiwiSDR antenna switch extension
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -23,7 +23,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 
-echo "$0 Welcome to MS-S7-WEB ant_switch extension uninstaller"
+echo "$0 Welcome to ant_switch extension uninstaller"
 echo ""
 echo "$0 Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
 read ok
@@ -33,9 +33,11 @@ if [ "x$ok" == "xy" ]; then
         # remove config
         rm /etc/default/ms-s7-web
         # remove executable
-        rm /usr/local/bin/ms-s7-web
+        rm /usr/local/bin/ant_switch_backend
         # Remove extension files
         rm -rf /root/extensions/ant_switch
+        # Remove backends
+        rm -rf /root/ant_switch_backends
         echo "$0 Stopping KiwiSDR"
         cd /root/Beagle_SDR_GPS
         make stop
