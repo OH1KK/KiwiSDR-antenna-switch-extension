@@ -1,5 +1,5 @@
 # THIS BRANCH IS NOT WORKING - USE MASTER.
-This brach is for development purposes only. This most likely does not work. Use master branch on production.
+This brach is for development purposes only. This most likely code does not work yet. Use master branch on production.
 
 # KiwiSDR-antenna-switch-extension
 
