@@ -1,1 +1,247 @@
-sasa
+#!/usr/bin/env bash
+# The MIT License (MIT)
+#	
+# ms-s7-web - script that controls MS-S7-WEB antenna switch from console
+#
+# Copyright (c) 2017 Kari Karvonen
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+IPADDRESS=192.168.11.100
+VERSION=1.02
+CURLOPTS=" --silent --connect-timeout 1"
+CONFFILE=/etc/default/ms-s7-web
+[ -r $CONFFILE ] && . $CONFFILE
+
+if [ "x`which curl`" == "x" ]; then
+	echo "curl not found. Please install curl."
+	echo "sudo apt-get install curl"
+	exit 1
+else
+        curlexec=`which curl`
+fi
+
+MS7_Get () {
+	if [ -z "$1" ]
+	then
+		# zero legth
+		sleep 1
+	else
+		REPLY=`$curlexec $CURLOPTS $1`
+		if [ "x$REPLY" == "x" ]; then
+			# failed. Let's try again.
+			REPLY=`$curlexec $CURLOPTS $1`
+		fi
+		if [ "x$REPLY" == "x" ]; then
+			# failed again. One more shot.
+			REPLY=`$curlexec $CURLOPTS $1`
+		fi
+	fi
+}
+
+MS7_Post () {
+	if [ -z "$1" ]
+	then
+		# zero legth
+		sleep 1
+	else
+		REPLY=`$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		if [ "x$REPLY" == "x" ]; then
+			# failed, let's try again
+			REPLY=`$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		fi
+		if [ "x$REPLY" == "x" ]; then
+			# failed again, one more shot
+			REPLY=`$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		fi
+	fi
+}
+
+
+MS7_GroundAll() {
+	for s in 0 1 2 3 4 5 6; do
+		MS7_Post "-d pin=$s -d val=1 http://$IPADDRESS/dout.cgi"
+		#$curlexec $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' -d pin=$s -d val=1 http://$IPADDRESS/dout.cgi > /dev/null
+	done
+}
+
+
+MS7_ShowUsage() {
+	echo "ms-s7-web - script that controls MS-S7-WEB antenna switch from console"
+	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
+	echo ""
+	echo "Usage: $0 command"
+        echo ""
+	echo "Basic antenna switching commands"
+	for s in 1 2 3 4 5 6 7; do
+	        echo "$s  = Switch to antenna $s"
+	done
+	echo "g  = Ground all antennas"
+	echo "tg = Ground all antennas. Alias to g."
+
+	echo ""
+	echo "Status query commands"
+	echo "s  = Status. Show currently selected antennas"
+	echo "q  = Query. Alias to status"
+	echo ""
+	echo "Advanced antenna switching commands"
+	echo "+x = Antenna mixing. Add simultanious antenna x"
+	echo "-x = Antenna mixing. Remove simultanous antenna x"
+	echo "tx = Antenna mixing. Toggle simultanous antenna x"
+	echo "     Example: t2 = toggles Antenna 2 state on/off"
+	echo ""
+	echo "Configuration commands"
+	echo "i  = IP-address. Show configured MS-S7-WEB controller IP-address"
+	echo "c  = Configure. Configure MS-S7-WEB IP-address"
+}
+
+MS7_VerifyConnectivity() {
+	# Test connectivity to MS-S7-WEB otherwise long timeouts
+	MS7_Get "http://$IPADDRESS/widget.cgi"
+	if [ "x$REPLY" == "x" ]; then
+		echo "Unable to connect MS-S7-WEB at $IPADDRESS"
+		echo "Please check network connectivity."
+		exit 1
+	fi
+}
+
+MS7_SelectAntenna() {
+	ANT=$(($1-1))
+	MS7_Post "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
+}
+
+MS7_DeSelectAntenna() {
+	ANT=$(($1-1))
+	MS7_Post "-d pin=$ANT -d val=1 http://$IPADDRESS/dout.cgi"
+}
+
+MS7_ToggleAntenna() {
+	ANT=$(($1-1))
+	# Read antenna status
+        MS7_Get "http://$IPADDRESS/io.cgi"
+        digits=`echo $REPLY | sed 's/[^0-9]*//g'`
+        thisbits=${digits:$ANT:1}
+	if [ "x$thisbits" == "x0" ]; then
+		MS7_SelectAntenna $1
+	else
+		MS7_DeSelectAntenna $1 
+	fi
+}
+
+MS7_ShowSelected() {
+	# Read antenna status
+	MS7_Get "http://$IPADDRESS/io.cgi"
+	digits=`echo $REPLY | sed 's/[^0-9]*//g'`
+
+	antennafound=0
+	selectedantennas=''
+	for s in 0 1 2 3 4 5 6; do
+		thisbit=${digits:${s}:1}
+		if [ "x$thisbit" == "x1" ]; then
+			selectedantennas="${selectedantennas}$(($s+1)),"
+			antennafound=$(($antennafound+1))
+		fi
+	done
+	thisbits=${digits:0:7}
+	if [ "x$thisbits" == "x0000000" ]; then
+		# All antenna inputs are grounded
+		antennafound=1
+		selectedantennas="g,"
+	fi
+	selectedantennas=${selectedantennas::-1}
+
+	echo -n "Selected antennas: "
+	echo $selectedantennas
+}
+
+MS7_Configure() {
+	echo "Current IP address is $IPADDRESS"
+	echo "Enter new IP address or CTRL-C to abort"
+	read IPADDRESS
+	if valid_ip $IPADDRESS; then 
+		MS7_VerifyConnectivity
+		echo "# KiwiSDR MS-S7-WEB ant_switch extension" > $CONFFILE
+		echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
+		if [ -r $CONFFILE ]; then
+			echo "Created configuration file $CONFFILE"
+		else
+			echo "Configuration file $CONFFILE creation failed. Installation aborted."
+			exit 1
+		fi
+	else
+		echo "Invalid IP address. Configuration not saved."
+		exit 1
+	fi
+}
+
+function valid_ip() {
+    local  ip=$1
+    local  stat=1
+
+    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        OIFS=$IFS
+        IFS='.'
+        ip=($ip)
+        IFS=$OIFS
+        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
+            && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+        stat=$?
+    fi
+    return $stat
+}
+
+case $1 in
+	1|2|3|4|5|6|7)
+		MS7_VerifyConnectivity
+                MS7_GroundAll
+		MS7_SelectAntenna $1
+		;;
+	+1|+2|+3|+4|+5|+6|+7)
+		MS7_VerifyConnectivity
+		antadd=${1//+} 
+		MS7_SelectAntenna $antadd
+		;;
+	-1|-2|-3|-4|-5|-6|-7)
+		MS7_VerifyConnectivity
+		antremove=${1//-} 
+		MS7_DeSelectAntenna $antremove
+		;;
+	t1|t2|t3|t4|t5|t6|t7)
+		MS7_VerifyConnectivity
+                anttoggle=${1//t}
+		MS7_ToggleAntenna $anttoggle
+		;;
+	tg|g)
+		MS7_VerifyConnectivity
+		MS7_GroundAll
+		;;
+	s|q)
+		MS7_VerifyConnectivity
+		MS7_ShowSelected
+		;;
+	c)
+		MS7_Configure
+		;;
+	i)
+		echo "MS-S7-WEB controller IP-address is $IPADDRESS"
+		;;
+	*)
+		MS7_ShowUsage
+		;;
+esac
