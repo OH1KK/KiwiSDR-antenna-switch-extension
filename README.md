@@ -19,9 +19,9 @@ Antenna switch and control out-of-stock antenna switches, like LZ2RR's MS-S7-WEB
 
 You need KiwiSDR is a software-defined radio (SDR) kit
 
-You need antenna switch hardware
+You need antenna switch hardware.
 
-## Available backends
+## Available backends for hardware
 
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
 * beagle-gpio-control for controlling Beaglebone GPIO pins
