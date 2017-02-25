@@ -104,7 +104,7 @@ BeagleGPIO_DeSelectAntenna() {
 BeagleGPIO_ToggleAntenna() {
 	ANT=$((69+$1))
 	# Read antenna status
-	VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value`
+	VAL=`cat /sys/class/gpio/gpio${ANT}/value`
 	if [ "x$VAL" == "x0" ]; then
 		BeagleGPIO_SelectAntenna $1
 	else
