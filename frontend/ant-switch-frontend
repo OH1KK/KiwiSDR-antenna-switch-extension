@@ -56,6 +56,14 @@ AntSW_ShowUsage() {
 	echo "     and it's configuration / help"
 }
 
+BACKENDFILE=/root/extensions/ant_switch/backends/ant-switch-backend
+if [ -x $BACKENDFILE ]; then
+	. $BACKENDFILE
+else
+	echo "Cannot load or execute backend file $BACKENDFILE"
+	exit 1
+fi
+
 case $1 in
 	1|2|3|4|5|6|7)
 		AntSW_Initialize
