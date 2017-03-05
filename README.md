@@ -45,7 +45,7 @@ open ssh connection to your KiwiSDR as root user
     cd /root
     git clone https://github.com/OH1KK/KiwiSDR-antenna-switch-extension.git
     cd KiwiSDR-antenna-switch-extension
-    bash ./ant_switch-extension-installer
+    bash ./ant-switch-extension-installer
 
 Installer copies ant_switch files on place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
 
@@ -79,7 +79,7 @@ If admin has disable antenna switching, buttons are grey and you cannot click th
 open ssh connection to your KiwiSDR as root user
 
     cd /root/KiwiSDR-antenna-switch-extension
-    bash ./ant_switch-extension-uninstaller
+    bash ./ant-switch-extension-uninstaller
     cd /root
     rm -rf KiwiSDR-antenna-switch-extension
 
