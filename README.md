@@ -13,7 +13,11 @@ Antenna switch can control out-of-stock antenna switch MS-S7-WEB, or your homema
 * Thunderstorm mode. In thunderstorm mode all antennas are grounded.
 * Admin can lock/unlock antenna switching from admin panel
 * Admin can enable/disable antenna mixing from admin panel
-
+* Antenna switching can be time scheluded using Beaglebone's crontab
+  * look at docs/antenna-schedules-using-crontab.txt
+* Switcing back to default antennas when no users are online
+  * look at docs/reset-to-default-antennas-when-no-users-online.txt
+  
 ## Required hardware
 
 You need KiwiSDR is a software-defined radio (SDR) kit
