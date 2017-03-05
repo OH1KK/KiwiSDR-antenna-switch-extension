@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
-#	
-# reset-to-default-antennas-when-no-users-online 
+#
+# reset-to-default-antennas-when-no-users-online
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -23,7 +23,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Specify default antennas. This can be single antenna on comma separated list
+# Specify default antennas. This can be single antenna on comma separated
+# list many antennas
 # DEFAULT_ANTENNAS=1,2,7
 DEFAULT_ANTENNAS=2
 
@@ -45,12 +46,12 @@ else
         JQEXEC=`which jq`
 fi
 
-ANTSWITCHEXEC=/usr/local/bin/ant_switch_backend
+ANTSWITCHEXEC=/root/extensions/ant_switch/frontend/ant-switch-frontend
 ADMINJSON=/root/kiwi.config/admin.json
 
 if ! [[ -x "$ANTSWITCHEXEC" ]]; then
-	echo "$0: Antenna switch script $ANTSWITCHEXEC not found or it is not executable. Exit."
-	exit 1
+        echo "$0: Antenna switch script $ANTSWITCHEXEC not found or it is not executable. Exit."
+        exit 1
 fi
 
 if ! [[ -r "$ADMINJSON" ]]; then
@@ -63,22 +64,22 @@ STATUSURL="http://127.0.0.1:$PORT/status"
 
 STATUS=`$CURLEXEC $STATUSURL $CURLOPTS`
 if [ "x$STATUS" == "x" ]; then
-	echo "$0: Status url $STATUSURL could not be retriewed. Exit."
-	exit 1
+        echo "$0: Status url $STATUSURL could not be retriewed. Exit."
+        exit 1
 fi
 
 ONLINEUSERS=`echo $STATUS | sed -e "s/.* users=\([0-9]\) .*/\1/"`
 re='^[0-9]+$'
 if ! [[ $ONLINEUSERS =~ $re ]] ; then
-	echo "$0: Cannot parse users number from $STATUSURL. Exit."
-	exit 1
+        echo "$0: Cannot parse users number from $STATUSURL. Exit."
+        exit 1
 fi
 
 if [ "$ONLINEUSERS" == "0" ]; then
-	# No users online, switch to default antennas
-	ANTENNAS=`echo $DEFAULT_ANTENNAS | tr ',' ' '`
-	$ANTSWITCHEXEC g
-	for antenna in $ANTENNAS; do
-		$ANTSWITCHEXEC +$antenna
-	done
+        # No users online, switch to default antennas
+        ANTENNAS=`echo $DEFAULT_ANTENNAS | tr ',' ' '`
+        $ANTSWITCHEXEC g
+        for antenna in $ANTENNAS; do
+                $ANTSWITCHEXEC +$antenna
+        done
 fi
