@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
 #	
-# beagle-gpio-backend - script that controls gpio pins from console
+# ant-switch-backend-beagle-gpio - beagle gpio backend to antenna switch
+#
+# This is part of KiwiSDR antenna switch extension
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -23,38 +25,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.3
+VERSION=0.1
 
-BeagleGPIO_ShowUsage() {
-	echo "beagle-gpio-backend"
-	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
-	echo ""
-	echo "Usage: $0 command"
-        echo ""
-	echo "Basic antenna switching commands"
-	for s in 1 2 3 4 5 6 7 9 10 11 12 13 14 15 16; do
-	        echo "$s  = Switch to antenna $s"
-	done
-	echo "g  = Ground all antennas"
-	echo "tg = Ground all antennas. Alias to g."
-
-	echo ""
-	echo "Status query commands"
-	echo "s  = Status. Show currently selected antennas"
-	echo "q  = Query. Alias to status"
-	echo ""
-	echo "gi  = GPIO initialize. Initializes GPIO pins 70 - 85."
-	echo "gs =  GPIP Shutdown. Shutdown GPIO pins 70 - 85."
-	echo ""
-	echo "Advanced antenna switching commands"
-	echo "+x = Antenna mixing. Add simultanious antenna x"
-	echo "-x = Antenna mixing. Remove simultanous antenna x"
-	echo "tx = Antenna mixing. Toggle simultanous antenna x"
-	echo "     Example: t2 = toggles Antenna 2 state on/off"
-	echo ""
-}
-
-BeagleGPIO_check_environment() {
+AntSW_Initialize() {
 	# Make sure only root can run our script
 	if [[ $EUID -ne 0 ]]; then
 		echo "This script must be run as root" 1>&2
@@ -77,48 +50,34 @@ BeagleGPIO_check_environment() {
 	done
 }
 
-BeagleGPIO_Init() {
-	for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
-		echo $GPIOPIN > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${GPIOPIN}/direction
-	done
-}
-
-BeagleGPIO_Shutdown() {
-	for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
-		echo $GPIOPIN > /sys/class/gpio/unexport
-	done
-}
-
-
-BeagleGPIO_GroundAll() {
+AntSW_GroundAll() {
 	for s in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
-		BeagleGPIO_DeSelectAntenna $s
+		AntSW_DeSelectAntenna $s
 	done
 }
 
-BeagleGPIO_SelectAntenna() {
+AntSW_SelectAntenna() {
 	ANT=$((69+$1))
 	echo 1 > /sys/class/gpio/gpio${ANT}/value
 }
 
-BeagleGPIO_DeSelectAntenna() {
+AntSW_DeSelectAntenna() {
 	ANT=$((69+$1))
         echo 0 > /sys/class/gpio/gpio${ANT}/value 
 }
 
-BeagleGPIO_ToggleAntenna() {
+AntSW_ToggleAntenna() {
 	ANT=$((69+$1))
 	# Read antenna status
 	VAL=`cat /sys/class/gpio/gpio${ANT}/value`
 	if [ "x$VAL" == "x0" ]; then
-		BeagleGPIO_SelectAntenna $1
+		AntSW_SelectAntenna $1
 	else
-		BeagleGPIO_DeSelectAntenna $1 
+		AntSW_DeSelectAntenna $1 
 	fi
 }
 
-BeagleGPIO_ShowSelected() {
+AntSW_ShowSelected() {
 	# Read antenna status
 	selectedantennas=''
 	antennafound=0
@@ -140,42 +99,3 @@ BeagleGPIO_ShowSelected() {
 	echo $selectedantennas
 }
 
-case $1 in
-	1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16)
-		BeagleGPIO_check_environment
-                BeagleGPIO_GroundAll
-		BeagleGPIO_SelectAntenna $1
-		;;
-	+1|+2|+3|+4|+5|+6|+7|+8|+9|+10|+11|+12|+13|+14|+15|+16)
-		BeagleGPIO_check_environment
-		antadd=${1//+} 
-		BeagleGPIO_SelectAntenna $antadd
-		;;
-	-1|-2|-3|-4|-5|-6|-7|-8|-9|-10|-11|-12|-13|-14|-15|-16)
-		BeagleGPIO_check_environment
-		antremove=${1//-} 
-		BeagleGPIO_DeSelectAntenna $antremove
-		;;
-	t1|t2|t3|t4|t5|t6|t7|t8|t9|t10|t11|t12|t13|t14|t15|t16)
-		BeagleGPIO_check_environment
-                anttoggle=${1//t}
-		BeagleGPIO_ToggleAntenna $anttoggle
-		;;
-	tg|g)
-		BeagleGPIO_check_environment
-		BeagleGPIO_GroundAll
-		;;
-	s|q)
-		BeagleGPIO_check_environment
-		BeagleGPIO_ShowSelected
-		;;
-	gi)
-		BeagleGPIO_Init
-		;;
-	gs)
-		BeagleGPIO_Shutdown
-		;;
-	*)
-		BeagleGPIO_ShowUsage
-		;;
-esac
