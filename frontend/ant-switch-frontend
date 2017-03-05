@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# The MIT License (MIT)
+#	
+# and-switch-frontend - glue between KiwiSDR and antenna switches
+#
+# This is part of KiwiSDR antenna switch extension
+#
+# Copyright (c) 2017 Kari Karvonen
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+VERSION=0.1
+
+AntSW_ShowUsage() {
+	echo "ant-switch-frontend - glue between KiwiSDR and antenna switches"
+	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
+	echo ""
+	echo "Usage: $0 command"
+        echo ""
+	echo "Basic antenna switching commands"
+	for s in 1 2 3 4 5 6 7; do
+	        echo "$s  = Switch to antenna $s"
+	done
+	echo "g  = Ground all antennas"
+	echo "tg = Ground all antennas. Alias to g."
+
+	echo ""
+	echo "Status query commands"
+	echo "s  = Status. Show currently selected antennas"
+	echo "q  = Query. Alias to status"
+	echo ""
+	echo "Advanced antenna switching commands"
+	echo "+x = Antenna mixing. Add simultanious antenna x"
+	echo "-x = Antenna mixing. Remove simultanous antenna x"
+	echo "tx = Antenna mixing. Toggle simultanous antenna x"
+	echo "     Example: t2 = toggles Antenna 2 state on/off"
+	echo ""
+	echo "bs = select backend"
+	echo "bi = backend information. Show selected backend"
+	echo "     and it's configuration / help"
+}
+
+case $1 in
+	1|2|3|4|5|6|7)
+		AntSW_Initialize
+                AntSW_GroundAll
+		AntSW_SelectAntenna $1
+		;;
+	+1|+2|+3|+4|+5|+6|+7)
+		AntSW_Initialize
+		antadd=${1//+} 
+		AntSW_SelectAntenna $antadd
+		;;
+	-1|-2|-3|-4|-5|-6|-7)
+		AntSW_Initialize
+		antremove=${1//-} 
+		AntSW_DeSelectAntenna $antremove
+		;;
+	t1|t2|t3|t4|t5|t6|t7)
+		AntSW_Initialize
+                anttoggle=${1//t}
+		AntSW_ToggleAntenna $anttoggle
+		;;
+	tg|g)
+		AntSW_Initialize
+		AntSW_GroundAll
+		;;
+	s|q)
+		AntSW_Initialize
+		AntSW_ShowSelected
+		;;
+	*)
+		AntSW_ShowUsage
+		;;
+esac
