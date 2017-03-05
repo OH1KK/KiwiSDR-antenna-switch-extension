@@ -124,7 +124,7 @@ function ant_switch_config_html()
 			'<hr>' +
 			w3_divs('', 'w3-container',
 				w3_divs('', 'w3-margin-bottom',
-                                        w3_divs('', '','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /usr/local/bin/ms-s7-web script.'),
+                                        w3_divs('', '','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /root/extensions/ant_switch/frontend/ant-switch-frontend script.'),
                                         w3_divs('', '', '<b>Deny antenna switching?</b> ' +
                                                 w3_radio_btn('No', 'ant_switch.denyswitching', denyswitching? 0:1, 'ant_switch_conf_denyswitching') +
                                                 w3_radio_btn('Yes', 'ant_switch.denyswitching', denyswitching? 1:0, 'ant_switch_conf_denyswitching')
