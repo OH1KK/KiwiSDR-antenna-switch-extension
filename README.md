@@ -17,9 +17,9 @@ Antenna switch can control out-of-stock antenna switch MS-S7-WEB, or your homema
 * Admin can lock/unlock antenna switching from admin panel
 * Admin can enable/disable antenna mixing from admin panel
 * Antenna switching can be scheluded using Beaglebone's crontab
-** look at docs/antenna-schedules-using-crontab.txt
+  * look at docs/antenna-schedules-using-crontab.txt
 * Switcing to default antennas when no users are online. See readme.crontab
-** look at docs/reset-to-default-antennas-when-no-users-online.txt
+  * look at docs/reset-to-default-antennas-when-no-users-online.txt
 
 ## Required hardware
 
