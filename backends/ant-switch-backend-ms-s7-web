@@ -32,7 +32,7 @@ CURLOPTS=" --silent --connect-timeout 1"
 CONFFILE=/etc/default/ms-s7-web
 [ -r $CONFFILE ] && . $CONFFILE
 
-AntSw_Get () {
+AntSW_Get () {
 	if [ -z "$1" ]
 	then
 		# zero legth
@@ -50,7 +50,7 @@ AntSw_Get () {
 	fi
 }
 
-AntSw_Post () {
+AntSW_Post () {
 	if [ -z "$1" ]
 	then
 		# zero legth
@@ -70,14 +70,14 @@ AntSw_Post () {
 
 AntSW_GroundAll() {
 	for s in 0 1 2 3 4 5 6; do
-		AntSw_Post "-d pin=$s -d val=1 http://$IPADDRESS/dout.cgi"
+		AntSW_Post "-d pin=$s -d val=1 http://$IPADDRESS/dout.cgi"
 		#$CURLEXEC $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' -d pin=$s -d val=1 http://$IPADDRESS/dout.cgi > /dev/null
 	done
 }
 
 AntSW_Initialize() {
 	# Test connectivity to MS-S7-WEB otherwise long timeouts
-	AntSw_Get "http://$IPADDRESS/widget.cgi"
+	AntSW_Get "http://$IPADDRESS/widget.cgi"
 	if [ "x$REPLY" == "x" ]; then
 		echo "Unable to connect MS-S7-WEB at $IPADDRESS"
 		echo "Please check network connectivity."
@@ -87,30 +87,30 @@ AntSW_Initialize() {
 
 AntSW_SelectAntenna() {
 	ANT=$(($1-1))
-	AntSw_Post "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
+	AntSW_Post "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
 }
 
 AntSW_DeSelectAntenna() {
 	ANT=$(($1-1))
-	AntSw_Post "-d pin=$ANT -d val=1 http://$IPADDRESS/dout.cgi"
+	AntSW_Post "-d pin=$ANT -d val=1 http://$IPADDRESS/dout.cgi"
 }
 
-AntSw_ToggleAntenna() {
+AntSW_ToggleAntenna() {
 	ANT=$(($1-1))
 	# Read antenna status
-        AntSw_Get "http://$IPADDRESS/io.cgi"
+        AntSW_Get "http://$IPADDRESS/io.cgi"
         digits=`echo $REPLY | sed 's/[^0-9]*//g'`
         thisbits=${digits:$ANT:1}
 	if [ "x$thisbits" == "x0" ]; then
-		AntSw_SelectAntenna $1
+		AntSW_SelectAntenna $1
 	else
-		AntSw_DeSelectAntenna $1 
+		AntSW_DeSelectAntenna $1 
 	fi
 }
 
 AntSW_ShowSelected() {
 	# Read antenna status
-	AntSw_Get "http://$IPADDRESS/io.cgi"
+	AntSW_Get "http://$IPADDRESS/io.cgi"
 	digits=`echo $REPLY | sed 's/[^0-9]*//g'`
 
 	antennafound=0
@@ -134,12 +134,12 @@ AntSW_ShowSelected() {
 	echo $selectedantennas
 }
 
-AntSw_Configure() {
+AntSW_Configure() {
 	echo "Current IP address is $IPADDRESS"
 	echo "Enter new IP address or CTRL-C to abort"
 	read IPADDRESS
 	if valid_ip $IPADDRESS; then 
-		AntSw_VerifyConnectivity
+		AntSW_VerifyConnectivity
 		echo "# KiwiSDR MS-S7-WEB ant_switch extension" > $CONFFILE
 		echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
 		if [ -r $CONFFILE ]; then
