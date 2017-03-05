@@ -76,6 +76,22 @@ if [ "x`which curl`" == "x" ]; then
 		exit 1
 	fi
 fi
+
+if [ "x`which jq`" == "x" ]; then
+	echo "$0 jq not found. Do you want to install it now (y/n) ?"
+	read ok
+	if [ "x$ok" == "xy" ]; then
+		apt-get install jq
+		if [ "x`which jq`" == "x" ]; then
+			echo "$0 Installation failed. Installation aborted."
+			exit 1
+		fi
+	else
+		echo "$0 jq not installed. Installation aborted."
+		exit 1
+	fi
+fi
+
 CONFFILE=/etc/default/ms-s7-web
 CURLOPTS=" --silent --connect-timeout 1"
 curlexec=`which curl`
