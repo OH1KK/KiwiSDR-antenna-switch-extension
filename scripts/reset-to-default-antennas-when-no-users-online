@@ -23,8 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Specify default antennas. This can be single antenna on comma separated
-# list many antennas 
+# Specify default antennas. This can be single antenna on comma separated list
 # DEFAULT_ANTENNAS=1,2,7
 DEFAULT_ANTENNAS=2
 
