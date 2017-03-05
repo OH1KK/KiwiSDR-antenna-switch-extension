@@ -43,7 +43,7 @@ else
         JQEXEC=`which jq`
 fi
 
-ANTSWITCHEXEC=/usr/local/bin/ms-s7-web
+ANTSWITCHEXEC=/usr/local/bin/ant_switch_backend
 
 if ! [[ -x "$ANTSWITCHEXEC" ]]; then
         echo "$0: Antenna switch script $ANTSWITCHEXEC not found or it is not executable. Exit."
