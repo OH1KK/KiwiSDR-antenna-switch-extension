@@ -32,7 +32,7 @@ char * ant_switch_queryantennas() {
 	char line[256];
 	int n;
 	char selected_antennas[256];
-	non_blocking_cmd("/usr/local/bin/and_switch_backend s", line, sizeof(line), NULL);
+	non_blocking_cmd("/usr/local/bin/ant_switch_backend s", line, sizeof(line), NULL);
 	n = sscanf(line, "Selected antennas: %s", &selected_antennas);
 	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", line);
 	return(selected_antennas);
