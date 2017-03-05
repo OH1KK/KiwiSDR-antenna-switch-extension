@@ -24,42 +24,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-function valid_ip()
-{
-    local  ip=$1
-    local  stat=1
+VERSION=0.1
 
-    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-        OIFS=$IFS
-        IFS='.'
-        ip=($ip)
-        IFS=$OIFS
-        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
-            && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
-        stat=$?
-    fi
-    return $stat
-}
-
-GetMS7web () {
-	if [ -z "$1" ]
-	then
-		# zero legth
-		sleep 1
-	else
-		REPLY=`$curlexec $CURLOPTS $1`
-		if [ "x$REPLY" == "x" ]; then
-			# failed. Let's try again.
-			REPLY=`$curlexec $CURLOPTS $1`
-		fi
-		if [ "x$REPLY" == "x" ]; then
-			# failed again. One more shot.
-			REPLY=`$curlexec $CURLOPTS $1`
-		fi
-	fi
-}
-
-echo "$0 Welcome to MS-S7-WEB ant_switch extension installer"
+echo "Welcome to KiwiSDR antenna switch extension installer"
 echo ""
 
 if [ "x`which curl`" == "x" ]; then
@@ -92,65 +59,47 @@ if [ "x`which jq`" == "x" ]; then
 	fi
 fi
 
-CONFFILE=/etc/default/ms-s7-web
-CURLOPTS=" --silent --connect-timeout 1"
-curlexec=`which curl`
+valid_backend_selected=0
 
-[ -r $CONFFILE ] && . $CONFFILE
-
-if [ "x$IPADDRESS" == "x" ]; then
-	echo "$0 Please enter IP address of your MS-S7-WEB ?"
-	USECONFIGFILE=false
-	read IPADDRESS
-else
-	USECONFIGFILE=true
-fi
-
-if valid_ip $IPADDRESS;  then 
-	# check that ms-s7-web is working
-	GetMS7web "http://$IPADDRESS/io.cgi"
-	if [ "x$REPLY" == "x" ]; then
-		if [ "x$USECONFIGFILE" == "xtrue" ]; then
-			echo "$0 IP address was loaded from $CONFFILE config file"
-		fi
-		echo "$0 No reply from MS-S7-WEB at address $IPADDRESS. Please check MS-S7-WEB network connectivity. Installation aborted."
-		exit 1
+while [ "$valid_backend_selected" == 0 ]; do
+	echo "Available antenna switch backends:"
+	for backend in backends/ant-switch-backend-*; do
+		name=`basename $backend`
+		name=`echo $name | sed 's/ant-switch-backend-//'`
+		echo $name
+	done
+	echo ""
+	if [ "x$BACKEND" == "x" ]; then
+        	BACKEND="ms-s7-web"
 	fi
-	echo "$0 Connection to MS-S7-WEB at $IPADDRESS worked OK."
-	echo ""
-	# Do config file if does not exist
-	if [ "x$USECONFIGFILE" == "xfalse" ]; then
-		echo "# KiwiSDR MS-S7-WEB ant_switch extension" > $CONFFILE
-		echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
-		if [ -r $CONFFILE ]; then
-			echo "$0 Created configuration file $CONFFILE"
-		else
-			echo "$0 Configuration file $CONFFILE creation failed. Installation aborted."
-			exit 1
-		fi
+	echo "which backend you would like to use (default: $BACKEND) ?"
+	read selected_backend
+	if [ "x$selected_backend" == "x" ]; then
+		 selected_backend=$BACKEND
 	fi
-	echo "$0 Copying ant_switch files to Beagle_SDR_GPS tree"
-	echo ""
-	mkdir -p /root/extensions/ant_switch/extensions/ant_switch
-	cp -varf extensions/ /root/
-	cp -varf backends/ /root/ant_switch_backends
-	chmod a+rx /root/ant_switch_backends/*
-	ln -s /root/ant_switch_backends/ms-s7-web-backend /usr/local/bin/ant_switch_backend
-	echo ""
-	echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
-	echo ""
-	cd /root/Beagle_SDR_GPS
-	make stop
-	make clean
-	make
-	make install
-	make start
-	echo "$0 Installation finished."
+	if [ -r "backends/ant-switch-backend-$selected_backend" ]; then
+		echo "Selected backend: $selected_backend";
+		valid_backend_selected=1
+		mkdir -p /root/extensions/ant_switch/backends
+		cp backends/* /root/extensions/ant_switch/backends
+		ln -s /root/extensions/ant_switch/backends/ant-switch-backend-$selected_backend /root/extensions/ant_switch/backends/ant-switch-backend
+	else
+		echo "Invalid selection $selected_backend. Try again."
+	fi
+done
 
-else 
-	if [ "x$USECONFIGFILE" == "xtrue" ]; then
-		echo "$0 IP address was loaded from $CONFFILE config file"
-	fi
-	echo "$0 Invalid IP address. Installation aborted."
-	exit 1
-fi
+echo "Copying ant_switch files to Beagle_SDR_GPS tree"
+echo ""
+cp -varf extensions/* /root/extensions/ant_switch/
+cp -varf frontend /root/extensions/ant_switch/
+chmod a+rx /root/extensions/ant_switch/frontend/ant-switch-frontend
+echo ""
+echo "Rebuilding KiwiSDR. This will take about 13 minutes."
+echo ""
+cd /root/Beagle_SDR_GPS
+make stop
+make clean
+make
+make install
+make start
+echo "KiwiSDR antenna switch extension installation finished."
