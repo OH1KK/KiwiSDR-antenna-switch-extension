@@ -91,7 +91,7 @@ done
 
 echo "Copying ant_switch files to Beagle_SDR_GPS tree"
 echo ""
-cp -varf extensions/* /root/extensions/ant_switch/
+cp -varf extensions/* /root/extensions/
 cp -varf frontend /root/extensions/ant_switch/
 chmod a+rx /root/extensions/ant_switch/frontend/ant-switch-frontend
 ln -s /root/extensions/ant_switch/frontend/ant-switch-frontend /usr/local/bin
