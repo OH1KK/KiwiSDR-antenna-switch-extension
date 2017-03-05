@@ -2,7 +2,7 @@
 #
 # The MIT License (MIT)
 #
-# ant_switch-uninstaller - uninstaller for KiwiSDR antenna switch extension
+# ant-switch-uninstaller - uninstaller for KiwiSDR antenna switch extension
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -23,32 +23,28 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 
-echo "$0 Welcome to ant_switch extension uninstaller"
+echo "Welcome to ant_switch extension uninstaller"
 echo ""
-echo "$0 Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
+echo "Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
 read ok
 if [ "x$ok" == "xy" ]; then
         echo ""
         echo "$0 Removing ant_switch extension files"
-        # remove config
-        rm /etc/default/ms-s7-web
         # remove executable
-        rm /usr/local/bin/ant_switch_backend
+        rm /usr/local/bin/ant-switch-frontend
         # Remove extension files
         rm -rf /root/extensions/ant_switch
-        # Remove backends
-        rm -rf /root/ant_switch_backends
-        echo "$0 Stopping KiwiSDR"
+        echo "Stopping KiwiSDR"
         cd /root/Beagle_SDR_GPS
         make stop
-        echo "$0 Rebuilding KiwiSDR without ant_switch extension"
+        echo "Rebuilding KiwiSDR without ant_switch extension"
         make clean
         make
         make install
-        echo "$0 Compile finished. Starting KiwiSDR"
+        echo "Compile finished. Starting KiwiSDR"
         make start
-        echo "$0 ant_switch extension uninstall finished."
+        echo "ant_switch extension uninstall finished."
 else
-        echo "$0 Uninstall aborted."
+        echo "Uninstall aborted."
         exit 1
 fi
