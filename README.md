@@ -1,6 +1,3 @@
-# THIS BRANCH IS NOT WORKING - USE MASTER.
-This brach is for development purposes only. This most likely code does not work yet. Use master branch on production.
-
 # KiwiSDR-antenna-switch-extension
 
 This is antenna switch extension to KiwiSDR software defined radio.
@@ -35,7 +32,7 @@ You need antenna switch hardware.
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.59
+* Tested to work with KiwiSDR v1.58
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
