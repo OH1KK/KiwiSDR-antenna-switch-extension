@@ -1,1 +1,74 @@
+#!/usr/bin/env bash
+# The MIT License (MIT)
+#
+# reset-to-default-antennas-when-no-users-online
+#
+# Copyright (c) 2017 Kari Karvonen
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
+DEFAULT_ANTENNA=2
+
+# do no change below this line
+
+if [ "x`which curl`" == "x" ]; then
+        echo "curl not found. Please install curl."
+        echo "sudo apt-get install curl"
+        exit 1
+else
+        CURLEXEC=`which curl`
+fi
+
+if [ "x`which jq`" == "x" ]; then
+        echo "jq not found. Please install jq."
+        echo "sudo apt-get install jq"
+        exit 1
+else
+        JQEXEC=`which jq`
+fi
+
+ANTSWITCHEXEC=/usr/local/bin/ms-s7-web
+
+if ! [[ -x "$ANTSWITCHEXEC" ]]; then
+        echo "$0: Antenna switch script $ANTSWITCHEXEC not found or it is not executable. Exit."
+        exit 1
+fi
+
+VERSION=0.1
+CURLOPTS=" --silent --connect-timeout 1"
+PORT=`$JQEXEC .port /root/kiwi.config/admin.json`
+STATUSURL="http://127.0.0.1:$PORT/status"
+
+STATUS=`$CURLEXEC $STATUSURL $CURLOPTS`
+if [ "x$STATUS" == "x" ]; then
+        echo "$0: Status url $STATUSURL could not be retriewed. Exit."
+        exit 1
+fi
+
+ONLINEUSERS=`echo $STATUS | sed -e "s/.* users=\([0-9]\) .*/\1/"`
+re='^[0-9]+$'
+if ! [[ $ONLINEUSERS =~ $re ]] ; then
+        echo "$0: Cannot parse users number from $STATUSURL. Exit."
+        exit 1
+fi
+
+if [ "$ONLINEUSERS" == "0" ]; then
+        # No users online, switch to default antennas
+        $ANTSWITCHEXEC $DEFAULT_ANTENNA
+fi
