@@ -6,7 +6,8 @@ permission to it
 
 Schedule antenna switching using cron
 
-echo "*/15 * * * * root /usr/local/bin/reset-to-default-antennas-when-no-users-online" > /etc/cron.d/reset-to-default-antennas-when-no-users-online
+ echo "*/15 * * * * root /usr/local/bin/reset-to-default-antennas-when-no-users-online" > /etc/cron.d/reset-to-default-antennas-when-no-users-online
+ chmod u+rx /etc/cron.d/reset-to-default-antennas-when-no-users-online
 
 This will check every 15 minutes are there users online. If there are no
 users online, antenna will be switchd to default. Default antenna is
