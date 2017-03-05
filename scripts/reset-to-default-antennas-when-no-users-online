@@ -44,15 +44,19 @@ else
 fi
 
 ANTSWITCHEXEC=/usr/local/bin/ant_switch_backend
+ADMINJSON=/root/kiwi.config/admin.json
 
 if ! [[ -x "$ANTSWITCHEXEC" ]]; then
         echo "$0: Antenna switch script $ANTSWITCHEXEC not found or it is not executable. Exit."
         exit 1
 fi
 
-VERSION=0.1
+if ! [[ -r "$ADMINJSON" ]]; then
+        echo "$0: $ADMINJSON not found or it is not readable. Exit."
+        exit 1
+fi
 CURLOPTS=" --silent --connect-timeout 1"
-PORT=`$JQEXEC .port /root/kiwi.config/admin.json`
+PORT=`$JQEXEC .port $ADMINJSON`
 STATUSURL="http://127.0.0.1:$PORT/status"
 
 STATUS=`$CURLEXEC $STATUSURL $CURLOPTS`
