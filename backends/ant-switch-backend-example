@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
 #	
-# example-backend - example  script to KiwiSDR antenna switch extension
+# ant-switch-backend-example - example backend for antenna switch
+#
+# This is part of KiwiSDR antenna switch extension
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -25,88 +27,44 @@
 
 VERSION=0.1
 
-ant_switch_ShowUsage() {
-	echo "beagle-gpio-control"
-	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
-	echo ""
-	echo "Usage: $0 command"
-        echo ""
-	echo "Basic antenna switching commands"
-	for s in 1 2 3 4 5 6 7; do
-	        echo "$s  = Switch to antenna $s"
-	done
-	echo "g  = Ground all antennas"
-	echo "tg = Ground all antennas. Alias to g."
-
-	echo ""
-	echo "Status query commands"
-	echo "s  = Status. Show currently selected antennas"
-	echo "q  = Query. Alias to status"
-	echo ""
-	echo "Advanced antenna switching commands"
-	echo "+x = Antenna mixing. Add simultanious antenna x"
-	echo "-x = Antenna mixing. Remove simultanous antenna x"
-	echo "tx = Antenna mixing. Toggle simultanous antenna x"
-	echo "     Example: t2 = toggles Antenna 2 state on/off"
-	echo ""
+AntSW_Initialize() {
+	# This function initalises extension. You can leave empty
 }
 
-ant_switch_GroundAll() {
-	# Write here code to ground all antennas
+AntSW_GroundAll() {
+	# This function grounds all antennas
+	# no return value
 }
 
-ant_switch_SelectAntenna() {
-	# Write here code to select antenna
-	# Antenna number is in variable $1 (number 1 to 7)
+AntSW_SelectAntenna() {
+	# This function selects antenna (turn on)
+	# Only one antenna
+	# Antenna to select is on variable $1
+	# no return value
 }
 
-ant_switch_DeSelectAntenna() {
-	# Write here code to deselect antenna
-	# Antenna number is in variable $1 (number 1 to 7)
+AntSW_DeSelectAntenna() {
+        # This function deselects antenna (turn off)
+	# Antenna to deleselct is on variable $1
+        # Only one antenna
+        # no return value
 }
 
-ant_switch_ToggleAntenna() {
-	# Write here code to switch antenna on/off 
-	# Antenna number is in variable $1 (number 1 to 7)
-	# Read antenna state, and then do ant_switch_SelectAntenna or ant_switch_DeSelectAntenna
+AntSW_ToggleAntenna() {
+        # This function toggles antenna
+ 	# if on, then off
+	# if off, then on
+	# Antenna to toogle is on variable $1
+        # Only one antenna
+        # no return value
 }
 
-ant_switch_ShowSelected() {
-	# Write here code to read antenna status
-	# Selected antennas should be comma separated list 
-	# Selected antennas: 1,2,5
-	
-	selectedantennas=1,2,5
-
-	# Return value
+AntSW_ShowSelected() {
+        # This function show relected antennas
+        # returns a string
+ 	# Selected antennas: 1
+	# or comma separated list
+        # Selected antennas: 1,2,3,4
 	echo -n "Selected antennas: "
 	echo $selectedantennas
 }
-
-case $1 in
-	1|2|3|4|5|6|7)
-                ant_switch_GroundAll
-		ant_switch_SelectAntenna $1
-		;;
-	+1|+2|+3|+4|+5|+6|+7)
-		antadd=${1//+} 
-		ant_switch_SelectAntenna $antadd
-		;;
-	-1|-2|-3|-4|-5|-6|-7)
-		antremove=${1//-} 
-		ant_switch_DeSelectAntenna $antremove
-		;;
-	t1|t2|t3|t4|t5|t6|t7)
-                anttoggle=${1//t}
-		ant_switch_ToggleAntenna $anttoggle
-		;;
-	tg|g)
-		ant_switch_GroundAll
-		;;
-	s|q)
-		ant_switch_ShowSelected
-		;;
-	*)
-		ant_switch_ShowUsage
-		;;
-esac
