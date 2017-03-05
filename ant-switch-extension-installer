@@ -82,6 +82,7 @@ while [ "$valid_backend_selected" == 0 ]; do
 		valid_backend_selected=1
 		mkdir -p /root/extensions/ant_switch/backends
 		cp backends/* /root/extensions/ant_switch/backends
+		chmod a+rx /root/extensions/ant_switch/backends/ant-switch-backend-*
 		ln -s /root/extensions/ant_switch/backends/ant-switch-backend-$selected_backend /root/extensions/ant_switch/backends/ant-switch-backend
 	else
 		echo "Invalid selection $selected_backend. Try again."
@@ -103,3 +104,4 @@ make
 make install
 make start
 echo "KiwiSDR antenna switch extension installation finished."
+
