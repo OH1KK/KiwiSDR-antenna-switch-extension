@@ -25,7 +25,45 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+VERSION=0.2
+
+BACKENDFILE=/root/extensions/ant_switch/backends/ant-switch-backend
+if [ -x $BACKENDFILE ]; then
+	. $BACKENDFILE
+else
+	echo "Cannot load or execute backend file $BACKENDFILE"
+	exit 1
+fi
+
+AntSW_SelectBackend() {
+	valid_backend_selected=0
+	while [ "$valid_backend_selected" == 0 ]; do
+		echo "Available antenna switch backends:"
+		for backend in /root/extensions/ant_switch/backends/ant-switch-backend-*; do
+		name=`basename $backend`
+		name=`echo $name | sed 's/ant-switch-backend-//'`
+		echo $name
+		done
+		echo ""
+		if [ "x$BACKEND" == "x" ]; then
+        		BACKEND="ms-s7-web"
+		fi
+		echo "which backend you would like to use (default: $BACKEND) ?"
+		read selected_backend
+		if [ "x$selected_backend" == "x" ]; then
+			 selected_backend=$BACKEND
+		fi
+		if [ -r "/root/extensions/ant_switch/backends/ant-switch-backend-$selected_backend" ]; then
+			echo "Selected backend: $selected_backend";
+			valid_backend_selected=1
+			rm /root/extensions/ant_switch/backends/ant-switch-backend
+			ln -s /root/extensions/ant_switch/backends/ant-switch-backend-$selected_backend /root/extensions/ant_switch/backends/ant-switch-backend
+		else
+			echo "Invalid selection $selected_backend. Try again."
+		fi
+	done
+}
+
 
 AntSW_ShowUsage() {
 	echo "ant-switch-frontend - glue between KiwiSDR and antenna switches"
@@ -56,13 +94,6 @@ AntSW_ShowUsage() {
 	echo "     and it's configuration / help"
 }
 
-BACKENDFILE=/root/extensions/ant_switch/backends/ant-switch-backend
-if [ -x $BACKENDFILE ]; then
-	. $BACKENDFILE
-else
-	echo "Cannot load or execute backend file $BACKENDFILE"
-	exit 1
-fi
 
 case $1 in
 	1|2|3|4|5|6|7)
@@ -93,6 +124,12 @@ case $1 in
 		AntSW_Initialize
 		AntSW_ShowSelected
 		;;
+	bi)
+		AntSW_ShowBackend
+		;;
+        bs)
+                AntSW_SelectBackend
+                ;;
 	*)
 		AntSW_ShowUsage
 		;;
