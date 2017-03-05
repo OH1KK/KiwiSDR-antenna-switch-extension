@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
 #	
-# and-switch-backend-ms-s7-web - MS-S7-WEB backend script
+# ant-switch-backend-ms-s7-web - MS-S7-WEB backend script
 #
 # This is part of KiwiSDR antenna switch extension
 #
@@ -31,6 +31,11 @@ CURLEXEC=/usr/bin/curl
 CURLOPTS=" --silent --connect-timeout 1"
 CONFFILE=/etc/default/ms-s7-web
 [ -r $CONFFILE ] && . $CONFFILE
+
+AntSW_ShowBackend() {
+	echo "ant-switch-backend-ms-s7-web version $VERSION"
+	echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-ms-s7-web.txt"
+}
 
 AntSW_Get () {
 	if [ -z "$1" ]
