@@ -2,7 +2,7 @@
 #
 # The MIT License (MIT)
 #
-# ant_switch-installer - installer for KiwiSDR ant_switch extension
+# ant-switch-installer - installer for KiwiSDR ant_switch extension
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -24,37 +24,37 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+VERSION=0.2
 
 echo "Welcome to KiwiSDR antenna switch extension installer"
 echo ""
 
 if [ "x`which curl`" == "x" ]; then
-	echo "$0 curl not found. Do you want to install it now (y/n) ?"
+	echo "Curl not found. Do you want to install it now (y/n) ?"
 	read ok
 	if [ "x$ok" == "xy" ]; then
 		apt-get install curl
 		if [ "x`which curl`" == "x" ]; then
-			echo "$0 Installation failed. Installation aborted."
+			echo "curl installation failed. Installation aborted."
 			exit 1
 		fi
 	else
-		echo "$0 Curl not installed. Installation aborted."
+		echo "Curl not installed. Installation aborted."
 		exit 1
 	fi
 fi
 
 if [ "x`which jq`" == "x" ]; then
-	echo "$0 jq not found. Do you want to install it now (y/n) ?"
+	echo "jq not found. Do you want to install it now (y/n) ?"
 	read ok
 	if [ "x$ok" == "xy" ]; then
 		apt-get install jq
 		if [ "x`which jq`" == "x" ]; then
-			echo "$0 Installation failed. Installation aborted."
+			echo "jq installation failed. Installation aborted."
 			exit 1
 		fi
 	else
-		echo "$0 jq not installed. Installation aborted."
+		echo "jq not installed. Installation aborted."
 		exit 1
 	fi
 fi
