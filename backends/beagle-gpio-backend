@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
 #	
-# beagle-gpio-backend - backend script to antenna switch extension. Uses Beaglebone GPIOs
+# beagle-gpio-backend - script that controls gpio pins from console
 #
 # Copyright (c) 2017 Kari Karvonen
 #
@@ -23,7 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+VERSION=0.3
 
 BeagleGPIO_ShowUsage() {
 	echo "beagle-gpio-backend"
@@ -32,7 +32,7 @@ BeagleGPIO_ShowUsage() {
 	echo "Usage: $0 command"
         echo ""
 	echo "Basic antenna switching commands"
-	for s in 1 2 3 4 5 6 7; do
+	for s in 1 2 3 4 5 6 7 9 10 11 12 13 14 15 16; do
 	        echo "$s  = Switch to antenna $s"
 	done
 	echo "g  = Ground all antennas"
@@ -43,8 +43,8 @@ BeagleGPIO_ShowUsage() {
 	echo "s  = Status. Show currently selected antennas"
 	echo "q  = Query. Alias to status"
 	echo ""
-	echo "gi  = GPIO initialize. Initializes GPIO pins 70 - 76"
-	echo "gs =  GPIP Shutdown. Shutdown GPIO pins 70 - 76."
+	echo "gi  = GPIO initialize. Initializes GPIO pins 70 - 85."
+	echo "gs =  GPIP Shutdown. Shutdown GPIO pins 70 - 85."
 	echo ""
 	echo "Advanced antenna switching commands"
 	echo "+x = Antenna mixing. Add simultanious antenna x"
@@ -60,33 +60,39 @@ BeagleGPIO_check_environment() {
 		echo "This script must be run as root" 1>&2
 		exit 1
 	fi
-        for GPIOPIN in 70 71 72 73 74 75 76; do
+        for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
 	        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value 2>/dev/null` 
 		if [ "x$VAL" == "x" ]; then
-			echo "Error. GPIO pin $GPIOPIN is not initalized."
-			echo "Please initalize GPIO pins first"
-			echo "$0 gi"
-			exit 1
+			# Try automatically initialize
+			echo $GPIOPIN > /sys/class/gpio/export
+	                echo out > /sys/class/gpio/gpio${GPIOPIN}/direction
+			
+			# Test again
+			VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value 2>/dev/null` 
+			if [ "x$VAL" == "x" ]; then
+				echo "Error. GPIO pin $GPIOPIN failed to initialize."
+				exit 1
+			fi
 		fi
 	done
 }
 
 BeagleGPIO_Init() {
-	for GPIOPIN in 70 71 72 73 74 75 76; do
+	for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
 		echo $GPIOPIN > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${GPIOPIN}/direction
 	done
 }
 
 BeagleGPIO_Shutdown() {
-	for GPIOPIN in 70 71 72 73 74 75 76; do
+	for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
 		echo $GPIOPIN > /sys/class/gpio/unexport
 	done
 }
 
 
 BeagleGPIO_GroundAll() {
-	for s in 1 2 3 4 5 6 7; do
+	for s in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
 		BeagleGPIO_DeSelectAntenna $s
 	done
 }
@@ -116,7 +122,7 @@ BeagleGPIO_ShowSelected() {
 	# Read antenna status
 	selectedantennas=''
 	antennafound=0
-	for GPIOPIN in 70 71 72 73 74 75 76; do
+	for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
 	        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value`
 		if [ "x$VAL" == "x1" ]; then
 			selectedantennas="${selectedantennas}$(($GPIOPIN-69)),"
@@ -135,22 +141,22 @@ BeagleGPIO_ShowSelected() {
 }
 
 case $1 in
-	1|2|3|4|5|6|7)
+	1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16)
 		BeagleGPIO_check_environment
                 BeagleGPIO_GroundAll
 		BeagleGPIO_SelectAntenna $1
 		;;
-	+1|+2|+3|+4|+5|+6|+7)
+	+1|+2|+3|+4|+5|+6|+7|+8|+9|+10|+11|+12|+13|+14|+15|+16)
 		BeagleGPIO_check_environment
 		antadd=${1//+} 
 		BeagleGPIO_SelectAntenna $antadd
 		;;
-	-1|-2|-3|-4|-5|-6|-7)
+	-1|-2|-3|-4|-5|-6|-7|-8|-9|-10|-11|-12|-13|-14|-15|-16)
 		BeagleGPIO_check_environment
 		antremove=${1//-} 
 		BeagleGPIO_DeSelectAntenna $antremove
 		;;
-	t1|t2|t3|t4|t5|t6|t7)
+	t1|t2|t3|t4|t5|t6|t7|t8|t9|t10|t11|t12|t13|t14|t15|t16)
 		BeagleGPIO_check_environment
                 anttoggle=${1//t}
 		BeagleGPIO_ToggleAntenna $anttoggle
