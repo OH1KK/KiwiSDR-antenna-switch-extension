@@ -27,6 +27,11 @@
 
 VERSION=0.1
 
+AntSW_ShowBackend() {
+        echo "and-switch-backend-beagle-gpio version $VERSION"
+        echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-beagle-gpio.txt"
+}
+
 AntSW_Initialize() {
 	# Make sure only root can run our script
 	if [[ $EUID -ne 0 ]]; then
@@ -98,4 +103,3 @@ AntSW_ShowSelected() {
 	echo -n "Selected antennas: "
 	echo $selectedantennas
 }
-
