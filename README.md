@@ -84,7 +84,7 @@ open ssh connection to your KiwiSDR as root user
 
 KiwiSDR Kaustinen http://sdr.vy.fi
 
-## LICENSE
+## License
 
 [The MIT License (MIT)](LICENSE)
 
