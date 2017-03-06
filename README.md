@@ -27,7 +27,7 @@ You need antenna switch hardware.
 ## Available backends for hardware
 
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
-* beagle-gpio-control for controlling Beaglebone GPIO pins
+* beagle-gpio for controlling Beaglebone gren GPIO pins
 * example-backend is example script for your own backend development
 
 ## Version compability
