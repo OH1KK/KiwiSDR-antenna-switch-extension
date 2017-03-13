@@ -5,12 +5,12 @@
  * 
  * 8 selecteable antennas in digital outputs d2,d3,d4,d5,d6,d7,d8,d9
  * 
- * curl http://172.16.50.19/?cmd=1 set antenna 1 (only)
- * curl http://172.16.50.19/?cmd=+1 add antenna 1
- * curl http://172.16.50.19/?cmd=-1 remove antenna 1
- * curl http://172.16.50.19/?cmd=t1 toggle antenna 1
- * curl http://172.16.50.19/?cmd=g ground all altennas
- * curl http://172.16.50.19/?cmd=s show selected antennas
+ * curl http://192.168.0.19/?cmd=1 set antenna 1 (only)
+ * curl http://192.168.0.19/?cmd=+1 add antenna 1
+ * curl http://192.168.0.19/?cmd=-1 remove antenna 1
+ * curl http://192.168.0.19/?cmd=t1 toggle antenna 1
+ * curl http://192.168.0.19/?cmd=g ground all altennas
+ * curl http://192.168.0.19/?cmd=s show selected antennas
  * 
  * This is part of KiwiSDR antenna switch extension
  * https://github.com/OH1KK/KiwiSDR-antenna-switch-extension
@@ -35,11 +35,11 @@ void setup()
   // the dns server ip
   IPAddress dnServer(8, 8, 8, 8);
   // the router's gateway address:
-  IPAddress gateway(172, 16, 50, 1);
+  IPAddress gateway(192, 168, 0, 1);
   // the subnet:
   IPAddress subnet(255, 255, 255, 0);
   //the IP address is dependent on your network
-  IPAddress ip(172, 16, 50, 19);
+  IPAddress ip(192, 168, 0, 19);
 
   Ethernet.begin(mac, ip, dnServer, gateway, subnet);
 
