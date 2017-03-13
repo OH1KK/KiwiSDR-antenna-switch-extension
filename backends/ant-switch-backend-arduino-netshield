@@ -33,28 +33,29 @@ AntSW_ShowBackend() {
 }
 
 AntSW_Initialize() {
-  ARDUINOURL="http://172.16.50.19"
-  CURLEXEC=`which curl`
+  	ARDUINOURL="http://172.16.50.19"
+	CURLEXEC=`which curl`
+	CURLOPTS=" --silent --connect-timeout 1"
 }
 
 AntSW_GroundAll() {
-	$CURLEXEC $ARDUINOURL/?cmd=g
+	$CURLEXEC $CURLOPTS $ARDUINOURL/?cmd=g
 }
 
 AntSW_SelectAntenna() {
-	$CURLEXEC $ARDUINOURL/?cmd=+$1
+	$CURLEXEC $CURLOPTS $ARDUINOURL/?cmd=+$1
 }
 
 AntSW_DeSelectAntenna() {
-	$CURLEXEC $ARDUINOURL/?cmd=-$1
+	$CURLEXEC $CURLOPTS $ARDUINOURL/?cmd=-$1
 }
 
 AntSW_ToggleAntenna() {
-	$CURLEXEC $ARDUINOURL/?cmd=t$1
+	$CURLEXEC $CURLOPTS $ARDUINOURL/?cmd=t$1
 }
 
 AntSW_ShowSelected() {
-	selectedantennas=`$CURLEXEC $ARDUINOURL/?cmd=q`
+	selectedantennas=`$CURLEXEC $CURLOPTS $ARDUINOURL/?cmd=q`
   echo -n "Selected antennas: "
 	echo $selectedantennas
 }
