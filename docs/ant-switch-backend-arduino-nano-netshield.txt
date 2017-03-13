@@ -3,3 +3,8 @@ You need:
 - ENC28J60 Ethernet Shield For Arduino Nano V3.0 RJ45 Webserver Module CF
 
 Arduino code is available at
+https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/arduino-nano-enc29J60-netshield/docs/arduino-nano-netshield/ant_switch_arduino_netshield.ino
+
+You need to modify IP address, netmask and gateway of code.
+
+You also need to update backend file to match ip address you set
