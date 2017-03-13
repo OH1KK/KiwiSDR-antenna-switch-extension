@@ -3,12 +3,14 @@
  *  
  * Arduino nano + ENC29J60 ethernet shield antenna switch
  * 
- * 8 selecteable antennas in digital outputus 2,3,4,5,6,7,8,9
+ * 8 selecteable antennas in digital outputus d2,d3,d4,d5,d6,d7,d8,d9
  * 
  * curl http://172.16.50.19/?cmd=1 set antenna 1 (only)
  * curl http://172.16.50.19/?cmd=+1 add antenna 1
  * curl http://172.16.50.19/?cmd=-1 remove antenna 1
  * curl http://172.16.50.19/?cmd=t1 toggle antenna 1
+ * curl http://172.16.50.19/?cmd=g ground all altennas
+ * curl http://172.16.50.19/?cmd=s show selected antennas
  * 
  * This is part of KiwiSDR antenna switch extension
  * https://github.com/OH1KK/KiwiSDR-antenna-switch-extension
@@ -16,13 +18,10 @@
  * UIPEthernet library can be found from https://github.com/ntruchsess/arduino_uip
  */
 
-
 EthernetServer server = EthernetServer(80);
 boolean alreadyConnected = false; // whether or not the client was connected previously
 String commandString;
 String commandStringTmp;
-
-int val;
 
 void setup()
 {
