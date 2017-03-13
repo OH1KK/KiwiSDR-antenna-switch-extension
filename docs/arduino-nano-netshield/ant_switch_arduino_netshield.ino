@@ -3,7 +3,7 @@
  *  
  * Arduino nano + ENC29J60 ethernet shield antenna switch
  * 
- * 8 selecteable antennas in digital outputus d2,d3,d4,d5,d6,d7,d8,d9
+ * 8 selecteable antennas in digital outputs d2,d3,d4,d5,d6,d7,d8,d9
  * 
  * curl http://172.16.50.19/?cmd=1 set antenna 1 (only)
  * curl http://172.16.50.19/?cmd=+1 add antenna 1
@@ -20,8 +20,6 @@
 
 EthernetServer server = EthernetServer(80);
 boolean alreadyConnected = false; // whether or not the client was connected previously
-String commandString;
-String commandStringTmp;
 
 void setup()
 {
@@ -35,7 +33,7 @@ void setup()
   uint8_t mac[6] = {0x00, 0x02, 0x2d, 0x01, 0x02, 0x03};
 
   // the dns server ip
-  IPAddress dnServer(172, 16, 49, 2);
+  IPAddress dnServer(8, 8, 8, 8);
   // the router's gateway address:
   IPAddress gateway(172, 16, 50, 1);
   // the subnet:
