@@ -1,0 +1,5 @@
+You need:
+- Nano V3.0 CH340G/FT232 ATmega328P MINI USB 5V 16M Micro-controller Board Arduino
+- ENC28J60 Ethernet Shield For Arduino Nano V3.0 RJ45 Webserver Module CF
+
+Arduino code is available at
