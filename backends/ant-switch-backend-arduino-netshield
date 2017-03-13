@@ -33,7 +33,7 @@ AntSW_ShowBackend() {
 }
 
 AntSW_Initialize() {
-  	ARDUINOURL="http://172.16.50.19"
+  	ARDUINOURL="http://192.168.0.19"
 	CURLEXEC=`which curl`
 	CURLOPTS=" --silent --connect-timeout 1"
 }
