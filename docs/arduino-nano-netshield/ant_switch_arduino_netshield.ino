@@ -13,6 +13,7 @@
  * This is part of KiwiSDR antenna switch extension
  * https://github.com/OH1KK/KiwiSDR-antenna-switch-extension
  * 
+ * UIPEthernet library can be found from https://github.com/ntruchsess/arduino_uip
  */
 
 
@@ -27,6 +28,7 @@ void setup()
 {
   for (int dio = 2; dio < 10; dio++) {
     pinMode(dio, OUTPUT);
+    digitalWrite(dio, LOW);
   }
 
   Serial.begin(9600);
@@ -59,16 +61,16 @@ void dio_selectonly(int dio) {
 }
 
 void dio_set(int dio) {
-  digitalWrite(dio+1, HIGH);
+  digitalWrite(dio+1, LOW);
 }
 
 void dio_unset(int dio) {
-  digitalWrite(dio+1, LOW);
+  digitalWrite(dio+1, HIGH);
 }
 
 void dio_toggle(int dio) {
   int dioReading = digitalRead(dio+1);
-  if (dioReading == 1) {
+  if (dioReading == 0) {
     dio_unset(dio);
   } else {
     dio_set(dio);
@@ -146,7 +148,7 @@ void loop() {
           String selected_antennas;
           for (int dio = 2; dio < 10; dio++) {
             int dioReading = digitalRead(dio);
-            if (dioReading == 1) {
+            if (dioReading == 0) {
               selected_antennas+=",";
               selected_antennas+=(dio-1);
             }
