@@ -27,12 +27,13 @@ You need antenna switch hardware.
 ## Available backends for hardware
 
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
-* beagle-gpio for controlling Beaglebone gren GPIO pins
+* beagle-gpio for controlling Beaglebone green GPIO pins
+* arduino-netshield for Arduino Nano V3.0 GPIO pins. ENC28J60 Ethernet Shield needed.
 * example-backend is example script for your own backend development
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.60
+* Tested to work with KiwiSDR v1.61
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
