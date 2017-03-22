@@ -25,7 +25,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+# Safe GPIO pins
+# P8 11 - GPIO 1_13
+# P8 12 - GPIO 1_12
+# P8 13 - GPIO 0_23
+# P8 14 - GPIO 0_26
+# P8 15 - GPIO 1_15
+# P8 16 - GPIO 1_14
+# P8 17 - GPIO 0_27
+# P8 18 - GPIO 2_1
+# P8 19 - GPIO 0_22
+# P8 26 - GPIO 1_29
+#
+SAFEGPIOS=(13 12 23 26 15 14 27 1 22 29)
+VERSION=0.2
 
 AntSW_ShowBackend() {
         echo "ant-switch-backend-beagle-gpio version $VERSION"
@@ -38,7 +51,7 @@ AntSW_Initialize() {
 		echo "This script must be run as root" 1>&2
 		exit 1
 	fi
-        for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
+        for GPIOPIN in "${SAFEGPIOS[@]}"; do
 	        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value 2>/dev/null` 
 		if [ "x$VAL" == "x" ]; then
 			# Try automatically initialize
@@ -56,23 +69,27 @@ AntSW_Initialize() {
 }
 
 AntSW_GroundAll() {
-	for s in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
+	for s in 1 2 3 4 5 6 7 8 9; do
 		AntSW_DeSelectAntenna $s
 	done
 }
 
 AntSW_SelectAntenna() {
-	ANT=$((69+$1))
+	IDX=$(($1-1))
+	ANT=${SAFEGPIOS[$IDX]}
 	echo 1 > /sys/class/gpio/gpio${ANT}/value
 }
 
 AntSW_DeSelectAntenna() {
-	ANT=$((69+$1))
+        IDX=$(($1-1)) 
+        ANT=${SAFEGPIOS[$IDX]}
         echo 0 > /sys/class/gpio/gpio${ANT}/value 
 }
 
 AntSW_ToggleAntenna() {
-	ANT=$((69+$1))
+        IDX=$(($1-1))    
+	echo "IDX=$IDX"
+        ANT=${SAFEGPIOS[$IDX]}
 	# Read antenna status
 	VAL=`cat /sys/class/gpio/gpio${ANT}/value`
 	if [ "x$VAL" == "x0" ]; then
@@ -86,10 +103,12 @@ AntSW_ShowSelected() {
 	# Read antenna status
 	selectedantennas=''
 	antennafound=0
-	for GPIOPIN in 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85; do
+	antidx=0
+	for GPIOPIN in "${SAFEGPIOS[@]}"; do
+		antidx=$(($antidx+1))
 	        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value`
 		if [ "x$VAL" == "x1" ]; then
-			selectedantennas="${selectedantennas}$(($GPIOPIN-69)),"
+			selectedantennas="${selectedantennas}${antidx},"
 			antennafound=$(($antennafound+1))
 		fi
 	done
