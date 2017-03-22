@@ -1,13 +1,16 @@
 This GPIO backend to KiwiSDR antenna switch extension
 
-This backend controls Beaglebone green GPIO pins 70-76
-
 http://wiki.seeed.cc/BeagleBone_Green/
 
-Beaglebone green connector P8 pin 45 (GPIO 70) = Antenna 1
-Beaglebone green Connector P8 pin 46 (GPIO 71) = Antenna 2
-Beaglebone green Connector P8 pin 43 (GPIO 72) = Antenna 3
-Beaglebone green Connector P8 pin 44 (GPIO 73) = Antenna 4
-Beaglebone green Connector P8 pin 41 (GPIO 74) = Antenna 5
-Beaglebone green Connector P8 pin 42 (GPIO 75) = Antenna 6
-Beaglebone green Connector P8 pin 39 (GPIO 76) = Antenna 7
+This extension uses Beagle GPIO pins
+
+Connector P8 pin 11 - GPIO 1_13 - Antenna 1
+Connector P8 pin 12 - GPIO 1_12 - Antenna 2
+Connector P8 pin 13 - GPIO 0_23 - Antenna 3
+Connector P8 pin 14 - GPIO 0_26 - Antenna 4
+Connector P8 pin 15 - GPIO 1_15 - Antenna 5
+Connector P8 pin 16 - GPIO 1_14 - Antenna 6
+Connector P8 pin 17 - GPIO 0_27 - Antenna 7
+Connector P8 pin 18 - GPIO 2_1 - Antenna 8 (not available on webui yet)
+Connector P8 pin 19 - GPIO 0_22 - Antenna 9 (not available on webui yet)
+Connector P8 pin 26 - GPIO 1_29 - Antenna 10 (not available on webui yet)
