@@ -4,12 +4,13 @@ http://wiki.seeed.cc/BeagleBone_Green/
 
 This extension uses Beagle GPIO pins
 
-Connector P8
-pin 11 = gpio_45 = Antenna 1
-pin 12 = gpio_44 = Antenna 2
-pin 14 = gpio_26 = Antenna 3
-pin 15 = gpio_47 = Antenna 4
-pin 16 = gpio_46 = Antenna 5
-pin 17 = gpio_27 = Antenna 6 
-pin 18 = gpio_65 = Antenna 7
-pin 26 = gpio_61 = Antenna 8
+P8 pin 11 - GPIO_45 - Antenna 1
+P8 pin 12 - GPIO_44 - Antenna 2
+P8 pin 13 - GPIO_23 - Antenna 3
+P8 pin 14 - GPIO_26 - Antenna 4
+P8 pin 15 - GPIO_47 - Antenna 5
+P8 pin 16 - GPIO_46 - Antenna 6
+P8 pin 17 - GPIO_27 - Antenna 7
+P8 pin 18 - GPIO_65 - Antenna 8 (not available in webui yet)
+P8 pin 19 - GPIO_22 - Antenna 9 (not available in webui yet)
+P8 pin 26 - GPIO_61 - Antenna 10 (not available in webui yet)
