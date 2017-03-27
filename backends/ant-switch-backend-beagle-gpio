@@ -26,19 +26,20 @@
 # SOFTWARE.
 
 # Safe GPIO pins
-# P8 11 - GPIO 1_13
-# P8 12 - GPIO 1_12
-# P8 13 - GPIO 0_23
-# P8 14 - GPIO 0_26
-# P8 15 - GPIO 1_15
-# P8 16 - GPIO 1_14
-# P8 17 - GPIO 0_27
-# P8 18 - GPIO 2_1
-# P8 19 - GPIO 0_22
-# P8 26 - GPIO 1_29
 #
-SAFEGPIOS=(13 12 23 26 15 14 27 1 22 29)
-VERSION=0.2
+#Connector P8
+#
+# pin 11 = gpio_45 = Antenna 1
+# pin 12 = gpio_44 = Antenna 2
+# pin 14 = gpio_26 = Antenna 3
+# pin 15 = gpio_47 = Antenna 4
+# pin 16 = gpio_46 = Antenna 5
+# pin 17 = gpio_27 = Antenna 6 
+# pin 18 = gpio_65 = Antenna 7
+# pin 26 = gpio_61 = Antenna 8
+#
+SAFEGPIOS=(45 44 26 47 46 27 65 61)
+VERSION=0.3
 
 AntSW_ShowBackend() {
         echo "ant-switch-backend-beagle-gpio version $VERSION"
@@ -69,7 +70,7 @@ AntSW_Initialize() {
 }
 
 AntSW_GroundAll() {
-	for s in 1 2 3 4 5 6 7 8 9; do
+	for s in 1 2 3 4 5 6 7 8; do
 		AntSW_DeSelectAntenna $s
 	done
 }
