@@ -1,11 +1,10 @@
-    IW   ms-s7-web-uninstaller (Modified)                                                                                                                                                                 Row 39   Col 40   9:12  Ctrl-K H for help
 #!/usr/bin/env bash
 #
 # The MIT License (MIT)
 #
-# ms-s7-web-installer - installer for ms-s7-web
+# ant-switch-uninstaller - uninstaller for KiwiSDR antenna switch extension
 #
-# Copyright (c) 2016 Kari Karvonen
+# Copyright (c) 2017 Kari Karvonen
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,38 +23,28 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 
-echo "$0 Welcome to MS-S7-WEB ant_switch extension uninstaller"
+echo "Welcome to ant_switch extension uninstaller"
 echo ""
-echo "$0 Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
+echo "Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
 read ok
 if [ "x$ok" == "xy" ]; then
         echo ""
-        echo "$0 Removing files"
-        # remove config
-        rm /etc/default/ms-s7-web
+        echo "$0 Removing ant_switch extension files"
         # remove executable
-        rm /usr/local/bin/ms-s7-web
+        rm /usr/local/bin/ant-switch-frontend
         # Remove extension files
-        rm -rf /root/Beagle_SDR_GPS/extensions/ant_switch
-        rm -rf /root/Beagle_SDR_GPS/web/extensions/ant_switch
-        echo ""
-        echo "$0 Rebuilding KiwiSDR. This will take about 13 minutes."
-        echo ""
+        rm -rf /root/extensions/ant_switch
+        echo "Stopping KiwiSDR"
         cd /root/Beagle_SDR_GPS
+        make stop
+        echo "Rebuilding KiwiSDR without ant_switch extension"
         make clean
         make
         make install
-        echo ""
-        echo "$0 Compile finished. Restart needed. Do you want to restart KiwiSDR now (y/n)?"
-        read ok
-        if [ "x$ok" == "xy" ]; then
-                echo "$0 Restarting KiwiSDR"
-                make stop
-                make start
-        else
-                echo "$0 Not restarting."
-        fi
+        echo "Compile finished. Starting KiwiSDR"
+        make start
+        echo "ant_switch extension uninstall finished."
 else
-        echo "$0 Uninstall aborted."
+        echo "Uninstall aborted."
         exit 1
 fi

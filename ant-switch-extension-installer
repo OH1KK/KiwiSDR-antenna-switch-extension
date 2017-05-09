@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+#
+# The MIT License (MIT)
+#
+# ant-switch-installer - installer for KiwiSDR ant_switch extension
+#
+# Copyright (c) 2017 Kari Karvonen
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+VERSION=0.2
+
+echo "Welcome to KiwiSDR antenna switch extension installer"
+echo ""
+
+if [ "x`which curl`" == "x" ]; then
+	echo "Curl not found. Do you want to install it now (y/n) ?"
+	read ok
+	if [ "x$ok" == "xy" ]; then
+		apt-get install curl
+		if [ "x`which curl`" == "x" ]; then
+			echo "curl installation failed. Installation aborted."
+			exit 1
+		fi
+	else
+		echo "Curl not installed. Installation aborted."
+		exit 1
+	fi
+fi
+
+if [ "x`which jq`" == "x" ]; then
+	echo "jq not found. Do you want to install it now (y/n) ?"
+	read ok
+	if [ "x$ok" == "xy" ]; then
+		apt-get install jq
+		if [ "x`which jq`" == "x" ]; then
+			echo "jq installation failed. Installation aborted."
+			exit 1
+		fi
+	else
+		echo "jq not installed. Installation aborted."
+		exit 1
+	fi
+fi
+
+valid_backend_selected=0
+
+while [ "$valid_backend_selected" == 0 ]; do
+	echo "Available antenna switch backends:"
+	for backend in backends/ant-switch-backend-*; do
+		name=`basename $backend`
+		name=`echo $name | sed 's/ant-switch-backend-//'`
+		echo $name
+	done
+	echo ""
+	if [ "x$BACKEND" == "x" ]; then
+        	BACKEND="ms-s7-web"
+	fi
+	echo "which backend you would like to use (default: $BACKEND) ?"
+	read selected_backend
+	if [ "x$selected_backend" == "x" ]; then
+		 selected_backend=$BACKEND
+	fi
+	if [ -r "backends/ant-switch-backend-$selected_backend" ]; then
+		echo "Selected backend: $selected_backend";
+		valid_backend_selected=1
+		mkdir -p /root/extensions/ant_switch/backends
+		cp backends/* /root/extensions/ant_switch/backends
+		chmod a+rx /root/extensions/ant_switch/backends/ant-switch-backend-*
+		ln -s /root/extensions/ant_switch/backends/ant-switch-backend-$selected_backend /root/extensions/ant_switch/backends/ant-switch-backend
+	else
+		echo "Invalid selection $selected_backend. Try again."
+	fi
+done
+
+echo "Copying ant_switch files to Beagle_SDR_GPS tree"
+echo ""
+cp -varf extensions/* /root/extensions/
+cp -varf frontend /root/extensions/ant_switch/
+chmod a+rx /root/extensions/ant_switch/frontend/ant-switch-frontend
+ln -s /root/extensions/ant_switch/frontend/ant-switch-frontend /usr/local/bin
+echo ""
+echo "Rebuilding KiwiSDR. This will take about 13 minutes."
+echo ""
+cd /root/Beagle_SDR_GPS
+make stop
+make clean
+make
+make install
+make start
+echo "KiwiSDR antenna switch extension installation finished."
