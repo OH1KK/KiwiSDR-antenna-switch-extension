@@ -19,7 +19,7 @@ var ant_switch_cmd_e = { CMD1:0 };
 
 function ant_switch_recv(data)
 {
-	var firstChars = getFirstChars(data, 3);
+	var firstChars = arrayBufferToStringLen(data, 3);
 	
 	// process data sent from server/C by ext_send_data_msg()
 	if (firstChars == "DAT") {
