@@ -6,6 +6,7 @@
 
 #include "kiwi.h"
 #include "cfg.h"
+#include "str.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -29,37 +30,38 @@ struct ant_switch_t {
 static ant_switch_t ant_switch[RX_CHANS];
 
 char * ant_switch_queryantennas() {
-	char line[256];
+	char *cmd, *reply;
+	static char selected_antennas[256];
 	int n;
-	char selected_antennas[256];
-	non_blocking_cmd("/root/extensions/ant_switch/frontend/ant-switch-frontend s", line, sizeof(line), NULL);
-	n = sscanf(line, "Selected antennas: %s", &selected_antennas);
-	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", line);
+	asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend s");
+	reply = non_blocking_cmd(cmd, NULL);
+	n = sscanf(kstr_sp(reply), "Selected antennas: %s", &selected_antennas);
+	free(cmd);
+	kstr_free(reply);
+	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", reply);
 	return(selected_antennas);
 }
 
 int ant_switch_setantenna(char* antenna) {
-	char line[256];
+        char *cmd, *reply;
 	int status;
 	int n;
-	char *antennastr;
-        asprintf(&antennastr, "/root/extensions/ant_switch/frontend/ant-switch-frontend %s", antenna);
-	line[0] = '\0';
-	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
-	free(antennastr);
-	return(status);
+        asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend %s", antenna);
+	reply = non_blocking_cmd(cmd,NULL);
+	free(cmd);
+	kstr_free(reply);
+	return(0);
 }
 
 int ant_switch_toggleantenna(char* antenna) {
-	char line[256];
+        char *cmd, *reply;
 	int status;
 	int n;
-	char *antennastr;
-        asprintf(&antennastr, "/root/extensions/ant_switch/frontend/ant-switch-frontend t%s", antenna);
-	line[0] = '\0';
-	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
-	free(antennastr);
-	return(status);
+        asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend t%s", antenna);
+	reply = non_blocking_cmd(cmd, NULL);
+	free(cmd);
+	kstr_free(reply);
+	return(0);
 }
 
 int ant_switch_validate_cmd(char *cmd) {
