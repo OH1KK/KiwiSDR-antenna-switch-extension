@@ -1,7 +1,5 @@
 // Copyright (c) 2017 Kari Karvonen, OH1KK
 //
-// You need snmpget and snmpset external commands
-//  sudo apt-get install snmp
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
 #include "kiwi.h"
@@ -16,8 +14,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define ANT_SWITCH_DEBUG_MSG	true
-//#define ANT_SWITCH_DEBUG_MSG	false
+//#define ANT_SWITCH_DEBUG_MSG	true
+#define ANT_SWITCH_DEBUG_MSG	false
 
 // rx_chan is the receiver channel number we've been assigned, 0..RX_CHAN
 // We need this so the extension can support multiple users, each with their own ant_switch[] data structure.
@@ -66,7 +64,6 @@ int ant_switch_toggleantenna(char* antenna) {
 
 int ant_switch_validate_cmd(char *cmd) {
 	int is_valid_cmd = false;
-	// FIXME. Clean this. To array or preg_match
 	if (strcmp(cmd, "1") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "2") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "3") == 0) is_valid_cmd=true;
@@ -98,7 +95,6 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 {
 	ant_switch_t *e = &ant_switch[rx_chan];
 	int n=0;
-	//char selected_antennas[256];
 	char antenna[256];
 
 	printf("### ant_switch_msgs RX%d <%s>\n", rx_chan, msg);
