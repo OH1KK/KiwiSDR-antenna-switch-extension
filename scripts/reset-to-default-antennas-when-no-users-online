@@ -48,6 +48,7 @@ fi
 
 ANTSWITCHEXEC=/root/extensions/ant_switch/frontend/ant-switch-frontend
 ADMINJSON=/root/kiwi.config/admin.json
+KIWIJSON=/root/kiwi.config/kiwi.json
 
 if ! [[ -x "$ANTSWITCHEXEC" ]]; then
 	echo "$0: Antenna switch script $ANTSWITCHEXEC not found or it is not executable. Exit."
@@ -61,6 +62,13 @@ fi
 CURLOPTS=" --silent --connect-timeout 1"
 PORT=`$JQEXEC .port $ADMINJSON`
 STATUSURL="http://127.0.0.1:$PORT/status"
+
+FORBIDSWITCH=`$JQEXEC .ant_switch.denyswitching $KIWIJSON`
+if [ $FORBIDSWITCH -eq 1 ]; then
+	echo "Antenna switching denied by configuration, not switching."
+	exit 1
+fi
+
 
 STATUS=`$CURLEXEC $STATUSURL $CURLOPTS`
 if [ "x$STATUS" == "x" ]; then
