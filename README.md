@@ -85,6 +85,9 @@ open ssh connection to your KiwiSDR as root user
 
 KiwiSDR Kaustinen http://sdr.vy.fi
 
+## Donate
+If you want to support this project, you can [send a donation via PayPal](https://www.paypal.me/oh1kk).
+
 ## License
 
 [The MIT License (MIT)](LICENSE)
