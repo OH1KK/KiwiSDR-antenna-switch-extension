@@ -1,11 +1,10 @@
 // Copyright (c) 2017 Kari Karvonen, OH1KK
 //
-// You need snmpget and snmpset external commands
-//  sudo apt-get install snmp
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
 #include "kiwi.h"
 #include "cfg.h"
+#include "str.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -15,8 +14,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define ANT_SWITCH_DEBUG_MSG	true
-//#define ANT_SWITCH_DEBUG_MSG	false
+//#define ANT_SWITCH_DEBUG_MSG	true
+#define ANT_SWITCH_DEBUG_MSG	false
 
 // rx_chan is the receiver channel number we've been assigned, 0..RX_CHAN
 // We need this so the extension can support multiple users, each with their own ant_switch[] data structure.
@@ -29,42 +28,42 @@ struct ant_switch_t {
 static ant_switch_t ant_switch[RX_CHANS];
 
 char * ant_switch_queryantennas() {
-	char line[256];
+	char *cmd, *reply;
+	static char selected_antennas[256];
 	int n;
-	char selected_antennas[256];
-	non_blocking_cmd("/root/extensions/ant_switch/frontend/ant-switch-frontend s", line, sizeof(line), NULL);
-	n = sscanf(line, "Selected antennas: %s", &selected_antennas);
-	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", line);
+	asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend s");
+	reply = non_blocking_cmd(cmd, NULL);
+	n = sscanf(kstr_sp(reply), "Selected antennas: %s", &selected_antennas);
+	free(cmd);
+	kstr_free(reply);
+	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", reply);
 	return(selected_antennas);
 }
 
 int ant_switch_setantenna(char* antenna) {
-	char line[256];
+        char *cmd, *reply;
 	int status;
 	int n;
-	char *antennastr;
-        asprintf(&antennastr, "/root/extensions/ant_switch/frontend/ant-switch-frontend %s", antenna);
-	line[0] = '\0';
-	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
-	free(antennastr);
-	return(status);
+        asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend %s", antenna);
+	reply = non_blocking_cmd(cmd,NULL);
+	free(cmd);
+	kstr_free(reply);
+	return(0);
 }
 
 int ant_switch_toggleantenna(char* antenna) {
-	char line[256];
+        char *cmd, *reply;
 	int status;
 	int n;
-	char *antennastr;
-        asprintf(&antennastr, "/root/extensions/ant_switch/frontend/ant-switch-frontend t%s", antenna);
-	line[0] = '\0';
-	n = non_blocking_cmd(antennastr, line, sizeof(line), &status);
-	free(antennastr);
-	return(status);
+        asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend t%s", antenna);
+	reply = non_blocking_cmd(cmd, NULL);
+	free(cmd);
+	kstr_free(reply);
+	return(0);
 }
 
 int ant_switch_validate_cmd(char *cmd) {
 	int is_valid_cmd = false;
-	// FIXME. Clean this. To array or preg_match
 	if (strcmp(cmd, "1") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "2") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "3") == 0) is_valid_cmd=true;
@@ -96,7 +95,6 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 {
 	ant_switch_t *e = &ant_switch[rx_chan];
 	int n=0;
-	//char selected_antennas[256];
 	char antenna[256];
 
 	printf("### ant_switch_msgs RX%d <%s>\n", rx_chan, msg);

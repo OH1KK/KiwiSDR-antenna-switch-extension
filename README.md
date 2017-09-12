@@ -33,7 +33,7 @@ You need antenna switch hardware.
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.80
+* Tested to work with KiwiSDR v1.95. Does not work on older versions than v1.95 due KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
@@ -84,6 +84,9 @@ open ssh connection to your KiwiSDR as root user
 ## Demo site
 
 KiwiSDR Kaustinen http://sdr.vy.fi
+
+## Donate
+If you want to support this project, you can [send a donation via PayPal](https://www.paypal.me/oh1kk).
 
 ## License
 
