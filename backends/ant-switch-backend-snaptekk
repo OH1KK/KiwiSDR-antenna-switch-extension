@@ -81,7 +81,6 @@ AntSW_ShowSelected() {
 
 	# reply is json string {“Status”:{”0”,”0”, ”1”,”0”,”0”,”0”, ”0”,”0”}}
 	reply=`$CURLEXEC $CURLOPTS $SNAPTEKK_URL/status`
-	reply='{"Status":{"0","0","1","0","0","0","0","0"}}'
 	digits=`echo $reply | sed 's/[^0-1]*//g'`
         for s in 0 1 2 3 4 5 6 7; do
 		thisbit=${digits:${s}:1}
