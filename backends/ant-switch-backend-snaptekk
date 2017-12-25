@@ -25,7 +25,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+VERSION=0.2
 SNAPTEKK_URL="http://192.168.1.96:9999"
 CURLEXEC=/usr/bin/curl
 CURLOPTS=" --silent --connect-timeout 1"
@@ -79,13 +79,17 @@ AntSW_ShowSelected() {
 	# or comma separated list
         # Selected antennas: 1,2,3,4
 
-	# reply is json string {“Status”:{”0”,”0”, ”1”,”0”,”0”,”0”, ”0”,”0”}}
+	#reply='
+	#<!DOCTYPE html> <html lang='en'> <body>
+	#<h1>{"Status":[0,0,1,0,0,0,0,0]}</h1> </form> </body>
+	#'
 	reply=`$CURLEXEC $CURLOPTS $SNAPTEKK_URL/status`
 	digits=`echo $reply | sed 's/[^0-1]*//g'`
-        for s in 0 1 2 3 4 5 6 7; do
+	echo $digits
+        for s in 1 2 3 4 5 6 7 8; do
 		thisbit=${digits:${s}:1}
 		if [ "x$thisbit" == "x1" ]; then
-			selectedantennas="${selectedantennas}$(($s+1)),"
+			selectedantennas="${selectedantennas}$(($s)),"
 			antennafound=$(($antennafound+1))
 		fi
 	done
