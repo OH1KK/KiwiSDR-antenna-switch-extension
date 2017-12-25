@@ -1,4 +1,4 @@
-Experimental backend to WIFI HAM Radio 8 antenna switch.
+Backend to Snaptekk WIFI HAM Radio 8 antenna switch.
 
 http://www.snaptekk.com/
 
