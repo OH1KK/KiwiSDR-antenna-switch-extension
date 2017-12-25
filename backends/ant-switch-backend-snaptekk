@@ -25,10 +25,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.2
+VERSION=0.3
 SNAPTEKK_URL="http://192.168.1.96:9999"
 CURLEXEC=/usr/bin/curl
-CURLOPTS=" --silent --connect-timeout 1"
+CURLOPTS=" --silent --connect-timeout 1 --max-time 2 "
 
 AntSW_ShowBackend() {
 	echo "ant-switch-backend-snaptekk version $VERSION"
@@ -51,7 +51,8 @@ AntSW_SelectAntenna() {
 	# Only one antenna
 	# Antenna to select is on variable $1
 	# no return value
-	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/$1  > /dev/null 2>&1
+	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/$1 > /dev/null 2>&1
+	AntSW_ShowSelected
 }
 
 AntSW_DeSelectAntenna() {
@@ -81,11 +82,15 @@ AntSW_ShowSelected() {
 
 	#reply='
 	#<!DOCTYPE html> <html lang='en'> <body>
-	#<h1>{"Status":[0,0,1,0,0,0,0,0]}</h1> </form> </body>
+	#<h1>{"Status":[0,0,0,0,0,0,0,0]}</h1> </form> </body>
 	#'
 	reply=`$CURLEXEC $CURLOPTS $SNAPTEKK_URL/status`
 	digits=`echo $reply | sed 's/[^0-1]*//g'`
-	
+	if [ "x$digits" == "x" ]; then
+		# curl failed. Reply with invalid message so 
+		# gui doesn't get hang. fixme.
+		digits="0000000000"
+	fi
         for s in 1 2 3 4 5 6 7 8; do
 		thisbit=${digits:${s}:1}
 		if [ "x$thisbit" == "x1" ]; then
