@@ -51,7 +51,7 @@ AntSW_SelectAntenna() {
 	# Only one antenna
 	# Antenna to select is on variable $1
 	# no return value
-	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/$1
+	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/$1  > /dev/null 2>&1
 }
 
 AntSW_DeSelectAntenna() {
