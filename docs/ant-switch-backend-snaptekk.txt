@@ -2,6 +2,7 @@ Experimental backend to WIFI HAM Radio 8 antenna switch.
 
 http://www.snaptekk.com/
 
-This backend is not TESTED, it doesh not have all function implemented and this is not ready for procuction.
+If your antenna switch URL is something else than http://192.168.1.96:9999 then yout have to manually update
+script and update url parameter. It is located on column 29
 
-(I do not have hardware, so I can not test)
+SNAPTEKK_URL="http://192.168.1.96:9999"
