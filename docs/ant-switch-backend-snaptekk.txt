@@ -1,0 +1,7 @@
+Experimental backend to WIFI HAM Radio 8 antenna switch.
+
+http://www.snaptekk.com/
+
+This backend is not TESTED, it doesh not have all function implemented and this is not ready for procuction.
+
+(I do not have hardware, so I can not test)

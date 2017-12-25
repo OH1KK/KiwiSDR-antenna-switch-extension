@@ -41,7 +41,7 @@
 # P8 pin 26 - GPIO_61 - Antenna 10
 #
 SAFEGPIOS=(45 44 23 26 47 46 27 65 22 61)
-VERSION=0.4
+VERSION=0.5
 
 AntSW_ShowBackend() {
         echo "ant-switch-backend-beagle-gpio version $VERSION"
@@ -55,8 +55,8 @@ AntSW_Initialize() {
 		exit 1
 	fi
         for GPIOPIN in "${SAFEGPIOS[@]}"; do
-	        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value 2>/dev/null` 
-		if [ "x$VAL" == "x" ]; then
+	        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/direction 2>/dev/null` 
+		if [ "x$VAL" != "xout" ]; then
 			# Try automatically initialize
 			echo $GPIOPIN > /sys/class/gpio/export
 	                echo out > /sys/class/gpio/gpio${GPIOPIN}/direction

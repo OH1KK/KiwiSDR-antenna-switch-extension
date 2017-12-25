@@ -33,7 +33,7 @@ You need antenna switch hardware.
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.95. Does not work on older versions than v1.95 due KiwiSDR API changes.
+* Tested to work with KiwiSDR v1.150. Does not work on older versions than v1.95 due KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
