@@ -71,6 +71,7 @@ int ant_switch_validate_cmd(char *cmd) {
 	if (strcmp(cmd, "5") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "6") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "7") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "8") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "g") == 0) is_valid_cmd=true;
 	return(is_valid_cmd);
 }
