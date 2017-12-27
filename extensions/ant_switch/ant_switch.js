@@ -212,7 +212,7 @@ function ant_switch_process_reply(ant) {
 	var selected_antennas_list = ant.match(/([0-9])/g);
         var inputs = document.getElementsByTagName("button");
         for (var i = 0; i < inputs.length; i++) {
-                var re=/^Antenna ([1-7])/i; 
+                var re=/^Antenna ([1-8])/i; 
                 if (inputs[i].textContent.match(re)) {
                         w3_unhighlight(inputs[i]);
                         for (var tmp=1; tmp<9; tmp++) {
