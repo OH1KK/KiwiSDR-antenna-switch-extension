@@ -74,9 +74,9 @@ function ant_switch_controls_setup()
    var buttons_html = '';
    var antdesc = [ ];
    var tmp;
-   for (tmp=1; tmp<8; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
+   for (tmp=1; tmp<9; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
    console.log('ant_switch: Antenna configuration');
-   for (tmp = 1; tmp<8; tmp++) {
+   for (tmp = 1; tmp<9; tmp++) {
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
            }  else {
@@ -84,6 +84,9 @@ function ant_switch_controls_setup()
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
+
+   //buttons_html+=w3_inline('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
+   //console.log('ant_switch: Antenna g: Ground all antennas');
    var data_html =
       '<div id="id-ant_switch-data"></div>';
 	var controls_html =
@@ -131,6 +134,8 @@ function ant_switch_config_html()
                                                 w3_radio_btn('No', 'ant_switch.denymixing', denymixing? 0:1, 'ant_switch_conf_denymixing') +
                                                 w3_radio_btn('Yes', 'ant_switch.denymixing', denymixing? 1:0, 'ant_switch_conf_denymixing')
                                         ),
+                                        w3_divs('', '','<b>Thunderstorm</b><br>'),
+                                        w3_btn('Ground all antennas immediately and deny switching', 'ant_switch_thunderstorm'), 
                                         w3_divs('', '','<hr><b>Antenna buttons configuration</b><br>'),
                                         w3_divs('', '','Leave Antenna description field empty if you want to hide antenna button from users<br>'),
 					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb'),
@@ -176,6 +181,11 @@ function ant_switch_select_7(path,val) {
 }
 function ant_switch_select_8(path,val) {
         ant_switch_select_antenna('8');
+}
+
+function ant_switch_select_groundall(path,val) {
+        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
+        ant_switch_select_antenna('g');
 }
 
 function ant_switch_select_antenna(ant) {
@@ -274,4 +284,9 @@ function ant_switch_conf_denyswitching(id, idx) {
 }
 function ant_switch_conf_denymixing(id, idx) {
         var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
+}
+
+function ant_switch_thunderstorm() {
+        ext_set_cfg_param('ant_switch.denyswitching', 1, true);
+        ant_switch_select_antenna('g');
 }
