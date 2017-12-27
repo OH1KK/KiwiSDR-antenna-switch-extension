@@ -2,7 +2,7 @@
 
 This is antenna switch extension to KiwiSDR software defined radio.
 
-Antenna switch can control out-of-stock antenna switch MS-S7-WEB, or your homemade antenna switches which uses Beaglebone GPIO-pins. You can also write your own backend for third party antenna switch.
+Antenna switch can control out-of-stock antenna switches and utilize Beaglebone GPIO-pins. You can also write your own backend for third party antenna switch.
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
@@ -34,7 +34,7 @@ You need antenna switch hardware.
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.150. Does not work on older versions than v1.95 due KiwiSDR API changes.
+* Tested to work with KiwiSDR v1.153. Does not work on older versions than v1.95 due KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
