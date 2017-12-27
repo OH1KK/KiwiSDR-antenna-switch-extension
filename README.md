@@ -28,8 +28,8 @@ You need antenna switch hardware.
 
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
 * beagle-gpio for controlling Beaglebone green GPIO pins
+* snaptekk for controlling Snaptekk Wifi ham radio 8 antenna switch
 * arduino-netshield for Arduino Nano V3.0 GPIO pins. ENC28J60 Ethernet Shield needed.
-* backend-snaptekk for controlling Snaptekk Wifi ham radio 8 antenna switch
 * example-backend is example script for your own backend development
 
 ## Version compability
