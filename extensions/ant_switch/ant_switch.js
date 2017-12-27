@@ -84,9 +84,6 @@ function ant_switch_controls_setup()
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
-
-   buttons_html+=w3_inline('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
-   console.log('ant_switch: Antenna g: Ground all antennas');
    var data_html =
       '<div id="id-ant_switch-data"></div>';
 	var controls_html =
@@ -143,6 +140,7 @@ function ant_switch_config_html()
 					w3_input_get_param('Antenna 5 description', 'ant_switch.ant5desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna 6 description', 'ant_switch.ant6desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna 7 description', 'ant_switch.ant7desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 8 description', 'ant_switch.ant8desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb')
 				), '', ''
 			)
@@ -176,10 +174,8 @@ function ant_switch_select_6(path,val) {
 function ant_switch_select_7(path,val) {
         ant_switch_select_antenna('7');
 }
-
-function ant_switch_select_groundall(path,val) {
-        setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
-        ant_switch_select_antenna('g');
+function ant_switch_select_8(path,val) {
+        ant_switch_select_antenna('8');
 }
 
 function ant_switch_select_antenna(ant) {
@@ -219,7 +215,7 @@ function ant_switch_process_reply(ant) {
                 var re=/^Antenna ([1-7])/i; 
                 if (inputs[i].textContent.match(re)) {
                         w3_unhighlight(inputs[i]);
-                        for (var tmp=1; tmp<8; tmp++) {
+                        for (var tmp=1; tmp<9; tmp++) {
                                 var chr = String.fromCharCode(48 + tmp);
         		        if (selected_antennas_list != null && selected_antennas_list.indexOf(chr) >= 0) {
 			                 if (inputs[i].textContent == 'Antenna '+tmp) w3_highlight(inputs[i]);
@@ -233,7 +229,7 @@ function ant_switch_lock_buttons(lock) {
         var inputs = document.getElementsByTagName("button");
         for (var i = 0; i < inputs.length; i++) {
                 // ant 1-7
-                var re=/^Antenna ([1-7])/i;
+                var re=/^Antenna ([1-8])/i;
                 if (inputs[i].textContent.match(re)) {
                         if (lock == true) {
                                 inputs[i].disabled = true; 
@@ -279,4 +275,3 @@ function ant_switch_conf_denyswitching(id, idx) {
 function ant_switch_conf_denymixing(id, idx) {
         var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
 }
-
