@@ -56,7 +56,7 @@ Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
 By default users can switch antennas and select multiple simultanoius antennas.
 
-Describe your antennas 1-7. If you leave antenna description empty, antenna button won't be visible to users.
+Describe your antennas 1-8. If you leave antenna description empty, antenna button won't be visible to users.
 
 Antenna switch failure or unknown status decription will be show to users if antenna switch is unreachable or malfunctioning. 
 
