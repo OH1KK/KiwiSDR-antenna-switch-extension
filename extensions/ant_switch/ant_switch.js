@@ -80,12 +80,12 @@ function ant_switch_controls_setup()
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
            }  else {
-                buttons_html+=w3_divs('','', w3_inline('', '', w3_btn('Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
+                buttons_html+=w3_divs('','', w3_inline('', '', w3_button('','Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
 
-   buttons_html+=w3_inline('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
+   buttons_html+=w3_inline('', '', w3_button('','Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
    console.log('ant_switch: Antenna g: Ground all antennas');
    var data_html =
       '<div id="id-ant_switch-data"></div>';
@@ -278,5 +278,6 @@ function ant_switch_conf_denyswitching(id, idx) {
 }
 function ant_switch_conf_denymixing(id, idx) {
         var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
-}
+}function w3_btn(text, cb)
+
 
