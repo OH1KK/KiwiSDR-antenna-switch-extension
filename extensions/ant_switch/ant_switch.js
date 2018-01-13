@@ -1,8 +1,9 @@
-// Copyright (c) 2017 Kari Karvonen, OH1KK
+// Copyright (c) 2018 Kari Karvonen, OH1KK
 
 var ant_switch_ext_name = 'ant_switch';		// NB: must match ant_switch.c:ant_switch_ext.name
 var ant_switch_first_time = true;
 var ant_switch_poll_interval;
+var ant_switch_data_canvas;
 var ant_switch_exantennas=0; // to avoid console.log spam on timerupdates
 var ant_switch_denymixing = ext_get_cfg_param_string('ant_switch.denymixing', '', EXT_NO_SAVE);
 var ant_switch_denyswitching = ext_get_cfg_param_string('ant_switch.denyswitching', '', EXT_NO_SAVE);
@@ -74,19 +75,19 @@ function ant_switch_controls_setup()
    var buttons_html = '';
    var antdesc = [ ];
    var tmp;
-   for (tmp=1; tmp<8; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
+   for (tmp=1; tmp<9; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
    console.log('ant_switch: Antenna configuration');
-   for (tmp = 1; tmp<8; tmp++) {
+   for (tmp = 1; tmp<9; tmp++) {
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
            }  else {
-                buttons_html+=w3_divs('','', w3_inline('', '', w3_btn('Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
+                buttons_html+=w3_divs('','', w3_inline('', '', w3_button('','Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
 
-   buttons_html+=w3_inline('', '', w3_btn('Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
-   console.log('ant_switch: Antenna g: Ground all antennas');
+   //buttons_html+=w3_inline('', '', w3_button('','Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
+   //console.log('ant_switch: Antenna g: Ground all antennas');
    var data_html =
       '<div id="id-ant_switch-data"></div>';
 	var controls_html =
@@ -102,7 +103,8 @@ function ant_switch_controls_setup()
 		);
 
 	ext_panel_show(controls_html, null, null);
-	ant_switch_visible(1);
+        ant_switch_data_canvas = w3_el('id-ant_switch-data-canvas');
+        ext_set_controls_width_height(400,330);
         ant_switch_poll();
 }
 
@@ -110,7 +112,6 @@ function ant_switch_blur()
 {
         kiwi_clearInterval(ant_switch_poll_interval);
 	console.log('### ant_switch_blur');
-	ant_switch_visible(0);		// hook to be called when controls panel is closed
 }
 
 // called to display HTML for configuration parameters in admin interface
@@ -134,6 +135,8 @@ function ant_switch_config_html()
                                                 w3_radio_btn('No', 'ant_switch.denymixing', denymixing? 0:1, 'ant_switch_conf_denymixing') +
                                                 w3_radio_btn('Yes', 'ant_switch.denymixing', denymixing? 1:0, 'ant_switch_conf_denymixing')
                                         ),
+                                        w3_divs('', '','<b>Thunderstorm</b><br>'),
+                                        w3_button('','Ground all antennas immediately and deny switching', 'ant_switch_thunderstorm'), 
                                         w3_divs('', '','<hr><b>Antenna buttons configuration</b><br>'),
                                         w3_divs('', '','Leave Antenna description field empty if you want to hide antenna button from users<br>'),
 					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb'),
@@ -143,16 +146,12 @@ function ant_switch_config_html()
 					w3_input_get_param('Antenna 5 description', 'ant_switch.ant5desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna 6 description', 'ant_switch.ant6desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna 7 description', 'ant_switch.ant7desc', 'w3_string_set_cfg_cb'),
+					w3_input_get_param('Antenna 8 description', 'ant_switch.ant8desc', 'w3_string_set_cfg_cb'),
 					w3_input_get_param('Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb')
 				), '', ''
 			)
 		)
 	);
-}
-
-function ant_switch_visible(v)
-{
-	visible_block('id-ant_switch-data', v);
 }
 
 function ant_switch_select_1(path,val) {
@@ -176,6 +175,9 @@ function ant_switch_select_6(path,val) {
 function ant_switch_select_7(path,val) {
         ant_switch_select_antenna('7');
 }
+function ant_switch_select_8(path,val) {
+        ant_switch_select_antenna('8');
+}
 
 function ant_switch_select_groundall(path,val) {
         setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
@@ -190,7 +192,8 @@ function ant_switch_select_antenna(ant) {
 
 function ant_switch_poll() {
         kiwi_clearInterval(ant_switch_poll_interval);
-        ant_switch_poll_interval = setInterval(ant_switch_poll, 10000);
+        //ant_switch_poll_interval = setInterval(ant_switch_poll, 10000);
+        ant_switch_poll_interval = setInterval(function() {ant_switch_poll(0);}, 10000);
         ext_send('GET Antenna');
 }
 
@@ -216,10 +219,10 @@ function ant_switch_process_reply(ant) {
 	var selected_antennas_list = ant.match(/([0-9])/g);
         var inputs = document.getElementsByTagName("button");
         for (var i = 0; i < inputs.length; i++) {
-                var re=/^Antenna ([1-7])/i; 
+                var re=/^Antenna ([1-8])/i; 
                 if (inputs[i].textContent.match(re)) {
                         w3_unhighlight(inputs[i]);
-                        for (var tmp=1; tmp<8; tmp++) {
+                        for (var tmp=1; tmp<9; tmp++) {
                                 var chr = String.fromCharCode(48 + tmp);
         		        if (selected_antennas_list != null && selected_antennas_list.indexOf(chr) >= 0) {
 			                 if (inputs[i].textContent == 'Antenna '+tmp) w3_highlight(inputs[i]);
@@ -233,7 +236,7 @@ function ant_switch_lock_buttons(lock) {
         var inputs = document.getElementsByTagName("button");
         for (var i = 0; i < inputs.length; i++) {
                 // ant 1-7
-                var re=/^Antenna ([1-7])/i;
+                var re=/^Antenna ([1-8])/i;
                 if (inputs[i].textContent.match(re)) {
                         if (lock == true) {
                                 inputs[i].disabled = true; 
@@ -280,3 +283,7 @@ function ant_switch_conf_denymixing(id, idx) {
         var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
 }
 
+function ant_switch_thunderstorm() {
+        ext_set_cfg_param('ant_switch.denyswitching', 1, true);
+        ant_switch_select_antenna('g');
+}  

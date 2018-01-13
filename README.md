@@ -2,7 +2,7 @@
 
 This is antenna switch extension to KiwiSDR software defined radio.
 
-Antenna switch can control out-of-stock antenna switch MS-S7-WEB, or your homemade antenna switches which uses Beaglebone GPIO-pins. You can also write your own backend for third party antenna switch.
+Antenna switch can control out-of-stock antenna switches and utilize Beaglebone GPIO-pins. You can also write your own backend for third party antenna switch.
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
@@ -29,11 +29,12 @@ You need antenna switch hardware.
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
 * beagle-gpio for controlling Beaglebone green GPIO pins
 * arduino-netshield for Arduino Nano V3.0 GPIO pins. ENC28J60 Ethernet Shield needed.
+* Snaptekk Wifi ham radio 8 antenna switch
 * example-backend is example script for your own backend development
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.150. Does not work on older versions than v1.95 due KiwiSDR API changes.
+* Tested to work with KiwiSDR v1.154. Does not work on older versions than v1.95 due KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
 
 ## Installation
@@ -55,7 +56,7 @@ Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
 By default users can switch antennas and select multiple simultanoius antennas.
 
-Describe your antennas 1-7. If you leave antenna description empty, antenna button won't be visible to users.
+Describe your antennas 1-8. If you leave antenna description empty, antenna button won't be visible to users.
 
 Antenna switch failure or unknown status decription will be show to users if antenna switch is unreachable or malfunctioning. 
 
