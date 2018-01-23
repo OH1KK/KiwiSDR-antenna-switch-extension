@@ -36,6 +36,7 @@ You need antenna switch hardware.
 
 * Tested to work with KiwiSDR v1.154. Does not work on older versions than v1.95 due KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
+* Tested to work with Snaptekk WiFi wireless 8 antenna switch
 
 ## Installation
 
