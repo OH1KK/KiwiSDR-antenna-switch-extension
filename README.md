@@ -94,4 +94,4 @@ If you want to support this project, you can [send a donation via PayPal](https:
 
 [The MIT License (MIT)](LICENSE)
 
-Copyright (c) 2017 Kari Karvonen
+Copyright (c) 2018 Kari Karvonen
