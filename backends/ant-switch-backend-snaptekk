@@ -34,7 +34,7 @@ else
 fi
 
 CURLEXEC=/usr/bin/curl
-CURLOPTS=" --silent --connect-timeout 1 --max-time 2 "
+CURLOPTS=" --silent --connect-timeout 1 --max-time 1 "
 
 AntSW_ShowBackend() {
 	echo "ant-switch-backend-snaptekk version $VERSION"
