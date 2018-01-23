@@ -86,7 +86,6 @@ function ant_switch_controls_setup()
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
 
-   //buttons_html+=w3_inline('', '', w3_button('','Ground all', 'ant_switch_select_groundall'), 'Ground all antennas');
    //console.log('ant_switch: Antenna g: Ground all antennas');
    var data_html =
       '<div id="id-ant_switch-data"></div>';
