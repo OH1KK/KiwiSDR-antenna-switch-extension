@@ -53,7 +53,7 @@ Installer copies ant_switch files on place, creates configuration file and recom
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
-![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface-20180123.png)
+![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface_20180123.png)
 
 By default users can switch antennas and select multiple simultanoius antennas.
 
@@ -66,7 +66,7 @@ Antenna switch failure or unknown status decription will be show to users if ant
 Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show.
 
 ![ant switch extension user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch_20180123.png)
-![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface-20180123.png)
+![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_20180123.png)
 
 Single antenna mode: Click to select antenna. 
 
