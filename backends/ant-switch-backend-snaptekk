@@ -25,8 +25,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.3
-SNAPTEKK_URL="http://192.168.1.96:9999"
+VERSION=0.4
+
+if [ -e /etc/default/snaptekk ]; then
+	. /etc/default/snaptekk
+else
+	SNAPTEKK_URL="http://192.168.4.1:9999"
+fi
+
 CURLEXEC=/usr/bin/curl
 CURLOPTS=" --silent --connect-timeout 1 --max-time 2 "
 
