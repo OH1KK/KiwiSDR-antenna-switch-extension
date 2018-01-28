@@ -10,13 +10,14 @@ Antenna switch can control out-of-stock antenna switches and utilize Beaglebone 
 
 * Basic antenna switching
 * Antenna mixing. In antenna mix mode multiple antennas can be selected simultaniously.
-* <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
 * Admin can lock/unlock antenna switching from admin panel
 * Admin can enable/disable antenna mixing from admin panel
+* Admin can deny antenna switching if more than 1 user is online
 * Antenna switching can be time scheluded using Beaglebone's crontab
   * look at docs/antenna-schedules-using-crontab.txt
 * Switcing back to default antennas when no users are online
   * look at docs/reset-to-default-antennas-when-no-users-online.txt
+* <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
   
 ## Required hardware
 
