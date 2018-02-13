@@ -127,18 +127,15 @@ function ant_switch_config_html()
 				w3_divs('', 'w3-margin-bottom',
                                         w3_divs('', '','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /root/extensions/ant_switch/frontend/ant-switch-frontend script.'),
                                         w3_divs('', '', '<b>Deny antenna switching?</b> ' +
-                                                w3_radio_btn('No', 'ant_switch.denyswitching', denyswitching? 0:1, 'ant_switch_conf_denyswitching') +
-                                                w3_radio_btn('Yes', 'ant_switch.denyswitching', denyswitching? 1:0, 'ant_switch_conf_denyswitching')
+                                                w3_switch('', 'No', 'Yes', 'ant_switch.denyswitching', denyswitching, 'ant_switch_conf_denyswitching')
                                         ),
                                         w3_divs('', '','If antenna mixing is denied then users can select only one antenna at time.'),
                                         w3_divs('', '', '<b>Deny antenna mixing?</b> ' +
-                                                w3_radio_btn('No', 'ant_switch.denymixing', denymixing? 0:1, 'ant_switch_conf_denymixing') +
-                                                w3_radio_btn('Yes', 'ant_switch.denymixing', denymixing? 1:0, 'ant_switch_conf_denymixing')
+                                                w3_switch('', 'No', 'Yes', 'ant_switch.denymixing', denymixing, 'ant_switch_conf_denymixing')
                                         ),
                                         w3_divs('', '','If multiuser is denied then antenna switching is disabled when more than 1 user is online.'),
                                         w3_divs('', '', '<b>Deny multiuser switching?</b> ' +
-                                                w3_radio_btn('No', 'ant_switch.denymultiuser', denymultiuser? 0:1, 'ant_switch_conf_denymultiuser') +
-                                                w3_radio_btn('Yes', 'ant_switch.denymultiuser', denymultiuser? 1:0, 'ant_switch_conf_denymultiuser')
+                                                w3_switch('', 'No', 'Yes', 'ant_switch.denymultiuser', denymultiuser, 'ant_switch_conf_denymultiuser')
                                         ),
                                         w3_divs('', '','<b>Thunderstorm</b><br>'),
                                         w3_button('','Ground all antennas immediately and deny switching', 'ant_switch_thunderstorm'), 
@@ -294,4 +291,4 @@ function ant_switch_conf_denymultiuser(id, idx) {
 function ant_switch_thunderstorm() {
         ext_set_cfg_param('ant_switch.denyswitching', 1, true);
         ant_switch_select_antenna('g');
-}  
+}
