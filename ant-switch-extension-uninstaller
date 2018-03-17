@@ -25,6 +25,13 @@
 
 echo "Welcome to ant_switch extension uninstaller"
 echo ""
+
+if [ "x$TERM" == "xdumb" ]; then
+    echo "Error: Can't run this script from Kiwi console window."
+    echo "Please use SSH or PuTTY to login to Kiwi Beagle directly then run script."
+    exit 1
+fi
+
 echo "Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
 read ok
 if [ "x$ok" == "xy" ]; then
