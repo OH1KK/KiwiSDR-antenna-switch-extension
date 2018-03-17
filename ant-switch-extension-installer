@@ -29,6 +29,12 @@ VERSION=0.2
 echo "Welcome to KiwiSDR antenna switch extension installer"
 echo ""
 
+if [ "x$TERM" == "xdumb" ]; then
+    echo "Error: Can't run this script from Kiwi console window."
+    echo "Please use SSH or PuTTY to login to Kiwi Beagle directly then run script."
+    exit 1
+fi
+
 if [ "x`which curl`" == "x" ]; then
 	echo "Curl not found. Do you want to install it now (y/n) ?"
 	read ok
