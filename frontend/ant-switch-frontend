@@ -25,7 +25,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.2
+VERSION=0.3
 
 BACKENDFILE=/root/extensions/ant_switch/backends/ant-switch-backend
 if [ -x $BACKENDFILE ]; then
@@ -45,12 +45,12 @@ AntSW_SelectBackend() {
 		echo $name
 		done
 		echo ""
-		if [ "x$BACKEND" == "x" ]; then
+		if [[ -z "${BACKEND// }" ]]; then
         		BACKEND="ms-s7-web"
 		fi
 		echo "which backend you would like to use (default: $BACKEND) ?"
 		read selected_backend
-		if [ "x$selected_backend" == "x" ]; then
+		if [[ -z "${selected_backend// }" ]]; then
 			 selected_backend=$BACKEND
 		fi
 		if [ -r "/root/extensions/ant_switch/backends/ant-switch-backend-$selected_backend" ]; then
@@ -64,7 +64,6 @@ AntSW_SelectBackend() {
 	done
 }
 
-
 AntSW_ShowUsage() {
 	echo "ant-switch-frontend - glue between KiwiSDR and antenna switches"
 	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
@@ -72,7 +71,7 @@ AntSW_ShowUsage() {
 	echo "Usage: $0 command"
         echo ""
 	echo "Basic antenna switching commands"
-	for s in 1 2 3 4 5 6 7; do
+	for s in 1 2 3 4 5 6 7 8; do
 	        echo "$s  = Switch to antenna $s"
 	done
 	echo "g  = Ground all antennas"
@@ -96,22 +95,22 @@ AntSW_ShowUsage() {
 
 
 case $1 in
-	1|2|3|4|5|6|7)
+	1|2|3|4|5|6|7|8)
 		AntSW_Initialize
                 AntSW_GroundAll
 		AntSW_SelectAntenna $1
 		;;
-	+1|+2|+3|+4|+5|+6|+7)
+	+1|+2|+3|+4|+5|+6|+7|+8)
 		AntSW_Initialize
 		antadd=${1//+} 
 		AntSW_SelectAntenna $antadd
 		;;
-	-1|-2|-3|-4|-5|-6|-7)
+	-1|-2|-3|-4|-5|-6|-7|-8)
 		AntSW_Initialize
 		antremove=${1//-} 
 		AntSW_DeSelectAntenna $antremove
 		;;
-	t1|t2|t3|t4|t5|t6|t7)
+	t1|t2|t3|t4|t5|t6|t7|t8)
 		AntSW_Initialize
                 anttoggle=${1//t}
 		AntSW_ToggleAntenna $anttoggle

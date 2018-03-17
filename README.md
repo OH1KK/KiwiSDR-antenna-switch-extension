@@ -10,13 +10,14 @@ Antenna switch can control out-of-stock antenna switches and utilize Beaglebone 
 
 * Basic antenna switching
 * Antenna mixing. In antenna mix mode multiple antennas can be selected simultaniously.
-* Thunderstorm mode. In thunderstorm mode all antennas are grounded.
 * Admin can lock/unlock antenna switching from admin panel
 * Admin can enable/disable antenna mixing from admin panel
+* Admin can deny antenna switching if more than 1 user is online
 * Antenna switching can be time scheluded using Beaglebone's crontab
   * look at docs/antenna-schedules-using-crontab.txt
 * Switcing back to default antennas when no users are online
   * look at docs/reset-to-default-antennas-when-no-users-online.txt
+* <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
   
 ## Required hardware
 
@@ -28,14 +29,15 @@ You need antenna switch hardware.
 
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
 * beagle-gpio for controlling Beaglebone green GPIO pins
+* snaptekk for controlling Snaptekk Wifi ham radio 8 antenna switch
 * arduino-netshield for Arduino Nano V3.0 GPIO pins. ENC28J60 Ethernet Shield needed.
-* Snaptekk Wifi ham radio 8 antenna switch
 * example-backend is example script for your own backend development
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.154. Does not work on older versions than v1.95 due KiwiSDR API changes.
+* Tested to work with KiwiSDR v1.162. Does not work on older versions than v1.95 due KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
+* Tested to work with Snaptekk WiFi wireless 8 antenna switch
 
 ## Installation
 
@@ -52,7 +54,7 @@ Installer copies ant_switch files on place, creates configuration file and recom
 
 Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
-![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface-20170110.png)
+![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface_20180123.png)
 
 By default users can switch antennas and select multiple simultanoius antennas.
 
@@ -64,8 +66,8 @@ Antenna switch failure or unknown status decription will be show to users if ant
 
 Open your KiwiSDR as user. Enable ant_switch extension from extension drop down menu. Antenna switch will show.
 
-![ant switch extension user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch.png)
-![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface-20170110.png)
+![ant switch extension user interface launch](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_launch_20180123.png)
+![ant_switch_extension_user_interface](http://oh1kk.toimii.fi/ant_switch_extension/user_interface_20180123.png)
 
 Single antenna mode: Click to select antenna. 
 
@@ -93,4 +95,4 @@ If you want to support this project, you can [send a donation via PayPal](https:
 
 [The MIT License (MIT)](LICENSE)
 
-Copyright (c) 2017 Kari Karvonen
+Copyright (c) 2018 Kari Karvonen

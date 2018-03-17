@@ -1,5 +1,5 @@
-// Copyright (c) 2017 Kari Karvonen, OH1KK
-//
+// Copyright (c) 2018 Kari Karvonen, OH1KK
+
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
 #include "kiwi.h"
@@ -71,6 +71,7 @@ int ant_switch_validate_cmd(char *cmd) {
 	if (strcmp(cmd, "5") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "6") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "7") == 0) is_valid_cmd=true;
+	if (strcmp(cmd, "8") == 0) is_valid_cmd=true;
 	if (strcmp(cmd, "g") == 0) is_valid_cmd=true;
 	return(is_valid_cmd);
 }
@@ -87,8 +88,21 @@ bool ant_switch_read_denymixing() {
      bool error;
      char cfgparam[26]="ant_switch.denymixing\0";
      int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
-     // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
+     // error handling: if deny parameter is not defined, or it is 0, then mixing is allowed
      if (result == 1) return true; else return false;
+}
+
+bool ant_switch_read_denymultiuser() {
+     bool error;
+     char cfgparam[26]="ant_switch.denymultiuser\0";
+     int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+     // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
+     if (result == 1) {
+         // option is set. Now check if more than 1 user online rx_util.cpp current_nusers variable
+        if(current_nusers > 1) return true; else return false;
+    } else {
+        return false;
+    }
 }
 
 bool ant_switch_msgs(char *msg, int rx_chan)
@@ -107,7 +121,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 
         n = sscanf(msg, "SET Antenna=%s", &antenna);
         if (n == 1) {
-                if (ant_switch_read_denyswitching()==true) {
+                if (ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
                     ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
                     return true;            
                 } else {
@@ -129,7 +143,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
         if (strcmp(msg, "GET Antenna") == 0) {
             char *selected_antennas = ant_switch_queryantennas();
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT Antenna=%s", selected_antennas);
-            if (ant_switch_read_denyswitching()==true) {
+            if (ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
             	ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
 	    } else {
             	ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=0");

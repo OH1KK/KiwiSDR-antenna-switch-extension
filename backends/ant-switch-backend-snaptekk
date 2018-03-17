@@ -25,10 +25,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.3
-SNAPTEKK_URL="http://192.168.1.96:9999"
+VERSION=0.4
+
+if [ -e /etc/default/snaptekk ]; then
+	. /etc/default/snaptekk
+else
+	SNAPTEKK_URL="http://192.168.4.1:9999"
+fi
+
 CURLEXEC=/usr/bin/curl
-CURLOPTS=" --silent --connect-timeout 1 --max-time 2 "
+CURLOPTS=" --silent --connect-timeout 1 --max-time 1 "
 
 AntSW_ShowBackend() {
 	echo "ant-switch-backend-snaptekk version $VERSION"
@@ -43,7 +49,7 @@ AntSW_Initialize() {
 AntSW_GroundAll() {
 	# This function grounds all antennas
 	# no return value
-	:
+	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/g > /dev/null 2>&1
 }
 
 AntSW_SelectAntenna() {
@@ -51,8 +57,7 @@ AntSW_SelectAntenna() {
 	# Only one antenna
 	# Antenna to select is on variable $1
 	# no return value
-	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/$1 > /dev/null 2>&1
-	AntSW_ShowSelected
+	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/+$1 > /dev/null 2>&1
 }
 
 AntSW_DeSelectAntenna() {
@@ -60,7 +65,7 @@ AntSW_DeSelectAntenna() {
 	# Antenna to deleselct is on variable $1
         # Only one antenna
         # no return value
-	:
+	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/-$1 > /dev/null 2>&1
 }
 
 AntSW_ToggleAntenna() {
@@ -70,7 +75,7 @@ AntSW_ToggleAntenna() {
 	# Antenna to toogle is on variable $1
         # Only one antenna
         # no return value
-	:
+	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/t$1 > /dev/null 2>&1
 }
 
 AntSW_ShowSelected() {
