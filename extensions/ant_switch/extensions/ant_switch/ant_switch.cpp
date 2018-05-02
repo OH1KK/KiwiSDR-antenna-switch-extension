@@ -33,7 +33,7 @@ char * ant_switch_queryantennas() {
 	int n;
 	asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend s");
 	reply = non_blocking_cmd(cmd, NULL);
-	n = sscanf(kstr_sp(reply), "Selected antennas: %s", &selected_antennas);
+	n = sscanf(kstr_sp(reply), "Selected antennas: %s", selected_antennas);
 	free(cmd);
 	kstr_free(reply);
 	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", reply);
@@ -119,7 +119,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 		return true;
 	}
 
-        n = sscanf(msg, "SET Antenna=%s", &antenna);
+        n = sscanf(msg, "SET Antenna=%s", antenna);
         if (n == 1) {
                 if (ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
                     ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
