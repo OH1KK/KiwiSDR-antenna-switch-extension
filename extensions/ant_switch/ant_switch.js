@@ -81,7 +81,10 @@ function ant_switch_controls_setup()
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
            }  else {
-                buttons_html+=w3_divs('','', w3_inline('', '', w3_button('','Antenna '+tmp, 'ant_switch_select_'+tmp),antdesc[tmp]));
+                buttons_html += w3_div('w3-valign w3-margin-B-8',
+                  w3_button('', 'Antenna '+tmp, 'ant_switch_select_'+tmp),
+                  w3_div('w3-margin-L-8', antdesc[tmp])
+               );
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
@@ -103,7 +106,7 @@ function ant_switch_controls_setup()
 
 	ext_panel_show(controls_html, null, null);
         ant_switch_data_canvas = w3_el('id-ant_switch-data-canvas');
-        ext_set_controls_width_height(400,330);
+        ext_set_controls_width_height(400,360);
         ant_switch_poll();
 }
 
@@ -116,9 +119,10 @@ function ant_switch_blur()
 // called to display HTML for configuration parameters in admin interface
 function ant_switch_config_html()
 {
-        var denyswitching = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE);
-        var denymixing = ext_get_cfg_param('ant_switch.denymixing', '', EXT_NO_SAVE);
-        var denymultiuser = ext_get_cfg_param('ant_switch.denymultiuser', '', EXT_NO_SAVE);
+        // *_no_yes: 0 -> 'No', 1 -> 'Yes' in w3_switch() below
+        var denyswitching_no_yes = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE)? 0:1;
+        var denymixing_no_yes = ext_get_cfg_param('ant_switch.denymixing', '', EXT_NO_SAVE)? 0:1;
+        var denymultiuser_no_yes = ext_get_cfg_param('ant_switch.denymultiuser', '', EXT_NO_SAVE)? 0:1;
 	ext_admin_config(ant_switch_ext_name, 'Antenna switch',
 		w3_divs('id-ant_switch w3-text-teal w3-hide', '',
 			'<b>Antenna switch configuration</b>' +
@@ -127,29 +131,29 @@ function ant_switch_config_html()
 				w3_divs('', 'w3-margin-bottom',
                                         w3_divs('', '','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /root/extensions/ant_switch/frontend/ant-switch-frontend script.'),
                                         w3_divs('', '', '<b>Deny antenna switching?</b> ' +
-                                                w3_switch('', 'No', 'Yes', 'ant_switch.denyswitching', denyswitching, 'ant_switch_conf_denyswitching')
+                                                w3_switch('', 'No', 'Yes', 'ant_switch.denyswitching', denyswitching_no_yes, 'ant_switch_conf_denyswitching')
                                         ),
                                         w3_divs('', '','If antenna mixing is denied then users can select only one antenna at time.'),
                                         w3_divs('', '', '<b>Deny antenna mixing?</b> ' +
-                                                w3_switch('', 'No', 'Yes', 'ant_switch.denymixing', denymixing, 'ant_switch_conf_denymixing')
+                                                w3_switch('', 'No', 'Yes', 'ant_switch.denymixing', denymixing_no_yes, 'ant_switch_conf_denymixing')
                                         ),
                                         w3_divs('', '','If multiuser is denied then antenna switching is disabled when more than 1 user is online.'),
                                         w3_divs('', '', '<b>Deny multiuser switching?</b> ' +
-                                                w3_switch('', 'No', 'Yes', 'ant_switch.denymultiuser', denymultiuser, 'ant_switch_conf_denymultiuser')
+                                                w3_switch('', 'No', 'Yes', 'ant_switch.denymultiuser', denymultiuser_no_yes, 'ant_switch_conf_denymultiuser')
                                         ),
                                         w3_divs('', '','<b>Thunderstorm</b><br>'),
                                         w3_button('','Ground all antennas immediately and deny switching', 'ant_switch_thunderstorm'), 
                                         w3_divs('', '','<hr><b>Antenna buttons configuration</b><br>'),
                                         w3_divs('', '','Leave Antenna description field empty if you want to hide antenna button from users<br>'),
-					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna 2 description', 'ant_switch.ant2desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna 3 description', 'ant_switch.ant3desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna 4 description', 'ant_switch.ant4desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna 5 description', 'ant_switch.ant5desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna 6 description', 'ant_switch.ant6desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna 7 description', 'ant_switch.ant7desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna 8 description', 'ant_switch.ant8desc', 'w3_string_set_cfg_cb'),
-					w3_input_get_param('Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb')
+					w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna 2 description', 'ant_switch.ant2desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna 3 description', 'ant_switch.ant3desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna 4 description', 'ant_switch.ant4desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna 5 description', 'ant_switch.ant5desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna 6 description', 'ant_switch.ant6desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna 7 description', 'ant_switch.ant7desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna 8 description', 'ant_switch.ant8desc', 'w3_string_set_cfg_cb', ''),
+					w3_input_get_param('Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb', '')
 				), '', ''
 			)
 		)
@@ -289,6 +293,9 @@ function ant_switch_conf_denymultiuser(id, idx) {
 }
 
 function ant_switch_thunderstorm() {
-        ext_set_cfg_param('ant_switch.denyswitching', 1, true);
+        ext_set_cfg_param('ant_switch.denyswitching', 1, EXT_SAVE);
+
+        // new API: use w3_call() so reference to w3_switch_set_value() doesn't fail for releases < v1.195
+        w3_call('w3_switch_set_value', 'ant_switch.denyswitching', 1);
         ant_switch_select_antenna('g');
 }
