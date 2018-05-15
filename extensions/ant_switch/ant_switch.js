@@ -294,6 +294,8 @@ function ant_switch_conf_denymultiuser(id, idx) {
 
 function ant_switch_thunderstorm() {
         ext_set_cfg_param('ant_switch.denyswitching', 1, EXT_SAVE);
-        w3_switch_set_value('ant_switch.denyswitching', 1);
+
+        // new API: use w3_call() so reference to w3_switch_set_value() doesn't fail for releases < v1.195
+        w3_call('w3_switch_set_value', 'ant_switch.denyswitching', 1);
         ant_switch_select_antenna('g');
 }
