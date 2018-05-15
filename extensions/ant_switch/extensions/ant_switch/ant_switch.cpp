@@ -127,7 +127,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
                 } else {
                     ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=0");                 
                 }
-                // FIXME: or toggleantenna if antenna mixig is allowed
+                // FIXME: or toggleantenna if antenna mixing is allowed
 		if (ant_switch_validate_cmd(antenna)) {
 		        if (ant_switch_read_denymixing() == 1) {
 		            ant_switch_setantenna(antenna);
