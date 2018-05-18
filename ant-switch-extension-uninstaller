@@ -32,7 +32,7 @@ if [ "x$TERM" == "xdumb" ]; then
     exit 1
 fi
 
-echo "Do you want to uninstall KiwiSDR antenna switch extension (y/n)"
+echo -n "Do you want to uninstall KiwiSDR antenna switch extension (y/n) ? "
 read ok
 if [ "x$ok" == "xy" ]; then
         echo ""

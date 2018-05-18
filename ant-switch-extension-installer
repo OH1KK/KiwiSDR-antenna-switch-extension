@@ -36,7 +36,7 @@ if [ "x$TERM" == "xdumb" ]; then
 fi
 
 if [ "x`which curl`" == "x" ]; then
-	echo "Curl not found. Do you want to install it now (y/n) ?"
+	echo -n "Curl not found. Do you want to install it now (y/n) ? "
 	read ok
 	if [ "x$ok" == "xy" ]; then
 		apt-get install curl
@@ -51,7 +51,7 @@ if [ "x`which curl`" == "x" ]; then
 fi
 
 if [ "x`which jq`" == "x" ]; then
-	echo "jq not found. Do you want to install it now (y/n) ?"
+	echo -n "jq not found. Do you want to install it now (y/n) ? "
 	read ok
 	if [ "x$ok" == "xy" ]; then
 		apt-get install jq
@@ -78,7 +78,7 @@ while [ "$valid_backend_selected" == 0 ]; do
 	if [ "x$BACKEND" == "x" ]; then
         	BACKEND="ms-s7-web"
 	fi
-	echo "which backend you would like to use (default: $BACKEND) ?"
+	echo -n "which backend you would like to use (default: $BACKEND) ? "
 	read selected_backend
 	if [ "x$selected_backend" == "x" ]; then
 		 selected_backend=$BACKEND
@@ -89,6 +89,7 @@ while [ "$valid_backend_selected" == 0 ]; do
 		mkdir -p /root/extensions/ant_switch/backends
 		cp backends/* /root/extensions/ant_switch/backends
 		chmod a+rx /root/extensions/ant_switch/backends/ant-switch-backend-*
+		rm -f /root/extensions/ant_switch/backends/ant-switch-backend
 		ln -s /root/extensions/ant_switch/backends/ant-switch-backend-$selected_backend /root/extensions/ant_switch/backends/ant-switch-backend
 	else
 		echo "Invalid selection $selected_backend. Try again."
@@ -100,6 +101,7 @@ echo ""
 cp -varf extensions/* /root/extensions/
 cp -varf frontend /root/extensions/ant_switch/
 chmod a+rx /root/extensions/ant_switch/frontend/ant-switch-frontend
+rm -f /usr/local/bin/ant-switch-frontend
 ln -s /root/extensions/ant_switch/frontend/ant-switch-frontend /usr/local/bin
 echo ""
 echo "Rebuilding KiwiSDR. This will take about 13 minutes."
