@@ -77,6 +77,7 @@ function ant_switch_controls_setup()
    var tmp;
    for (tmp=1; tmp<9; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
    console.log('ant_switch: Antenna configuration');
+   var n_ant = 0;
    for (tmp = 1; tmp<9; tmp++) {
            if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
                 antdesc[tmp] = ''; 
@@ -85,6 +86,7 @@ function ant_switch_controls_setup()
                   w3_button('', 'Antenna '+tmp, 'ant_switch_select_'+tmp),
                   w3_div('w3-margin-L-8', antdesc[tmp])
                );
+               n_ant++;
            }
            console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
@@ -106,7 +108,7 @@ function ant_switch_controls_setup()
 
 	ext_panel_show(controls_html, null, null);
         ant_switch_data_canvas = w3_el('id-ant_switch-data-canvas');
-        ext_set_controls_width_height(400,360);
+        ext_set_controls_width_height(400, 90 + Math.round(n_ant * 36.5667));
         ant_switch_poll();
 }
 
