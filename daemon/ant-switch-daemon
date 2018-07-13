@@ -16,5 +16,5 @@ service ant-switch-daemon
     server          = /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
     instances       = 1
     type            = unlisted
-    #only_from	    = 89.190.3.61
+    #only_from	    = 192.168.0.123
 }
