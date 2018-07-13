@@ -22,6 +22,9 @@ case $CMD in
 	s|q)
 		$FRONTEND "$CMD"
 		;;
+	h)
+		$FRONTEND "$CMD"
+		;;
 	*)
 		echo "Invalid or unallowed command \"$CMD\""
 esac
