@@ -1,4 +1,4 @@
-ant-switch-daemon 
+ant-switch-daemon is xinetd script that allowed telnet commands to antenna switch
 
 Install instructions
 sudo apt-get install xinetd
