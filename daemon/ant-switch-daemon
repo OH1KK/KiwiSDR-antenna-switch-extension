@@ -1,0 +1,27 @@
+#!/bin/bash
+
+FRONTEND=/root/extensions/ant_switch/frontend/ant-switch-frontend
+trap "" 2 3 24
+IFS=$'\t\r'
+read -r -a INPUT
+CMD=`echo "$INPUT" | tr -d '\r'`
+
+case $CMD in 
+        1|2|3|4|5|6|7|8)
+		$FRONTEND "$CMD"
+		;;
+        +1|+2|+3|+4|+5|+6|+7|+8)
+		$FRONTEND "$CMD"
+		;;
+	t1|t2|t3|t4|t5|t6|t7|t8)
+		$FRONTEND "$CMD"
+		;;
+        -1|-2|-3|-4|-5|-6|-7|-8)
+		$FRONTEND "$CMD"
+		;;
+	s|q)
+		$FRONTEND "$CMD"
+		;;
+	*)
+		echo "Invalid or unallowed command \"$CMD\""
+esac
