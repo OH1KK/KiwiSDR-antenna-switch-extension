@@ -1,0 +1,20 @@
+# Install instructions
+# sudo apt-get install xinetd
+# cp ant-switch-daemon /etc/xinet.d/
+# then telnet to your kiwisdr
+# telnet sdr.vy.fi 6500
+# and give a command, for example h for help
+
+service ant-switch-daemon
+{
+    disable         = no
+    port            = 65000
+    socket_type     = stream
+    protocol        = tcp
+    wait            = no
+    user            = root
+    server          = /root/extensions/ant_switch/daemon/ant-switch-daemon-script
+    instances       = 1
+    type            = unlisted
+    #only_from	    = 89.190.3.61
+}
