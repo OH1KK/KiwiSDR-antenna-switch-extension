@@ -20,6 +20,7 @@ Antenna switch can control out-of-stock antenna switches and utilize Beaglebone 
 * <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
 * Telnet daemon (optional). You can switch antennas using telnet commands
   * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
+  * look at docs/ant-switch-daemon.txt
   
 ## Required hardware
 
