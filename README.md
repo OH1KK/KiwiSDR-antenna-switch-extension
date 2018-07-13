@@ -18,7 +18,8 @@ Antenna switch can control out-of-stock antenna switches and utilize Beaglebone 
 * Switcing back to default antennas when no users are online
   * look at docs/reset-to-default-antennas-when-no-users-online.txt
 * <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
-* Telnet daemon (optional). You can switch antennas using telnet commands. Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
+* Telnet daemon (optional). You can switch antennas using telnet commands
+  * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
   
 ## Required hardware
 
