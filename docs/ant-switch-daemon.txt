@@ -1,8 +1,11 @@
 ant-switch-daemon is xinetd script that allowed telnet commands to antenna switch
 
 Install instructions
+
 sudo apt-get install xinetd
-cp ant-switch-daemon /etc/xinet.d/
+mkdir -p /root/extensions/ant_switch/daemon/
+curl https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/ant-switch-daemon/daemon/ant-switch-daemon > /etc/xinet.d/ant-switch-daemon
+curl https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/ant-switch-daemon/daemon/ant-switch-daemon-wrapper > /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
 chmod a+rx /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
 /etc/init.d/xinetd restart
 
