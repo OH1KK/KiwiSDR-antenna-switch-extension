@@ -13,7 +13,7 @@ service ant-switch-daemon
     protocol        = tcp
     wait            = no
     user            = root
-    server          = /root/extensions/ant_switch/daemon/ant-switch-daemon-script
+    server          = /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
     instances       = 1
     type            = unlisted
     #only_from	    = 89.190.3.61
