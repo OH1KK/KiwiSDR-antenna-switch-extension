@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The MIT License (MIT)
 #	
-# ant-switch-daemon-script - xinetd script to pass telnet commands to ant-switch-fronted
+# ant-switch-daemon-wrapper - xinetd script to pass telnet commands to ant-switch-fronted
 #
 # This is part of KiwiSDR antenna switch extension
 #
