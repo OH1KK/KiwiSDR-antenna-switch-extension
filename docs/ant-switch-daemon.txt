@@ -13,9 +13,9 @@ chmod a+rx /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
 
 == Usage ==
 
-Daemon takes same commands as ant-switch-frontend
+Daemon takes (almost) same commands as ant-switch-frontend
 
-You cand command from linux console using netcat
+You can command from linux console using netcat
 
     echo "s" | nc kiwisdr.example.org 65000
 
@@ -25,6 +25,9 @@ Or just telnet to your kiwisdr
 
 and give a command, for example h for help
 
+Note. Some antenna switch commands are restricted in ant-switch-daemon-wrapper, look at source code and modify if needed.
+
 == Bugs etc ==
 
-If something goes wrong, cat /var/log/syslog
+If something goes wrong, look first syslog, cat /var/log/syslog
+
