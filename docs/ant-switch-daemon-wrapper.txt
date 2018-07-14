@@ -19,6 +19,9 @@ Daemon takes (almost) same commands as ant-switch-frontend
 
 You can command from linux console using netcat
 
+    echo "1" | nc kiwisdr.example.org 65000
+    echo "s" | nc kiwisdr.example.org 65000
+    echo "+3" | nc kiwisdr.example.org 65000
     echo "s" | nc kiwisdr.example.org 65000
 
 Or just telnet to your kiwisdr
