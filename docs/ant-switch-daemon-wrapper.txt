@@ -1,5 +1,7 @@
 ant-switch-daemon-wrapper is script that allows controlling antenna switch from telnet.
 
+This is optional and not installed by default
+
 == Install instructions ==
 
 Take ssh connection to your KiwiSDR as root and then
