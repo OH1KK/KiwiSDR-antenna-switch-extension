@@ -1,0 +1,14 @@
+service ant-switch-daemon
+{
+    disable         = no
+    port            = 65000
+    socket_type     = stream
+    protocol        = tcp
+    wait            = no
+    user            = root
+    server          = /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
+    instances       = 1
+    type            = unlisted
+    #only_from	    = 127.0.0.1 192.168.0.0/16
+    log_on_success  += HOST PID EXIT DURATION
+}

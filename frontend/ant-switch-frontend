@@ -5,7 +5,7 @@
 #
 # This is part of KiwiSDR antenna switch extension
 #
-# Copyright (c) 2017 Kari Karvonen
+# Copyright (c) 2018 Kari Karvonen
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.3
+VERSION=0.4
 
 BACKENDFILE=/root/extensions/ant_switch/backends/ant-switch-backend
 if [ -x $BACKENDFILE ]; then
@@ -66,7 +66,7 @@ AntSW_SelectBackend() {
 
 AntSW_ShowUsage() {
 	echo "ant-switch-frontend - glue between KiwiSDR and antenna switches"
-	echo "Version $VERSION Copyright (c) 2017 Kari Karvonen"
+	echo "Version $VERSION Copyright (c) 2018 Kari Karvonen"
 	echo ""
 	echo "Usage: $0 command"
         echo ""
@@ -91,6 +91,7 @@ AntSW_ShowUsage() {
 	echo "bs = select backend"
 	echo "bi = backend information. Show selected backend"
 	echo "     and it's configuration / help"
+	echo "h = help"
 }
 
 
@@ -129,7 +130,14 @@ case $1 in
         bs)
                 AntSW_SelectBackend
                 ;;
-	*)
+	h|"")
 		AntSW_ShowUsage
+		;;
+
+	*)
+		echo "Invalid command \"$1\""
+		echo ""
+		echo "See help"
+		echo "$0 h"
 		;;
 esac

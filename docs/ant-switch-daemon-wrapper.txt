@@ -1,0 +1,46 @@
+ant-switch-daemon-wrapper is script that allows controlling antenna switch from telnet.
+
+This is optional and not installed by default
+
+== Install instructions ==
+
+Take ssh connection to your KiwiSDR as root and then
+
+sudo apt-get install xinetd
+mkdir -p /root/extensions/ant_switch/daemon/
+curl https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/ant-switch-daemon/daemon/ant-switch-daemon > /etc/xinetd.d/ant-switch-daemon
+curl https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/ant-switch-daemon/daemon/ant-switch-daemon-wrapper > /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
+chmod a+rx /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
+/etc/init.d/xinetd restart
+
+== Usage ==
+
+Daemon takes (almost) same commands as ant-switch-frontend
+
+You can command from linux console using netcat
+
+    echo "1" | nc kiwisdr.example.org 65000
+    echo "s" | nc kiwisdr.example.org 65000
+    echo "+3" | nc kiwisdr.example.org 65000
+    echo "s" | nc kiwisdr.example.org 65000
+
+Or just telnet to your kiwisdr
+ 
+    telnet kiwisdr.example.org 65000
+
+and give a command, for example h for help
+
+Note. Some antenna switch commands are restricted in ant-switch-daemon-wrapper, look at source code and modify if needed.
+
+== Security ==
+
+If you do not want open your antenna switch to public, restrict it only to your private network
+
+Modify /etc/xinetd.d/ant-switch-daemon and add restictive line
+
+    only_from	    = 127.0.0.1 192.168.0.0/16 2001:DB8::/32
+
+== Bugs etc ==
+
+If something goes wrong, look first syslog, cat /var/log/syslog
+
