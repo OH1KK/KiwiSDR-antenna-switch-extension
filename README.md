@@ -20,7 +20,7 @@ Antenna switch can control out-of-stock antenna switches and utilize Beaglebone 
 * <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
 * Telnet daemon (optional). You can switch antennas using telnet commands
   * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
-  * look at docs/ant-switch-daemon.txt
+  * look at docs/ant-switch-daemon-wrapper.txt
   
 ## Required hardware
 
@@ -38,7 +38,7 @@ You need antenna switch hardware.
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.194. Does not work on older versions than v1.95 due KiwiSDR API changes.
+* Tested to work with KiwiSDR v1.202. Does not work on older versions than v1.95 due KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
 * Tested to work with Snaptekk WiFi wireless 8 antenna switch
 
