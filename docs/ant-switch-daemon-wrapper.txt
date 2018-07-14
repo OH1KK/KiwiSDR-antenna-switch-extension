@@ -27,6 +27,14 @@ and give a command, for example h for help
 
 Note. Some antenna switch commands are restricted in ant-switch-daemon-wrapper, look at source code and modify if needed.
 
+== Security ==
+
+If you do not want open your antenna switch to public, restrict it only to your private network
+
+Modify /etc/xinetd.d/ant-switch-daemon and add restictive lines
+
+    only_from	    = 127.0.0.1 192.168.0.0/16 2001:DB8::/32
+
 == Bugs etc ==
 
 If something goes wrong, look first syslog, cat /var/log/syslog
