@@ -12,8 +12,20 @@ curl https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/an
 chmod a+rx /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
 /etc/init.d/xinetd restart
 
-then telnet to your kiwisdr
- telnet sdr.vy.fi 65000
+== Usage ==
+
+Daemon takes same commands as ant-switch-frontend
+
+You cand command from linux console using netcat
+
+    echo "s" | nc kiwisdr.example.org 65000
+
+Or just telnet to your kiwisdr
+ 
+    kiwisdr.example.org 65000
+
 and give a command, for example h for help
+
+== Bugs etc ==
 
 If something goes wrong, cat /var/log/syslog
