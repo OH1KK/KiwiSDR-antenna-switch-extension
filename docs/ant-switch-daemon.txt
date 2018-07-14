@@ -1,4 +1,4 @@
-ant-switch-daemon is xinetd script that allowed telnet commands to antenna switch
+ant-switch-daemon-wrapper is script that allows controlling antenna switch from telnet.
 
 == Install instructions ==
 
@@ -7,7 +7,6 @@ Take ssh connection to your KiwiSDR as root and then
 sudo apt-get install xinetd
 mkdir -p /root/extensions/ant_switch/daemon/
 curl https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/ant-switch-daemon/daemon/ant-switch-daemon > /etc/xinetd.d/ant-switch-daemon
-
 curl https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/ant-switch-daemon/daemon/ant-switch-daemon-wrapper > /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
 chmod a+rx /root/extensions/ant_switch/daemon/ant-switch-daemon-wrapper
 /etc/init.d/xinetd restart
@@ -22,7 +21,7 @@ You cand command from linux console using netcat
 
 Or just telnet to your kiwisdr
  
-    kiwisdr.example.org 65000
+    telnet kiwisdr.example.org 65000
 
 and give a command, for example h for help
 
