@@ -36,7 +36,7 @@ Note. Some antenna switch commands are restricted in ant-switch-daemon-wrapper, 
 
 If you do not want open your antenna switch to public, restrict it only to your private network
 
-Modify /etc/xinetd.d/ant-switch-daemon and add restictive lines
+Modify /etc/xinetd.d/ant-switch-daemon and add restictive line
 
     only_from	    = 127.0.0.1 192.168.0.0/16 2001:DB8::/32
 
