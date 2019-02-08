@@ -1,18 +1,19 @@
 # KiwiSDR-antenna-switch-extension
 
-This is antenna switch extension to KiwiSDR software defined radio.
+This is an antenna switch extension to the KiwiSDR software defined radio.
 
-Antenna switch can control out-of-stock antenna switches and utilize Beaglebone GPIO-pins. You can also write your own backend for third party antenna switch.
+The antenna switch can control out-of-stock antenna switches and utilize Beaglebone GPIO-pins.
+You can also write your own backend for third party antenna switches.
 
 ![MS-S7-WEB kit](http://oh1kk.toimii.fi/ant_switch_extension/MS-S7-WEB.jpg)
 
 ## Features
 
 * Basic antenna switching
-* Antenna mixing. In antenna mix mode multiple antennas can be selected simultaniously.
+* Antenna mixing. In antenna mix mode multiple antennas can be selected simultaneously.
 * Admin can lock/unlock antenna switching from admin panel
 * Admin can enable/disable antenna mixing from admin panel
-* Admin can deny antenna switching if more than 1 user is online
+* Admin can deny antenna switching if more than one user is online
 * Antenna switching can be time scheluded using Beaglebone's crontab
   * look at docs/antenna-schedules-using-crontab.txt
 * Switcing back to default antennas when no users are online
@@ -24,9 +25,9 @@ Antenna switch can control out-of-stock antenna switches and utilize Beaglebone 
   
 ## Required hardware
 
-You need KiwiSDR is a software-defined radio (SDR) kit
+You will need the KiwiSDR software-defined radio (SDR) kit.
 
-You need antenna switch hardware.
+You will need antenna switch hardware.
 
 ## Available backends for hardware
 
@@ -34,24 +35,30 @@ You need antenna switch hardware.
 * beagle-gpio for controlling Beaglebone green GPIO pins
 * snaptekk for controlling Snaptekk Wifi ham radio 8 antenna switch
 * arduino-netshield for Arduino Nano V3.0 GPIO pins. ENC28J60 Ethernet Shield needed.
-* example-backend is example script for your own backend development
+* example-backend is an example script for your own backend development
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.202. Does not work on older versions than v1.95 due KiwiSDR API changes.
+* Tested to work with KiwiSDR v1.202. Does not work on versions older than v1.95 due to KiwiSDR API changes.
 * Tested to work with MS-S7-WEB firmware v1.01
 * Tested to work with Snaptekk WiFi wireless 8 antenna switch
 
 ## Installation
 
-open ssh connection to your KiwiSDR as root user
+Open ssh connection to your KiwiSDR as root user and type the commands below.
+Do not install from the "console" tab of the Kiwi admin page.
+This is because the install script rebuilds and restarts the Kiwi software
+and this cannot be done while connected to the Kiwi using the console tab.
 
     cd /root
     git clone https://github.com/OH1KK/KiwiSDR-antenna-switch-extension.git
     cd KiwiSDR-antenna-switch-extension
     bash ./ant-switch-extension-installer
 
-Installer copies ant_switch files on place, creates configuration file and recompiles KiwiSDR. This will take several minutes. After compile is finished, KiwiSDR will be restarted. After restart ant_switch extension is installed to KiwiSDR.
+The installer copies the files to the correct place, creates a configuration file
+and recompiles the KiwiSDR server.
+This will take several minutes. After the compile is finished, the KiwiSDR will be restarted.
+After restart the antenna switch extension is installed on the KiwiSDR.
 
 ## Configuration
 
@@ -59,7 +66,7 @@ Open your KiwiSDR admin panel. Then Extensions -> Antenna Switch.
 
 ![ant switch extenstion admin interface](http://oh1kk.toimii.fi/ant_switch_extension/admin_interface_20180123.png)
 
-By default users can switch antennas and select multiple simultanoius antennas.
+By default users can switch antennas and select multiple simultaneous antennas.
 
 Describe your antennas 1-8. If you leave antenna description empty, antenna button won't be visible to users.
 
@@ -74,13 +81,13 @@ Open your KiwiSDR as user. Enable ant_switch extension from extension drop down 
 
 Single antenna mode: Click to select antenna. 
 
-Antenna mixing mode: you can select multiple antennas simultaniously. Click antennas on/off. 
+Antenna mixing mode: you can select multiple antennas simultaneously. Click antennas on/off. 
 
 If admin has disable antenna switching, buttons are grey and you cannot click them.
 
 ## Uninstalling extension
 
-open ssh connection to your KiwiSDR as root user
+Open an ssh connection to your KiwiSDR as the root user and type:
 
     cd /root/KiwiSDR-antenna-switch-extension
     bash ./ant-switch-extension-uninstaller
