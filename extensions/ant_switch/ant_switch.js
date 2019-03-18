@@ -68,16 +68,19 @@ function ant_switch_recv(data)
    }
 }
 
+var ant_switch_n_ant = 8;
+var ant_switch_url_ant = null;
+
 function ant_switch_controls_setup()
 {
   
    var buttons_html = '';
    var antdesc = [ ];
    var tmp;
-   for (tmp=1; tmp<9; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
+   for (tmp=1; tmp <= ant_switch_n_ant; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
    console.log('ant_switch: Antenna configuration');
    var n_ant = 0;
-   for (tmp = 1; tmp<9; tmp++) {
+   for (tmp = 1; tmp <= ant_switch_n_ant; tmp++) {
       if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
          antdesc[tmp] = ''; 
       }  else {
@@ -109,6 +112,14 @@ function ant_switch_controls_setup()
    ant_switch_data_canvas = w3_el('id-ant_switch-data-canvas');
    ext_set_controls_width_height(400, 90 + Math.round(n_ant * 40));
    ant_switch_poll();
+
+	var p = ext_param();
+	console.log('ant_switch: URL param = '+ p);
+	p = parseInt(p);
+	if (!isNaN(p) && p >= 1 && p <= ant_switch_n_ant) {
+	   console.log('ant_switch: URL ant = '+ p);
+	   ant_switch_url_ant = p;
+	}
 }
 
 function ant_switch_blur()
@@ -222,7 +233,7 @@ function ant_switch_process_reply(ant) {
    }
    
    if (ant == 'g') {
-      if (need_to_inform) console.log('ant_switch: all antennas grouded');
+      if (need_to_inform) console.log('ant_switch: all antennas grounded');
       ant_switch_display_update('Thunderstorm mode. All antennas are grounded.');
    } else {
       if (need_to_inform) console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
@@ -236,13 +247,18 @@ function ant_switch_process_reply(ant) {
       var re=/^Antenna ([1-8])/i; 
       if (inputs[i].textContent.match(re)) {
          w3_unhighlight(inputs[i]);
-         for (var tmp=1; tmp<9; tmp++) {
+         for (var tmp=1; tmp <= ant_switch_n_ant; tmp++) {
             var chr = String.fromCharCode(48 + tmp);
             if (selected_antennas_list != null && selected_antennas_list.indexOf(chr) >= 0) {
                if (inputs[i].textContent == 'Antenna '+tmp) w3_highlight(inputs[i]);
             }
          }
       }
+   }
+   
+   if (ant_switch_url_ant != null) {
+      ant_switch_select_antenna(ant_switch_url_ant);
+      ant_switch_url_ant = null;
    }
 }
 
@@ -317,8 +333,10 @@ function ant_switch_help(show)
          w3_text('w3-medium w3-bold w3-text-aqua', 'Antenna switch help') +
          '<br>Please see the information at ' +
          '<a href="https://github.com/OH1KK/KiwiSDR-antenna-switch-extension" target="_blank">' +
-         'github.com/OH1KK/KiwiSDR-antenna-switch-extension</a>';
-      confirmation_show_content(s, 610, 150);
+         'github.com/OH1KK/KiwiSDR-antenna-switch-extension</a><br><br>' +
+         'When starting the extension from the browser URL the antenna to select can be specified<br>' +
+         'with a parameter, e.g. my_kiwi:8073/?ext=ant,6 would select antenna #6';
+      confirmation_show_content(s, 610, 125);
    }
    return true;
 }
