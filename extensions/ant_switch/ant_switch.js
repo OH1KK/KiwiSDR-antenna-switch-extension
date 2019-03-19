@@ -7,6 +7,7 @@ var ant_switch_data_canvas;
 var ant_switch_exantennas=0; // to avoid console.log spam on timerupdates
 var ant_switch_denymixing = ext_get_cfg_param_string('ant_switch.denymixing', '', EXT_NO_SAVE);
 var ant_switch_denyswitching = ext_get_cfg_param_string('ant_switch.denyswitching', '', EXT_NO_SAVE);
+var ant_switch_thunderstorm = ext_get_cfg_param_string('ant_switch.thunderstorm', '', EXT_NO_SAVE);
 
 function ant_switch_main()
 {
@@ -60,6 +61,16 @@ function ant_switch_recv(data)
             var arg = param[1];
             if (arg == 1) ant_switch_denymixing=1; else ant_switch_denymixing=0;
             ant_switch_showpermissions(); 
+            break;
+         case "Thunderstorm":
+            var arg = param[1];
+            if (arg == 1) {
+               ant_switch_thunderstorm=1;
+               ant_switch_denyswitching=1;
+            } else {
+                ant_switch_thunderstorm=0;
+            }
+            ant_switch_showpermissions();
             break;
          default:
             console.log('ant_switch_recv: UNKNOWN CMD '+ param[0]);
@@ -135,6 +146,7 @@ function ant_switch_config_html()
    var denyswitching_no_yes = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE)? 0:1;
    var denymixing_no_yes = ext_get_cfg_param('ant_switch.denymixing', '', EXT_NO_SAVE)? 0:1;
    var denymultiuser_no_yes = ext_get_cfg_param('ant_switch.denymultiuser', '', EXT_NO_SAVE)? 0:1;
+   var thunderstorm_no_yes = ext_get_cfg_param('ant_switch.thunderstorm', '', EXT_NO_SAVE)? 0:1;
    ext_admin_config(ant_switch_ext_name, 'Antenna switch',
       w3_div('id-ant_switch w3-text-teal w3-hide', '', '<b>Antenna switch configuration</b>' + '<hr>' +
          w3_div('',
@@ -150,8 +162,11 @@ function ant_switch_config_html()
            w3_div('', '', '<b>Deny multiuser switching?</b> ' +
               w3_switch('', 'No', 'Yes', 'ant_switch.denymultiuser', denymultiuser_no_yes, 'ant_switch_conf_denymultiuser')
            ),
-           w3_div('', '','<b>Thunderstorm</b><br>'),
-           w3_button('','Ground all antennas immediately and deny switching', 'ant_switch_thunderstorm'), 
+           w3_div('', '','If thunderstorm mode is activated, all antennas and forced to ground and switching is disabled'),
+           
+           w3_div('', '', '<b>Enable thunderstorm mode?</b> ' +
+              w3_switch('', 'No', 'Yes', 'ant_switch.thunderstorm', thunderstorm_no_yes, 'ant_switch_conf_thunderstorm')
+           ),
            w3_div('', '','<hr><b>Antenna buttons configuration</b><br>'),
            w3_div('', '','Leave Antenna description field empty if you want to hide antenna button from users<br>'),
            w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb', ''),
@@ -295,6 +310,10 @@ function ant_switch_showpermissions() {
          html('id-ant-display-permissions').innerHTML = 'Antenna switching and mixing is allowed.';
       }
    }
+   if (ant_switch_thunderstorm == 1) {
+      ant_switch_lock_buttons(true);
+      html('id-ant-display-permissions').innerHTML = 'Thunderstorm. Antenna switching is denied.';
+   }
 }
 
 function ant_switch_display_update(ant) {
@@ -314,12 +333,8 @@ function ant_switch_conf_denymultiuser(id, idx) {
    var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
 }
 
-function ant_switch_thunderstorm() {
-   ext_set_cfg_param('ant_switch.denyswitching', 1, EXT_SAVE);
-   
-   // new API: use w3_call() so reference to w3_switch_set_value() doesn't fail for releases < v1.195
-   w3_call('w3_switch_set_value', 'ant_switch.denyswitching', 1);
-   ant_switch_select_antenna('g');
+function ant_switch_conf_thunderstorm(id, idx) {
+   var tmp = ext_set_cfg_param(id, idx, EXT_SAVE);
 }
 
 function ant_switch_help(show)
