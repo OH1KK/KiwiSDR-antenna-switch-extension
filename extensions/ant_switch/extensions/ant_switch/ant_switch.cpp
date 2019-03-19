@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Kari Karvonen, OH1KK
+// Copyright (c) 2018-2019 Kari Karvonen, OH1KK
 
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
@@ -111,6 +111,14 @@ bool ant_switch_read_denymultiuser() {
     }
 }
 
+bool ant_switch_read_thunderstorm() {
+    bool error;
+    char cfgparam[26]="ant_switch.thunderstorm\0";
+    int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+    // error handling: if deny parameter is not defined, or it is 0, then mixing is allowed
+    if (result == 1) return true; else return false;
+}
+
 bool ant_switch_msgs(char *msg, int rx_chan)
 {
 	ant_switch_t *e = &ant_switch[rx_chan];
@@ -128,7 +136,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
     n = sscanf(msg, "SET Antenna=%s", antenna);
     if (n == 1) {
         printf("ant_switch: RX%d %s\n", rx_chan, msg);
-        if (ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
+        if (ant_switch_read_thunderstorm()==true || ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
             return true;            
         } else {
@@ -164,13 +172,22 @@ bool ant_switch_msgs(char *msg, int rx_chan)
         } else {
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenyMixing=0");
         }
-
+        if (ant_switch_read_thunderstorm()==true) {
+            ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT Thunderstorm=1");
+            // also ground antenna if not grounded
+            if (strcmp(selected_antennas, "g")!=0)  {
+                char* groundall=(char*)"g\0";
+                ant_switch_setantenna(groundall);
+                ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT Antenna=g");
+            }
+            return true;
+        } else {
+                ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT Thunderstorm=0");
+        }
         return true;
     }
-
     return false;
 }
-
 
 void ant_switch_close(int rx_chan)
 {
