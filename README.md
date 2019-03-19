@@ -18,7 +18,7 @@ You can also write your own backend for third party antenna switches.
   * look at docs/antenna-schedules-using-crontab.txt
 * Switcing back to default antennas when no users are online
   * look at docs/reset-to-default-antennas-when-no-users-online.txt
-* <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
+* Thunderstorm mode. In thunderstorm mode all antennas are forced to ground and switching is denied.
 * Telnet daemon (optional). You can switch antennas using telnet commands
   * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
   * look at docs/ant-switch-daemon-wrapper.txt
