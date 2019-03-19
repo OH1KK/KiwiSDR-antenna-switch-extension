@@ -136,7 +136,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
     n = sscanf(msg, "SET Antenna=%s", antenna);
     if (n == 1) {
         printf("ant_switch: RX%d %s\n", rx_chan, msg);
-        if (ant_switch_read_thunderstorm()==true || ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
+        if (ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
             return true;            
         } else {
