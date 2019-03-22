@@ -18,10 +18,11 @@ You can also write your own backend for third party antenna switches.
   * look at docs/antenna-schedules-using-crontab.txt
 * Switcing back to default antennas when no users are online
   * look at docs/reset-to-default-antennas-when-no-users-online.txt
-* <s>Thunderstorm mode. In thunderstorm mode all antennas are grounded.</s> not working right now
+* Thunderstorm mode. In thunderstorm mode all antennas are forced to ground and switching is denied.
 * Telnet daemon (optional). You can switch antennas using telnet commands
   * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
   * look at docs/ant-switch-daemon-wrapper.txt
+* Antenna switching can be make from http url with a parameter, e.g. my_kiwi:8073/?ext=ant,6 would select antenna #6 if you do not use antenna mixing mode
   
 ## Required hardware
 
@@ -39,7 +40,7 @@ You will need antenna switch hardware.
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.202. Does not work on versions older than v1.95 due to KiwiSDR API changes.
+* Tested to work with KiwiSDR v1.274
 * Tested to work with MS-S7-WEB firmware v1.01
 * Tested to work with Snaptekk WiFi wireless 8 antenna switch
 
@@ -105,4 +106,4 @@ If you want to support this project, you can [send a donation via PayPal](https:
 
 [The MIT License (MIT)](LICENSE)
 
-Copyright (c) 2018 Kari Karvonen
+Copyright (c) 2019 Kari Karvonen
