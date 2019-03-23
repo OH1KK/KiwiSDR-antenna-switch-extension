@@ -22,7 +22,10 @@ You can also write your own backend for third party antenna switches.
 * Telnet daemon (optional). You can switch antennas using telnet commands
   * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
   * look at docs/ant-switch-daemon-wrapper.txt
-* Antenna switching can be make from http url with a parameter, e.g. my_kiwi:8073/?ext=ant,6 would select antenna #6 if you do not use antenna mixing mode
+* Antenna switching can be made from the http url with a parameter,  
+e.g. my\_kiwi:8073/?ext=ant,6 would select antenna #6 and  
+my\_kiwi:8073/?ext=ant,6,3 would select antennas #6 and #3. Instead of an antenna number
+a sub-string of the antenna description can be specified. See the extension help button for details.
   
 ## Required hardware
 
