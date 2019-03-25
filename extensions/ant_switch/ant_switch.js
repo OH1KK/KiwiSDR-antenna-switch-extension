@@ -81,6 +81,10 @@ function ant_switch_recv(data)
 
 var ant_switch_n_ant = 8;
 var ant_switch_url_ant = null;
+var ant_switch_url_deselected = false;
+var ant_switch_url_first = true;
+
+var ant_switch_desc_lc = [];
 
 function ant_switch_controls_setup()
 {
@@ -101,6 +105,7 @@ function ant_switch_controls_setup()
          );
          n_ant++;
       }
+      ant_switch_desc_lc[tmp] = antdesc[tmp].toLowerCase();
       console.log('ant_switch: Antenna '+ tmp +': '+ antdesc[tmp]);
    }
 
@@ -125,18 +130,16 @@ function ant_switch_controls_setup()
    ant_switch_poll();
 
 	var p = ext_param();
-	console.log('ant_switch: URL param = '+ p);
-	p = parseInt(p);
-	if (!isNaN(p) && p >= 1 && p <= ant_switch_n_ant) {
-	   console.log('ant_switch: URL ant = '+ p);
-	   ant_switch_url_ant = p;
+	console.log('ant_switch: URL param = <'+ p +'>');
+	if (p) {
+	   ant_switch_url_ant = p.split(',');
 	}
 }
 
 function ant_switch_blur()
 {
    kiwi_clearInterval(ant_switch_poll_interval);
-   console.log('### ant_switch_blur');
+   //console.log('### ant_switch_blur');
 }
 
 // called to display HTML for configuration parameters in admin interface
@@ -236,6 +239,7 @@ function ant_switch_poll() {
 function ant_switch_process_reply(ant) {
    ant_selected_antenna = ant;
    var need_to_inform = false;
+   //console.log('ant_switch_process_reply ant='+ ant);
    
    if (ant_switch_exantennas != ant) {
       // antenna changed.
@@ -267,9 +271,35 @@ function ant_switch_process_reply(ant) {
       }
    }
    
-   if (ant_switch_url_ant != null) {
-      ant_switch_select_antenna(ant_switch_url_ant);
-      ant_switch_url_ant = null;
+   // if switching is allowed process optional URL antenna list (includes multiuser feature)
+   if (ant_switch_denyswitching == 0 && ant_switch_url_ant != null && ant_switch_url_ant.length > 0) {
+   
+      // start by deselecting all antennas (backends may have memory of last antenna(s) used)
+      if (ant_switch_url_deselected == false) {
+         ant_switch_select_antenna('g');
+         ant_switch_url_deselected = true;
+      } else {
+         // only allow first antenna if mixing denied
+         if (ant_switch_url_first == true || ant_switch_denymixing == 0)
+         var ant = decodeURIComponent(ant_switch_url_ant.shift());
+         console.log('ant_switch: URL ant = <'+ ant +'>');
+         var n = parseInt(ant);
+         if (!(!isNaN(n) && n >= 1 && n <= ant_switch_n_ant)) {
+            if (ant == '') {
+               n = 0;
+            } else {
+               // try to match on antenna descriptions
+               ant = ant.toLowerCase();
+               for (n = 1; n <= ant_switch_n_ant; n++) {
+                  //console.log('ant_switch: CONSIDER '+ n +' <'+ ant +'> <'+ ant_switch_desc_lc[n] +'>');
+                  if (ant_switch_desc_lc[n].indexOf(ant) != -1)
+                     break;
+               }
+            }
+         }
+         if (n >= 1 && n <= ant_switch_n_ant) ant_switch_select_antenna(n);
+         ant_switch_url_first = false;
+      }
    }
 }
 
@@ -345,9 +375,18 @@ function ant_switch_help(show)
          '<br>Please see the information at ' +
          '<a href="https://github.com/OH1KK/KiwiSDR-antenna-switch-extension" target="_blank">' +
          'github.com/OH1KK/KiwiSDR-antenna-switch-extension</a><br><br>' +
-         'When starting the extension from the browser URL the antenna to select can be specified<br>' +
-         'with a parameter, e.g. my_kiwi:8073/?ext=ant,6 would select antenna #6';
-      confirmation_show_content(s, 610, 125);
+         
+         'When starting the extension from the browser URL the antenna(s) to select can be<br>' +
+         'specified with a parameter, e.g. my_kiwi:8073/?ext=ant,6 would select antenna #6<br>' +
+         'and my_kiwi:8073/?ext=ant,6,3 would select antennas #6 and #3 if antenna mixing<br>' +
+         'is allowed.<br><br>' +
+         
+         'Instead of an antenna number a string can be specified that matches any<br>' +
+         'case insensitive sub-string of the antenna description<br>' +
+         'e.g. my_kiwi:8073/?ext=ant,loop would match the description "E-W Attic Loop ".<br>' +
+         'The first description match wins.' +
+         '';
+      confirmation_show_content(s, 600, 250);
    }
    return true;
 }
