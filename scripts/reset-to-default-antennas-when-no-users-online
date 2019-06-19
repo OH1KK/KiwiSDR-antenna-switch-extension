@@ -64,7 +64,7 @@ PORT=`$JQEXEC .port $ADMINJSON`
 STATUSURL="http://127.0.0.1:$PORT/status"
 
 FORBIDSWITCH=`$JQEXEC .ant_switch.denyswitching $KIWIJSON`
-if [ $FORBIDSWITCH -eq 1 ]; then
+if [ "$FORBIDSWITCH" = "1" ]; then
 	echo "Antenna switching denied by configuration, not switching."
 	exit 1
 fi
