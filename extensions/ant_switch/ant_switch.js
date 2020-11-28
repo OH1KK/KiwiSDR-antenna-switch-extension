@@ -3,7 +3,6 @@
 var ant_switch_ext_name = 'ant_switch';      // NB: must match ant_switch.c:ant_switch_ext.name
 var ant_switch_first_time = true;
 var ant_switch_poll_interval;
-var ant_switch_data_canvas;
 var ant_switch_exantennas=0; // to avoid console.log spam on timerupdates
 var ant_switch_denymixing = ext_get_cfg_param_string('ant_switch.denymixing', '', EXT_NO_SAVE);
 var ant_switch_denyswitching = ext_get_cfg_param_string('ant_switch.denyswitching', '', EXT_NO_SAVE);
@@ -82,7 +81,7 @@ function ant_switch_recv(data)
 var ant_switch_n_ant = 8;
 var ant_switch_url_ant = null;
 var ant_switch_url_deselected = false;
-var ant_switch_url_first = true;
+var ant_switch_url_idx = 0;
 
 var ant_switch_desc_lc = [];
 
@@ -99,8 +98,8 @@ function ant_switch_controls_setup()
       if (antdesc[tmp] == undefined || antdesc[tmp] == null || antdesc[tmp] == '') {
          antdesc[tmp] = ''; 
       }  else {
-         buttons_html += w3_div('w3-valign w3-margin-B-8',
-            w3_button('', 'Antenna '+tmp, 'ant_switch_select_'+tmp),
+         buttons_html += w3_div('w3-valign w3-margin-T-8',
+            w3_button('', 'Antenna '+tmp, 'ant_switch_select_antenna_cb', tmp),
             w3_div('w3-margin-L-8', antdesc[tmp])
          );
          n_ant++;
@@ -110,22 +109,17 @@ function ant_switch_controls_setup()
    }
 
    //console.log('ant_switch: Antenna g: Ground all antennas');
-   var data_html =
-      '<div id="id-ant_switch-data"></div>';
    var controls_html =
-      w3_div('id-ant_display-controls w3-text-white', '',
-         data_html,
-            w3_div('w3-container',
-                 w3_div('', '<b>Antenna switch</b>'),
-                     w3_div('id-ant-display-selected', '','Selected antenna: unknown'),
-                     w3_div('id-ant-display-permissions', '','Permissions: unknown'),
-                     w3_div('', '',buttons_html),
-                     w3_div('', '','')
-            )
+      w3_div('id-ant_display-controls w3-text-white',
+         w3_div('',
+              w3_div('w3-medium w3-text-aqua', '<b>Antenna switch</b>'),
+                  w3_div('id-ant-display-selected w3-margin-T-8', 'Selected antenna: unknown'),
+                  w3_div('id-ant-display-permissions', 'Permissions: unknown'),
+                  w3_div('', buttons_html)
+         )
       );
 
    ext_panel_show(controls_html, null, null);
-   ant_switch_data_canvas = w3_el('id-ant_switch-data-canvas');
    ext_set_controls_width_height(400, 90 + Math.round(n_ant * 40));
    ant_switch_poll();
 
@@ -145,83 +139,66 @@ function ant_switch_blur()
 // called to display HTML for configuration parameters in admin interface
 function ant_switch_config_html()
 {
+   var s = '';
+   for (var i = 1; i <= 8; i++) {
+      s +=
+         w3_col_percent('w3-margin-T-16/',
+            w3_input_get('', 'Antenna '+ i +' description', 'ant_switch.ant'+ i +'desc', 'w3_string_set_cfg_cb', ''), 70, '&nbsp;', 5,
+               w3_input_get('', 'Frequency scale offset (kHz)', 'ant_switch.ant'+ i +'offset', 'w3_int_set_cfg_cb', 0)
+         );
+   }
+
    // *_no_yes: 0 -> 'No', 1 -> 'Yes' in w3_switch() below
    var denyswitching_no_yes = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE)? 0:1;
    var denymixing_no_yes = ext_get_cfg_param('ant_switch.denymixing', '', EXT_NO_SAVE)? 0:1;
    var denymultiuser_no_yes = ext_get_cfg_param('ant_switch.denymultiuser', '', EXT_NO_SAVE)? 0:1;
    var thunderstorm_no_yes = ext_get_cfg_param('ant_switch.thunderstorm', '', EXT_NO_SAVE)? 0:1;
    ext_admin_config(ant_switch_ext_name, 'Antenna switch',
-      w3_div('id-ant_switch w3-text-teal w3-hide', '', '<b>Antenna switch configuration</b>' + '<hr>' +
+      w3_div('id-ant_switch w3-text-teal w3-hide', '<b>Antenna switch configuration</b>' + '<hr>' +
          w3_div('',
-           w3_div('', '','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /root/extensions/ant_switch/frontend/ant-switch-frontend script.'),
-           w3_div('', '', '<b>Deny antenna switching?</b> ' +
+           w3_div('','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /root/extensions/ant_switch/frontend/ant-switch-frontend script.'),
+           w3_div('w3-margin-T-8', '<b>Deny antenna switching?</b> ' +
               w3_switch('', 'No', 'Yes', 'ant_switch.denyswitching', denyswitching_no_yes, 'ant_switch_conf_denyswitching')
            ),
-           w3_div('', '','If antenna mixing is denied then users can select only one antenna at time.'),
-           w3_div('', '', '<b>Deny antenna mixing?</b> ' +
+           
+           w3_div('w3-margin-T-16','If antenna mixing is denied then users can select only one antenna at time.'),
+           w3_div('w3-margin-T-8', '<b>Deny antenna mixing?</b> ' +
               w3_switch('', 'No', 'Yes', 'ant_switch.denymixing', denymixing_no_yes, 'ant_switch_conf_denymixing')
            ),
-           w3_div('', '','If multiuser is denied then antenna switching is disabled when more than 1 user is online.'),
-           w3_div('', '', '<b>Deny multiuser switching?</b> ' +
+           
+           w3_div('w3-margin-T-16','If multiuser is denied then antenna switching is disabled when more than 1 user is online.'),
+           w3_div('w3-margin-T-8', '<b>Deny multiuser switching?</b> ' +
               w3_switch('', 'No', 'Yes', 'ant_switch.denymultiuser', denymultiuser_no_yes, 'ant_switch_conf_denymultiuser')
            ),
-           w3_div('', '','If thunderstorm mode is activated, all antennas and forced to ground and switching is disabled'),
            
-           w3_div('', '', '<b>Enable thunderstorm mode?</b> ' +
+           w3_div('w3-margin-T-16','If thunderstorm mode is activated, all antennas and forced to ground and switching is disabled.'),
+           w3_div('w3-margin-T-8', '<b>Enable thunderstorm mode?</b> ' +
               w3_switch('', 'No', 'Yes', 'ant_switch.thunderstorm', thunderstorm_no_yes, 'ant_switch_conf_thunderstorm')
            ),
-           w3_div('', '','<hr><b>Antenna buttons configuration</b><br>'),
-           w3_div('', '','Leave Antenna description field empty if you want to hide antenna button from users<br>'),
-           w3_input_get_param('Antenna 1 description', 'ant_switch.ant1desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna 2 description', 'ant_switch.ant2desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna 3 description', 'ant_switch.ant3desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna 4 description', 'ant_switch.ant4desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna 5 description', 'ant_switch.ant5desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna 6 description', 'ant_switch.ant6desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna 7 description', 'ant_switch.ant7desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna 8 description', 'ant_switch.ant8desc', 'w3_string_set_cfg_cb', ''),
-           w3_input_get_param('Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb', '')
-         ), '', ''
+           
+           w3_div('','<hr><b>Antenna buttons configuration</b><br>'),
+           w3_col_percent('w3-margin-T-16/',
+               'Leave Antenna description field empty if you want to hide antenna button from users.', 70, '&nbsp;', 5,
+               'Overrides offset value on config tab <br>when any antenna selected. <br>' +
+               'No effect if antenna mixing enabled.'
+           ),
+           w3_div('',
+              s,
+              w3_col_percent('w3-margin-T-16/',
+                 w3_input_get('', 'Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb'), 70
+              )
+            )
+         )
       )
    );
-}
-
-function ant_switch_select_1(path,val) {
-   ant_switch_select_antenna('1');
-}
-
-function ant_switch_select_2(path,val) {
-   ant_switch_select_antenna('2');
-}
-
-function ant_switch_select_3(path,val) {
-   ant_switch_select_antenna('3');
-}
-
-function ant_switch_select_4(path,val) {
-   ant_switch_select_antenna('4');
-}
-
-function ant_switch_select_5(path,val) {
-   ant_switch_select_antenna('5');
-}
-
-function ant_switch_select_6(path,val) {
-   ant_switch_select_antenna('6');
-}
-
-function ant_switch_select_7(path,val) {
-   ant_switch_select_antenna('7');
-}
-
-function ant_switch_select_8(path,val) {
-   ant_switch_select_antenna('8');
 }
 
 function ant_switch_select_groundall(path,val) {
    setTimeout('w3_radio_unhighlight('+ q(path) +')', w3_highlight_time);
    ant_switch_select_antenna('g');
 }
+
+function ant_switch_select_antenna_cb(path, val) { ant_switch_select_antenna(val); }
 
 function ant_switch_select_antenna(ant) {
    console.log('ant_switch: switching antenna '+ant);
@@ -235,6 +212,8 @@ function ant_switch_poll() {
    ant_switch_poll_interval = setInterval(function() {ant_switch_poll(0);}, 10000);
    ext_send('GET Antenna');
 }
+
+var ant_switch_last_offset = -1;
 
 function ant_switch_process_reply(ant) {
    ant_selected_antenna = ant;
@@ -265,40 +244,58 @@ function ant_switch_process_reply(ant) {
          for (var tmp=1; tmp <= ant_switch_n_ant; tmp++) {
             var chr = String.fromCharCode(48 + tmp);
             if (selected_antennas_list != null && selected_antennas_list.indexOf(chr) >= 0) {
-               if (inputs[i].textContent == 'Antenna '+tmp) w3_highlight(inputs[i]);
+               if (inputs[i].textContent == 'Antenna '+tmp) {
+                  w3_highlight(inputs[i]);
+                  
+                  // check for frequency offset change when only one antenna is selected
+                  // and mixing is disabled
+                  if (ant_switch_denymixing && selected_antennas_list.length == 1) {
+                     var s = 'ant_switch.ant'+ tmp +'offset';
+                     var offset = ext_get_cfg_param(s, '', EXT_NO_SAVE);
+                     offset = +offset;
+                     if (!isNumber(offset)) offset = 0;
+                     if (offset != ant_switch_last_offset) {
+                        ext_send('SET freq_offset='+ offset);
+                        ant_switch_last_offset = offset;
+                     }
+                  }
+               }
             }
          }
       }
    }
-   
+
    // if switching is allowed process optional URL antenna list (includes multiuser feature)
    if (ant_switch_denyswitching == 0 && ant_switch_url_ant != null && ant_switch_url_ant.length > 0) {
    
-      // start by deselecting all antennas (backends may have memory of last antenna(s) used)
+      // Start by deselecting all antennas (backends may have memory of last antenna(s) used).
+      // This code works because this routine is being routinely polled.
       if (ant_switch_url_deselected == false) {
          ant_switch_select_antenna('g');
          ant_switch_url_deselected = true;
       } else {
          // only allow first antenna if mixing denied
-         if (ant_switch_url_first == true || ant_switch_denymixing == 0)
-         var ant = decodeURIComponent(ant_switch_url_ant.shift());
-         console.log('ant_switch: URL ant = <'+ ant +'>');
-         var n = parseInt(ant);
-         if (!(!isNaN(n) && n >= 1 && n <= ant_switch_n_ant)) {
-            if (ant == '') {
-               n = 0;
-            } else {
-               // try to match on antenna descriptions
-               ant = ant.toLowerCase();
-               for (n = 1; n <= ant_switch_n_ant; n++) {
-                  //console.log('ant_switch: CONSIDER '+ n +' <'+ ant +'> <'+ ant_switch_desc_lc[n] +'>');
-                  if (ant_switch_desc_lc[n].indexOf(ant) != -1)
-                     break;
+         if (ant_switch_url_idx == 0 || ant_switch_denymixing == 0) {
+            var ant = decodeURIComponent(ant_switch_url_ant.shift());
+            console.log('ant_switch: URL ant = <'+ ant +'>');
+            var n = parseInt(ant);
+            if (!(!isNaN(n) && n >= 1 && n <= ant_switch_n_ant)) {
+               if (ant == '') {
+                  n = 0;
+               } else {
+                  // try to match on antenna descriptions
+                  ant = ant.toLowerCase();
+                  for (n = 1; n <= ant_switch_n_ant; n++) {
+                     //console.log('ant_switch: CONSIDER '+ n +' <'+ ant +'> <'+ ant_switch_desc_lc[n] +'>');
+                     if (ant_switch_desc_lc[n].indexOf(ant) != -1)
+                        break;
+                  }
                }
             }
+            if (n >= 1 && n <= ant_switch_n_ant)
+               ant_switch_select_antenna(n);    // this causes poll to re-occur immediately
+            ant_switch_url_idx++;
          }
-         if (n >= 1 && n <= ant_switch_n_ant) ant_switch_select_antenna(n);
-         ant_switch_url_first = false;
       }
    }
 }
