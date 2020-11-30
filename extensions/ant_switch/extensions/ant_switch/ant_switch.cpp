@@ -69,39 +69,26 @@ int ant_switch_toggleantenna(char* antenna) {
 }
 
 int ant_switch_validate_cmd(char *cmd) {
-    int is_valid_cmd = false;
-    if (strcmp(cmd, "1") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "2") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "3") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "4") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "5") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "6") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "7") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "8") == 0) is_valid_cmd=true;
-    if (strcmp(cmd, "g") == 0) is_valid_cmd=true;
-    return(is_valid_cmd);
+    return (cmd[0] >= '1' && cmd[0] <= '9');
 }
 
 bool ant_switch_read_denyswitching() {
     bool error;
-    char cfgparam[26]="ant_switch.denyswitching\0";
-    int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+    int result = cfg_int("ant_switch.denyswitching", &error, CFG_OPTIONAL);
     // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
     if (result == 1) return true; else return false;
 }
 
 bool ant_switch_read_denymixing() {
     bool error;
-    char cfgparam[26]="ant_switch.denymixing\0";
-    int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+    int result = cfg_int("ant_switch.denymixing", &error, CFG_OPTIONAL);
     // error handling: if deny parameter is not defined, or it is 0, then mixing is allowed
     if (result == 1) return true; else return false;
 }
 
 bool ant_switch_read_denymultiuser() {
     bool error;
-    char cfgparam[26]="ant_switch.denymultiuser\0";
-    int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+    int result = cfg_int("ant_switch.denymultiuser", &error, CFG_OPTIONAL);
     // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
     if (result == 1) {
         // option is set. Now check if more than 1 user online rx_util.cpp current_nusers variable
@@ -113,8 +100,7 @@ bool ant_switch_read_denymultiuser() {
 
 bool ant_switch_read_thunderstorm() {
     bool error;
-    char cfgparam[26]="ant_switch.thunderstorm\0";
-    int result = cfg_int(cfgparam, &error, CFG_OPTIONAL);
+    int result = cfg_int("ant_switch.thunderstorm", &error, CFG_OPTIONAL);
     // error handling: if deny parameter is not defined, or it is 0, then mixing is allowed
     if (result == 1) return true; else return false;
 }
@@ -125,7 +111,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 	int n=0;
 	char antenna[256];
 
-	//printf("### ant_switch_msgs RX%d <%s>\n", rx_chan, msg);
+	//rcprintf(rx_chan, "### ant_switch_msgs <%s>\n", msg);
 	
 	if (strcmp(msg, "SET ext_server_init") == 0) {
 		e->rx_chan = rx_chan;	// remember our receiver channel number
@@ -135,7 +121,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 
     n = sscanf(msg, "SET Antenna=%s", antenna);
     if (n == 1) {
-        printf("ant_switch: RX%d %s\n", rx_chan, msg);
+        rcprintf(rx_chan, "ant_switch: %s\n", msg);
         if (ant_switch_read_denyswitching()==true || ant_switch_read_denymultiuser()==true) {
             ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
             return true;            
@@ -151,7 +137,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
                 ant_switch_toggleantenna(antenna);
             }
         } else {
-            ext_send_msg(e->rx_chan, ANT_SWITCH_DEBUG_MSG, "Command not valid SET Antenna=%s",antenna);   
+            rcprintf(rx_chan, "ant_switch: Command not valid SET Antenna=%s", antenna);   
         }
 
         return true;
@@ -186,6 +172,16 @@ bool ant_switch_msgs(char *msg, int rx_chan)
         }
         return true;
     }
+
+    int freq_offset_ant;
+    n = sscanf(msg, "SET freq_offset=%d", &freq_offset_ant);
+    if (n == 1) {
+        rcprintf(rx_chan, "ant_switch: freq_offset %d\n", freq_offset_ant);
+        cfg_set_float_save("freq_offset", (double) freq_offset_ant);
+        freq_offset = freq_offset_ant;
+        return true;
+    }
+    
     return false;
 }
 

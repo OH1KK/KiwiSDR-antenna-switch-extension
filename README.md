@@ -9,19 +9,20 @@ You can also write your own backend for third party antenna switches.
 
 ## Features
 
-* Basic antenna switching
+* Basic antenna switching.
 * Antenna mixing. In antenna mix mode multiple antennas can be selected simultaneously.
-* Admin can lock/unlock antenna switching from admin panel
-* Admin can enable/disable antenna mixing from admin panel
-* Admin can deny antenna switching if more than one user is online
-* Antenna switching can be time scheluded using Beaglebone's crontab
+* Admin can lock/unlock antenna switching from admin panel.
+* Admin can enable/disable antenna mixing from admin panel.
+* Admin can deny antenna switching if more than one user is online.
+* Antenna switching can be time scheluded using Beaglebone's crontab.
   * look at docs/antenna-schedules-using-crontab.txt
-* Switcing back to default antennas when no users are online
+* Switching back to default antennas when no users are online.
   * look at docs/reset-to-default-antennas-when-no-users-online.txt
 * Thunderstorm mode. In thunderstorm mode all antennas are forced to ground and switching is denied.
-* Telnet daemon (optional). You can switch antennas using telnet commands
-  * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information
+* Telnet daemon (optional). You can switch antennas using telnet commands.
+  * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information.
   * look at docs/ant-switch-daemon-wrapper.txt
+* The Kiwi frequency scale offset can be set for each antenna selection. Supports transverters or downconverters that are switched together with the antenna.
 * Antenna switching can be made from the http url with a parameter,  
 e.g. my\_kiwi:8073/?ext=ant,6 would select antenna #6 and  
 my\_kiwi:8073/?ext=ant,6,3 would select antennas #6 and #3. Instead of an antenna number
@@ -43,7 +44,7 @@ You will need antenna switch hardware.
 
 ## Version compability
 
-* Tested to work with KiwiSDR v1.274
+* This version requires KiwiSDR version v1.427 or later
 * Tested to work with MS-S7-WEB firmware v1.01
 * Tested to work with Snaptekk WiFi wireless 8 antenna switch
 
