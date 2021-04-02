@@ -29,12 +29,6 @@ VERSION=0.2
 echo "Welcome to KiwiSDR antenna switch extension installer"
 echo ""
 
-if [ "x$TERM" == "xdumb" ]; then
-    echo "Error: Can't run this script from Kiwi console window."
-    echo "Please use SSH or PuTTY to login to Kiwi Beagle directly then run script."
-    exit 1
-fi
-
 if [ "x`which curl`" == "x" ]; then
 	echo -n "Curl not found. Do you want to install it now (y/n) ? "
 	read ok
@@ -104,12 +98,21 @@ chmod a+rx /root/extensions/ant_switch/frontend/ant-switch-frontend
 rm -f /usr/local/bin/ant-switch-frontend
 ln -s /root/extensions/ant_switch/frontend/ant-switch-frontend /usr/local/bin
 echo ""
-echo "Rebuilding KiwiSDR. This will take about 13 minutes."
+echo "Rebuilding KiwiSDR."
 echo ""
 cd /root/Beagle_SDR_GPS
-make stop
-make clean
+if [ "x$KIWI_CONSOLE" == "xyes" ]; then
+    echo "Script run from Kiwi console window. Building while Kiwi still running."
+else
+    make stop
+fi
+touch ~/extensions/ant_switch/extensions/ant_switch/*
+rm ../build/gen/ext_init.cpp
 make
 make install
-make start
 echo "KiwiSDR antenna switch extension installation finished."
+if [ "x$KIWI_CONSOLE" == "xyes" ]; then
+    echo "Script run from Kiwi console window. Please use admin restart button."
+else
+    make start
+fi

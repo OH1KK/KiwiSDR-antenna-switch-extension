@@ -81,7 +81,7 @@ AntSW_GroundAll() {
 }
 
 AntSW_Initialize() {
-	# Test connectivity to MS-S7-WEB otherwise long timeouts
+	# Test connectivity to MS-S7-WEB otherwise log timeouts
 	AntSW_Get "http://$IPADDRESS/widget.cgi"
 	if [ "x$REPLY" == "x" ]; then
 		echo "Unable to connect MS-S7-WEB at $IPADDRESS"

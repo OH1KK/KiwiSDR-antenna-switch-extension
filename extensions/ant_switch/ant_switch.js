@@ -1,11 +1,21 @@
-// Copyright (c) 2018-2019 Kari Karvonen, OH1KK
+// Copyright (c) 2018-2021 Kari Karvonen, OH1KK
+
+var antsw = {
+   not_configured: false,
+   exantennas: 0,    // to avoid console.log spam on timer updates
+   
+   // ordering for backward compatibility with cfg.ant_switch.denyswitching
+   deny_s: [ 'everyone', 'local connections only', 'local connections or user password only' ],
+};
 
 var ant_switch_ext_name = 'ant_switch';      // NB: must match ant_switch.c:ant_switch_ext.name
 var ant_switch_first_time = true;
 var ant_switch_poll_interval;
-var ant_switch_exantennas=0; // to avoid console.log spam on timerupdates
-var ant_switch_denymixing = ext_get_cfg_param_string('ant_switch.denymixing', '', EXT_NO_SAVE);
+
+// initially set to blank so "extension not configured" condition can be detected
 var ant_switch_denyswitching = ext_get_cfg_param_string('ant_switch.denyswitching', '', EXT_NO_SAVE);
+antsw.not_configured = (ant_switch_denyswitching == '');
+var ant_switch_denymixing = ext_get_cfg_param_string('ant_switch.denymixing', '', EXT_NO_SAVE);
 var ant_switch_thunderstorm = ext_get_cfg_param_string('ant_switch.thunderstorm', '', EXT_NO_SAVE);
 
 function ant_switch_main()
@@ -16,8 +26,6 @@ function ant_switch_main()
    ant_switch_first_time = false;
 }
 
-var ant_switch_cmd_e = { CMD1:0 };
-
 function ant_switch_recv(data)
 {
    var firstChars = arrayBufferToStringLen(data, 3);
@@ -26,12 +34,7 @@ function ant_switch_recv(data)
    if (firstChars == "DAT") {
       var ba = new Uint8Array(data, 4);
       var cmd = ba[0];
-
-      if (cmd == ant_switch_cmd_e.CMD1) {
-         // do something ...
-      } else {
-         console.log('ant_switch_recv: DATA UNKNOWN cmd='+ cmd +' len='+ (ba.length-1));
-      }
+      console.log('ant_switch_recv: DATA UNKNOWN cmd='+ cmd +' len='+ (ba.length-1));
       return;
    }
    
@@ -91,7 +94,7 @@ function ant_switch_controls_setup()
    var buttons_html = '';
    var antdesc = [ ];
    var tmp;
-   for (tmp=1; tmp <= ant_switch_n_ant; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+tmp+'desc', '', EXT_NO_SAVE);
+   for (tmp=1; tmp <= ant_switch_n_ant; tmp++) antdesc[tmp] = ext_get_cfg_param_string('ant_switch.ant'+ tmp +'desc', '', EXT_NO_SAVE);
    console.log('ant_switch: Antenna configuration');
    var n_ant = 0;
    for (tmp = 1; tmp <= ant_switch_n_ant; tmp++) {
@@ -149,48 +152,69 @@ function ant_switch_config_html()
    }
 
    // *_no_yes: 0 -> 'No', 1 -> 'Yes' in w3_switch() below
-   var denyswitching_no_yes = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE)? 0:1;
+   var denyswitching = ext_get_cfg_param('ant_switch.denyswitching', '', EXT_NO_SAVE);
+   if (denyswitching == '') denyswitching = 0;
    var denymixing_no_yes = ext_get_cfg_param('ant_switch.denymixing', '', EXT_NO_SAVE)? 0:1;
    var denymultiuser_no_yes = ext_get_cfg_param('ant_switch.denymultiuser', '', EXT_NO_SAVE)? 0:1;
    var thunderstorm_no_yes = ext_get_cfg_param('ant_switch.thunderstorm', '', EXT_NO_SAVE)? 0:1;
+
+	   /*
+         w3_div('','If antenna switching is denied then users cannot switch antennas. ' +
+            'Admin can always switch antennas from KiwiSDR ssh root console using ' +
+            '/root/extensions/ant_switch/frontend/ant-switch-frontend script.') +
+         w3_div('w3-margin-T-8', '<b>Deny antenna switching?</b> ' +
+            w3_switch('', 'No', 'Yes', 'ant_switch.denyswitching', denyswitching_no_yes, 'ant_switch_conf_denyswitching'));
+	   */
+
    ext_admin_config(ant_switch_ext_name, 'Antenna switch',
       w3_div('id-ant_switch w3-text-teal w3-hide', '<b>Antenna switch configuration</b>' + '<hr>' +
          w3_div('',
-           w3_div('','If antenna switching is denied then users cannot switch antennas. Admin can always switch antennas from KiwiSDR ssh root console using /root/extensions/ant_switch/frontend/ant-switch-frontend script.'),
-           w3_div('w3-margin-T-8', '<b>Deny antenna switching?</b> ' +
-              w3_switch('', 'No', 'Yes', 'ant_switch.denyswitching', denyswitching_no_yes, 'ant_switch_conf_denyswitching')
-           ),
-           
-           w3_div('w3-margin-T-16','If antenna mixing is denied then users can select only one antenna at time.'),
-           w3_div('w3-margin-T-8', '<b>Deny antenna mixing?</b> ' +
-              w3_switch('', 'No', 'Yes', 'ant_switch.denymixing', denymixing_no_yes, 'ant_switch_conf_denymixing')
-           ),
-           
-           w3_div('w3-margin-T-16','If multiuser is denied then antenna switching is disabled when more than 1 user is online.'),
-           w3_div('w3-margin-T-8', '<b>Deny multiuser switching?</b> ' +
-              w3_switch('', 'No', 'Yes', 'ant_switch.denymultiuser', denymultiuser_no_yes, 'ant_switch_conf_denymultiuser')
-           ),
-           
-           w3_div('w3-margin-T-16','If thunderstorm mode is activated, all antennas and forced to ground and switching is disabled.'),
-           w3_div('w3-margin-T-8', '<b>Enable thunderstorm mode?</b> ' +
-              w3_switch('', 'No', 'Yes', 'ant_switch.thunderstorm', thunderstorm_no_yes, 'ant_switch_conf_thunderstorm')
-           ),
-           
-           w3_div('','<hr><b>Antenna buttons configuration</b><br>'),
-           w3_col_percent('w3-margin-T-16/',
+            w3_div('','If antenna switching is denied then users cannot switch antennas. <br>' +
+               'Admin can always switch antennas, either from a connection on the local network, or from the <br>' +
+               'KiwiSDR ssh root console using the script: <i>/root/extensions/ant_switch/frontend/ant-switch-frontend</i> <br>' +
+               'The last option allows anyone connecting using a user password to switch antennas. <br>' +
+               'Other connections made without passwords are denied.'
+            ),
+            w3_select('w3-label-inline w3-margin-T-8|color:red', 'Allow antenna switching by:', '',
+               'ant_switch.denyswitching', denyswitching, antsw.deny_s, 'ant_switch_deny_cb'
+            ),
+
+            w3_div('w3-margin-T-16','If antenna mixing is denied then users can select only one antenna at time.'),
+            w3_div('w3-margin-T-8', '<b>Deny antenna mixing?</b> ' +
+               w3_switch('', 'No', 'Yes', 'ant_switch.denymixing', denymixing_no_yes, 'ant_switch_conf_denymixing')
+            ),
+
+            w3_div('w3-margin-T-16','If multiuser is denied then antenna switching is disabled when more than 1 user is online.'),
+            w3_div('w3-margin-T-8', '<b>Deny multiuser switching?</b> ' +
+               w3_switch('', 'No', 'Yes', 'ant_switch.denymultiuser', denymultiuser_no_yes, 'ant_switch_conf_denymultiuser')
+            ),
+
+            w3_div('w3-margin-T-16','If thunderstorm mode is activated, all antennas and forced to ground and switching is disabled.'),
+            w3_div('w3-margin-T-8', '<b>Enable thunderstorm mode?</b> ' +
+               w3_switch('', 'No', 'Yes', 'ant_switch.thunderstorm', thunderstorm_no_yes, 'ant_switch_conf_thunderstorm')
+            ),
+
+            w3_div('','<hr><b>Antenna buttons configuration</b><br>'),
+            w3_col_percent('w3-margin-T-16/',
                'Leave Antenna description field empty if you want to hide antenna button from users.', 70, '&nbsp;', 5,
                'Overrides offset value on config tab <br>when any antenna selected. <br>' +
                'No effect if antenna mixing enabled.'
-           ),
-           w3_div('',
-              s,
-              w3_col_percent('w3-margin-T-16/',
-                 w3_input_get('', 'Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb'), 70
-              )
+            ),
+
+            w3_div('',
+               s,
+               w3_col_percent('w3-margin-T-16/',
+                  w3_input_get('', 'Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb'), 70
+               )
             )
          )
       )
    );
+}
+
+function ant_switch_deny_cb(path, val, first) {
+	console.log('ant_switch_deny_cb path='+ path +' val='+ val +' first='+ first);
+	w3_int_set_cfg_cb(path, val);
 }
 
 function ant_switch_select_groundall(path,val) {
@@ -215,27 +239,32 @@ function ant_switch_poll() {
 
 var ant_switch_last_offset = -1;
 
-function ant_switch_process_reply(ant) {
-   ant_selected_antenna = ant;
+function ant_switch_process_reply(ant_selected_antenna) {
    var need_to_inform = false;
-   //console.log('ant_switch_process_reply ant='+ ant);
+   //console.log('ant_switch_process_reply ant_selected_antenna='+ ant_selected_antenna);
    
-   if (ant_switch_exantennas != ant) {
+   ant_switch_denyswitching = ext_get_cfg_param_string('ant_switch.denyswitching', '', EXT_NO_SAVE);
+   if (antsw.not_configured) {
+      ant_switch_display_update('Antenna switch extension is not configured.');
+      return;
+   }
+
+   if (antsw.exantennas != ant_selected_antenna) {
       // antenna changed.
       need_to_inform = true;
-      ant_switch_exantennas = ant;
+      antsw.exantennas = ant_selected_antenna;
    }
    
-   if (ant == 'g') {
+   if (ant_selected_antenna == 'g') {
       if (need_to_inform) console.log('ant_switch: all antennas grounded');
       ant_switch_display_update('All antennas are grounded.');
    } else {
       if (need_to_inform) console.log('ant_switch: antenna '+ ant_selected_antenna +' in use');
-      ant_switch_display_update('Selected antennas are now: '+ant_selected_antenna);
+      ant_switch_display_update('Selected antennas are now: '+ ant_selected_antenna);
    }
    
    // update highlight
-   var selected_antennas_list = ant.match(/([0-9])/g);
+   var selected_antennas_list = ant_selected_antenna.match(/([0-9])/g);
    var inputs = document.getElementsByTagName("button");
    for (var i = 0; i < inputs.length; i++) {
       var re=/^Antenna ([1-8])/i; 
@@ -326,13 +355,17 @@ function ant_switch_lock_buttons(lock) {
 }
 
 function ant_switch_showpermissions() {
+   if (antsw.not_configured) {
+      w3_innerHTML('id-ant-display-permissions', '');
+      return;
+   }
    if (ant_switch_denyswitching == 1) {
       ant_switch_lock_buttons(true);
       html('id-ant-display-permissions').innerHTML = 'Antenna switching is denied';
    } else {
       ant_switch_lock_buttons(false);
       if (ant_switch_denymixing == 1) {
-         html('id-ant-display-permissions').innerHTML = 'Antenna switching is allowed.';
+         html('id-ant-display-permissions').innerHTML = 'Antenna switching is allowed. Mixing is not allowed.';
       } else {
          html('id-ant-display-permissions').innerHTML = 'Antenna switching and mixing is allowed.';
       }
@@ -344,7 +377,6 @@ function ant_switch_showpermissions() {
 }
 
 function ant_switch_display_update(ant) {
-   // FIXME: How to notify other users about antenna changes?
    html('id-ant-display-selected').innerHTML = ant;
 }
 
