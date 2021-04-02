@@ -105,8 +105,9 @@ if [ "x$KIWI_CONSOLE" == "xyes" ]; then
 else
     make stop
 fi
+# speed up system rebuild by not doing a "make clean"
 touch ~/extensions/ant_switch/extensions/ant_switch/*
-rm ../build/gen/ext_init.cpp
+rm -f ../build/gen/ext_init.cpp
 make
 make install
 echo "KiwiSDR antenna switch extension installation finished."
