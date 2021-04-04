@@ -40,9 +40,9 @@ AntSW_SelectBackend() {
 	while [ "$valid_backend_selected" == 0 ]; do
 		echo "Available antenna switch backends:"
 		for backend in /root/extensions/ant_switch/backends/ant-switch-backend-*; do
-		name=`basename $backend`
-		name=`echo $name | sed 's/ant-switch-backend-//'`
-		echo $name
+		    name=`basename $backend`
+		    name=`echo $name | sed 's/ant-switch-backend-//'`
+		    echo $name
 		done
 		echo ""
 		if [[ -z "${BACKEND// }" ]]; then

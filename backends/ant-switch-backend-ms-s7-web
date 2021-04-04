@@ -40,7 +40,7 @@ AntSW_ShowBackend() {
 AntSW_Get () {
 	if [ -z "$1" ]
 	then
-		# zero legth
+		# zero length
 		sleep 1
 	else
 		REPLY=`$CURLEXEC $CURLOPTS $1`
@@ -58,7 +58,7 @@ AntSW_Get () {
 AntSW_Post () {
 	if [ -z "$1" ]
 	then
-		# zero legth
+		# zero length
 		sleep 1
 	else
 		REPLY=`$CURLEXEC $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
