@@ -41,20 +41,20 @@ AntSW_ShowBackend() {
 
 AntSW_Get () {
     if [ -z "$1" ]
-    then
-        # zero length
-        sleep 1
-    else
-        REPLY=`$CURLEXEC $CURLOPTS $1`
-        if [ "x$REPLY" == "x" ]; then
-            # failed. Let's try again.
-            REPLY=`$CURLEXEC $CURLOPTS $1`
-        fi
-        if [ "x$REPLY" == "x" ]; then
-            # failed again. One more shot.
-            REPLY=`$CURLEXEC $CURLOPTS $1`
-        fi
-    fi
+	then
+		# zero length
+		sleep 1
+	else
+		REPLY=`$CURLEXEC $CURLOPTS $1`
+		if [ "x$REPLY" == "x" ]; then
+			# failed. Let's try again.
+			REPLY=`$CURLEXEC $CURLOPTS $1`
+		fi
+		if [ "x$REPLY" == "x" ]; then
+			# failed again. One more shot.
+			REPLY=`$CURLEXEC $CURLOPTS $1`
+		fi
+	fi
 }
 
 AntSW_GroundAll() {
@@ -62,7 +62,7 @@ AntSW_GroundAll() {
 }
 
 AntSW_Initialize() {
-    # Test connectivity to MS-S4A-WEB otherwise long timeouts
+    # Test connectivity to MS-S4A-WEB otherwise log timeouts
     AntSW_Get "http://$IPADDRESS/"
     if [ "x$REPLY" == "x" ]; then
         echo "Unable to connect MS-S4A-WEB at $IPADDRESS"
@@ -121,23 +121,23 @@ AntSW_ShowSelected() {
 }
 
 AntSW_Configure() {
-    echo "Current IP address is $IPADDRESS"
-    echo "Enter new IP address or CTRL-C to abort"
-    read IPADDRESS
-    if valid_ip $IPADDRESS; then
-        AntSW_VerifyConnectivity
-        echo "# KiwiSDR MS-S4A-WEB ant_switch extension" > $CONFFILE
-        echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
-        if [ -r $CONFFILE ]; then
-            echo "Created configuration file $CONFFILE"
-        else
-            echo "Configuration file $CONFFILE creation failed. Installation aborted."
-            exit 1
-        fi
-    else
-        echo "Invalid IP address. Configuration not saved."
-        exit 1
-    fi
+	echo "Current IP address is $IPADDRESS"
+	echo "Enter new IP address or CTRL-C to abort"
+	read IPADDRESS
+	if valid_ip $IPADDRESS; then 
+		AntSW_VerifyConnectivity
+		echo "# KiwiSDR MS-S4A-WEB ant_switch extension" > $CONFFILE
+		echo "IPADDRESS=$IPADDRESS" >> $CONFFILE
+		if [ -r $CONFFILE ]; then
+			echo "Created configuration file $CONFFILE"
+		else
+			echo "Configuration file $CONFFILE creation failed. Installation aborted."
+			exit 1
+		fi
+	else
+		echo "Invalid IP address. Configuration not saved."
+		exit 1
+	fi
 }
 
 function getselected() {
