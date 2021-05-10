@@ -29,7 +29,6 @@ IPADDRESS=192.168.11.100
 VERSION=1.02
 CURLEXEC=/usr/bin/curl
 CURLOPTS=" --silent --connect-timeout 1"
-ANTENNAS=4 # minimal configurable number at hardware controller level = 2
 
 CONFFILE=/etc/default/ms-s7-web
 [ -r $CONFFILE ] && . $CONFFILE
@@ -40,7 +39,7 @@ AntSW_ShowBackend() {
 }
 
 AntSW_Get () {
-    if [ -z "$1" ]
+	if [ -z "$1" ]
 	then
 		# zero length
 		sleep 1
@@ -57,67 +56,88 @@ AntSW_Get () {
 	fi
 }
 
+AntSW_Post () {
+	if [ -z "$1" ]
+	then
+		# zero length
+		sleep 1
+	else
+		REPLY=`$CURLEXEC $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		if [ "x$REPLY" == "x" ]; then
+			# failed, let's try again
+			REPLY=`$CURLEXEC $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		fi
+		if [ "x$REPLY" == "x" ]; then
+			# failed again, one more shot
+			REPLY=`$CURLEXEC $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' $1`
+		fi
+	fi
+}
+
 AntSW_GroundAll() {
-    AntSW_SelectAntenna 0
+	for s in 0 1 2 3 4 5 6; do
+		AntSW_Post "-d pin=$s -d val=1 http://$IPADDRESS/dout.cgi"
+		#$CURLEXEC $CURLOPTS --header 'Content-Type: application/x-www-form-urlencoded' -d pin=$s -d val=1 http://$IPADDRESS/dout.cgi > /dev/null
+	done
 }
 
 AntSW_Initialize() {
-    # Test connectivity to MS-S7-WEB otherwise log timeouts
-    AntSW_Get "http://$IPADDRESS/"
-    if [ "x$REPLY" == "x" ]; then
-        echo "Unable to connect MS-S7-WEB at $IPADDRESS"
-        echo "Please check network connectivity."
-        exit 1
-    fi
+	# Test connectivity to MS-S7-WEB otherwise log timeouts
+	AntSW_Get "http://$IPADDRESS/widget.cgi"
+	if [ "x$REPLY" == "x" ]; then
+		echo "Unable to connect MS-S7-WEB at $IPADDRESS"
+		echo "Please check network connectivity."
+		exit 1
+	fi
 }
 
 AntSW_SelectAntenna() {
-    ANT=$1
-
-    if [[ "$ANT" =~ ^([0-$ANTENNAS])$ ]]; then
-
-        getselected
-
-        steps=$(($selectedantenna-$ANT))
-
-        if (( $steps > $(($ANTENNAS/2)) )); then
-            steps=$(( $steps-$ANTENNAS-1 ))
-        fi
-
-        if (( $steps < $((-1*$ANTENNAS/2)) )); then
-            steps=$(( $steps+$ANTENNAS+1 ))
-        fi
-
-        if (( $steps < 0 )); then
-            for (( 0; $steps<0; steps++))  do
-                AntSW_Get "http://$IPADDRESS/5/on"
-            done
-        fi
-
-        if (( $steps > 0 )); then
-            for (( 0; $steps>0; steps--))  do
-                AntSW_Get "http://$IPADDRESS/4/on"
-            done
-        fi
-    else
-        :
-        #echo "$ANT is not a valid selection (0-$ANTENNAS)"
-        #exit 1
-    fi
+	ANT=$(($1-1))
+	AntSW_Post "-d pin=$ANT -d val=0 http://$IPADDRESS/dout.cgi"
 }
 
 AntSW_DeSelectAntenna() {
-    :
+	ANT=$(($1-1))
+	AntSW_Post "-d pin=$ANT -d val=1 http://$IPADDRESS/dout.cgi"
 }
 
 AntSW_ToggleAntenna() {
-    :
+	ANT=$(($1-1))
+	# Read antenna status
+        AntSW_Get "http://$IPADDRESS/io.cgi"
+        digits=`echo $REPLY | sed 's/[^0-9]*//g'`
+        thisbits=${digits:$ANT:1}
+	if [ "x$thisbits" == "x0" ]; then
+		AntSW_SelectAntenna $1
+	else
+		AntSW_DeSelectAntenna $1 
+	fi
 }
 
 AntSW_ShowSelected() {
-    getselected
-    echo -n "Selected antennas: "
-    echo $selectedantenna
+	# Read antenna status
+	AntSW_Get "http://$IPADDRESS/io.cgi"
+	digits=`echo $REPLY | sed 's/[^0-9]*//g'`
+
+	antennafound=0
+	selectedantennas=''
+	for s in 0 1 2 3 4 5 6; do
+		thisbit=${digits:${s}:1}
+		if [ "x$thisbit" == "x1" ]; then
+			selectedantennas="${selectedantennas}$(($s+1)),"
+			antennafound=$(($antennafound+1))
+		fi
+	done
+	thisbits=${digits:0:7}
+	if [ "x$thisbits" == "x0000000" ]; then
+		# All antenna inputs are grounded
+		antennafound=1
+		selectedantennas="g,"
+	fi
+	selectedantennas=${selectedantennas::-1}
+
+	echo -n "Selected antennas: "
+	echo $selectedantennas
 }
 
 AntSW_Configure() {
@@ -138,12 +158,6 @@ AntSW_Configure() {
 		echo "Invalid IP address. Configuration not saved."
 		exit 1
 	fi
-}
-
-function getselected() {
-    # Read antenna status
-    AntSW_Get "http://$IPADDRESS/"
-    selectedantenna=`echo $REPLY | grep -Po '[1-7](?=<p>)|GROUND' | sed s/GROUND/0/g `
 }
 
 function valid_ip() {
