@@ -27,7 +27,7 @@
 
 # Safe GPIO pins
 #
-#Connector P8
+# Connector P8
 #
 # P8 pin 11 - GPIO_45 - Antenna 1
 # P8 pin 12 - GPIO_44 - Antenna 2
