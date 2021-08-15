@@ -84,15 +84,15 @@ AntSW_SelectAntenna() {
 }
 
 AntSW_DeSelectAntenna() {
-        IDX=$(($1-1)) 
-        ANT=${SAFEGPIOS[$IDX]}
-        echo 0 > /sys/class/gpio/gpio${ANT}/value 
+    IDX=$(($1-1)) 
+    ANT=${SAFEGPIOS[$IDX]}
+    echo 0 > /sys/class/gpio/gpio${ANT}/value 
 }
 
 AntSW_ToggleAntenna() {
-        IDX=$(($1-1))    
+    IDX=$(($1-1))    
 	echo "IDX=$IDX"
-        ANT=${SAFEGPIOS[$IDX]}
+    ANT=${SAFEGPIOS[$IDX]}
 	# Read antenna status
 	VAL=`cat /sys/class/gpio/gpio${ANT}/value`
 	if [ "x$VAL" == "x0" ]; then
@@ -109,7 +109,7 @@ AntSW_ShowSelected() {
 	antidx=0
 	for GPIOPIN in "${SAFEGPIOS[@]}"; do
 		antidx=$(($antidx+1))
-	        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value`
+        VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value`
 		if [ "x$VAL" == "x1" ]; then
 			selectedantennas="${selectedantennas}${antidx},"
 			antennafound=$(($antennafound+1))

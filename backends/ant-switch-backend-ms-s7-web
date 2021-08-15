@@ -104,9 +104,9 @@ AntSW_DeSelectAntenna() {
 AntSW_ToggleAntenna() {
 	ANT=$(($1-1))
 	# Read antenna status
-        AntSW_Get "http://$IPADDRESS/io.cgi"
-        digits=`echo $REPLY | sed 's/[^0-9]*//g'`
-        thisbits=${digits:$ANT:1}
+    AntSW_Get "http://$IPADDRESS/io.cgi"
+    digits=`echo $REPLY | sed 's/[^0-9]*//g'`
+    thisbits=${digits:$ANT:1}
 	if [ "x$thisbits" == "x0" ]; then
 		AntSW_SelectAntenna $1
 	else

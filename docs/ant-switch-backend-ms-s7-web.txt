@@ -2,8 +2,8 @@ MS-S7-WEB was first supported antenna switch hardware in KiwiSDR antenna switch 
 
 Factory default IP address of MS-S7-WEB controller is 192.168.11.100
 
-If your controller has another IP, you can modify /root/extensions/ant_switch/backends/ant-switch-backend-ms-s7-web file
-or you can create configuration file to /etc/default/ms-s7-web with content
+If your controller has another IP, then you have to create the configuration file
+/etc/default/ms-s7-web with the following:
 
 # KiwiSDR ant-switch-backend-ms-s7-web configuration file
 IPADDRESS=192.168.0.101
