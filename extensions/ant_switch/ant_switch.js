@@ -204,7 +204,7 @@ function ant_switch_config_html()
             w3_div('',
                s,
                w3_col_percent('w3-margin-T-16/',
-                  w3_input_get('', 'Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb'), 70
+                  w3_input_get('', 'Antenna switch failure or unknown status decription', 'ant_switch.ant0desc', 'w3_string_set_cfg_cb', ''), 70
                )
             )
          )
