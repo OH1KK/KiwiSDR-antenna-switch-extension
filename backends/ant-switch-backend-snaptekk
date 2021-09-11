@@ -61,29 +61,29 @@ AntSW_SelectAntenna() {
 }
 
 AntSW_DeSelectAntenna() {
-        # This function deselects antenna (turn off)
+    # This function deselects antenna (turn off)
 	# Antenna to deleselct is on variable $1
-        # Only one antenna
-        # no return value
+    # Only one antenna
+    # no return value
 	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/-$1 > /dev/null 2>&1
 }
 
 AntSW_ToggleAntenna() {
-        # This function toggles antenna
+    # This function toggles antenna
  	# if on, then off
 	# if off, then on
 	# Antenna to toogle is on variable $1
-        # Only one antenna
-        # no return value
+    # Only one antenna
+    # no return value
 	$CURLEXEC $CURLOPTS $SNAPTEKK_URL/switch/t$1 > /dev/null 2>&1
 }
 
 AntSW_ShowSelected() {
-        # This function show relected antennas
-        # returns a string
+    # This function show relected antennas
+    # returns a string
  	# Selected antennas: 1
 	# or comma separated list
-        # Selected antennas: 1,2,3,4
+    # Selected antennas: 1,2,3,4
 
 	#reply='
 	#<!DOCTYPE html> <html lang='en'> <body>

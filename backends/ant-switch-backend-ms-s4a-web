@@ -38,7 +38,7 @@ CONFFILE=/etc/default/ms-s4a-web
 
 AntSW_ShowBackend() {
     echo "ant-switch-backend-ms-s4a-web version $VERSION"
-    echo ""
+    echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-ms-s4a-web.txt"
 }
 
 AntSW_Get () {

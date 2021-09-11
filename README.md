@@ -41,6 +41,7 @@ You will need antenna switch hardware.
 * beagle-gpio for controlling Beaglebone green GPIO pins
 * snaptekk for controlling Snaptekk Wifi ham radio 8 antenna switch
 * kmtronic for controlling KMTronic LAN Ethernet IP 8 channels WEB Relay
+* kmtronic-udp for controlling KMTronic LAN Ethernet IP 8 channels UDP Relay
 * arduino-netshield for Arduino Nano V3.0 GPIO pins. ENC28J60 Ethernet Shield needed.
 * example-backend is an example script for your own backend development
 
@@ -51,6 +52,7 @@ You will need antenna switch hardware.
 * Tested to work with MS-S4A-WEB
 * Tested to work with Snaptekk WiFi wireless 8 antenna switch
 * Tested to work with KMTronic LAN Ethernet IP 8 channels WEB Relay
+* Tested to work with KMTronic LAN Ethernet IP 8 channels UDP Relay
 
 ## Installation
 
