@@ -19,7 +19,7 @@
 
 char * ant_switch_queryantennas() {
 	char *cmd, *reply;
-	static char selected_antennas[64];
+	static char selected_antennas[64 + SPACE_FOR_NULL];
 	int n;
 	asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend s");
 	reply = non_blocking_cmd(cmd, NULL);
