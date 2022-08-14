@@ -146,8 +146,11 @@ function ant_switch_config_html()
    for (var i = 1; i <= 8; i++) {
       s +=
          w3_col_percent('w3-margin-T-16/',
-            w3_input_get('', 'Antenna '+ i +' description', 'ant_switch.ant'+ i +'desc', 'w3_string_set_cfg_cb', ''), 70, '&nbsp;', 5,
-               w3_input_get('', 'Frequency scale offset (kHz)', 'ant_switch.ant'+ i +'offset', 'w3_int_set_cfg_cb', 0)
+            w3_input_get('', 'Antenna '+ i +' description', 'ant_switch.ant'+ i +'desc', 'w3_string_set_cfg_cb', ''), 50,
+            '&nbsp;', 5,
+            w3_checkbox_get_param('//w3-label-inline', 'High-side injection', 'ant_switch.ant'+ i +'high_side', 'admin_bool_cb', false), 10,
+            '&nbsp;', 3,
+            w3_input_get('', 'Frequency scale offset (kHz)', 'ant_switch.ant'+ i +'offset', 'w3_int_set_cfg_cb', 0)
          );
    }
 
@@ -169,14 +172,14 @@ function ant_switch_config_html()
    ext_admin_config(ant_switch_ext_name, 'Antenna switch',
       w3_div('id-ant_switch w3-text-teal w3-hide', '<b>Antenna switch configuration</b>' + '<hr>' +
          w3_div('',
-            w3_div('', 'Version: 19 Feb 2022 <br><br>' +
+            w3_div('', 'Version: 14 Aug 2022 <br><br>' +
                'If antenna switching is denied then users cannot switch antennas. <br>' +
                'Admin can always switch antennas, either from a connection on the local network, or from the <br>' +
                'KiwiSDR ssh root console using the script: <i>/root/extensions/ant_switch/frontend/ant-switch-frontend</i> <br>' +
                'The last option allows anyone connecting using a user password to switch antennas. <br>' +
                'Other connections made without passwords are denied.'
             ),
-            w3_select('w3-label-inline w3-margin-T-8|color:red', 'Allow antenna switching by:', '',
+            w3_select('w3-width-auto w3-label-inline w3-margin-T-8|color:red', 'Allow antenna switching by:', '',
                'ant_switch.denyswitching', denyswitching, antsw.deny_s, 'ant_switch_deny_cb'
             ),
 
@@ -239,6 +242,7 @@ function ant_switch_poll() {
 }
 
 var ant_switch_last_offset = -1;
+var ant_switch_last_high_side = -1;
 
 function ant_switch_process_reply(ant_selected_antenna) {
    var need_to_inform = false;
@@ -277,16 +281,25 @@ function ant_switch_process_reply(ant_selected_antenna) {
                if (inputs[i].textContent == 'Antenna '+tmp) {
                   w3_highlight(inputs[i]);
                   
-                  // check for frequency offset change when only one antenna is selected
-                  // and mixing is disabled
+                  // check for frequency offset and high-side injection change
+                  // but only when one antenna is selected and mixing is disabled
                   if (ant_switch_denymixing && selected_antennas_list.length == 1) {
                      var s = 'ant_switch.ant'+ tmp +'offset';
                      var offset = ext_get_cfg_param(s, '', EXT_NO_SAVE);
                      offset = +offset;
                      if (!isNumber(offset)) offset = 0;
-                     if (offset != ant_switch_last_offset) {
+                     if (1||offset != ant_switch_last_offset) {
+                        console.log('SET freq_offset='+ offset);
                         ext_send('SET freq_offset='+ offset);
                         ant_switch_last_offset = offset;
+                     }
+
+                     var s = 'ant_switch.ant'+ tmp +'high_side';
+                     var high_side = ext_get_cfg_param(s, '', EXT_NO_SAVE);
+                     if (1||high_side != ant_switch_last_high_side) {
+                        console.log('SET high_side='+ high_side);
+                        ext_send('SET high_side='+ (high_side? 1:0));
+                        ant_switch_last_high_side = high_side;
                      }
                   }
                }

@@ -198,6 +198,17 @@ bool ant_switch_msgs(char *msg, int rx_chan)
         return true;
     }
     
+    int high_side_ant;
+    n = sscanf(msg, "SET high_side=%d", &high_side_ant);
+    if (n == 1) {
+        //rcprintf(rx_chan, "ant_switch: high_side %d\n", high_side_ant);
+        // if antenna switch extension is active override current inversion setting
+        // and lockout the admin config page setting until a restart
+        kiwi.spectral_inversion_lockout = true;
+        kiwi.spectral_inversion = high_side_ant? true:false;
+        return true;
+    }
+    
     return false;
 }
 
