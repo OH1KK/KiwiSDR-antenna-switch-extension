@@ -218,6 +218,7 @@ bool ant_switch_msgs(char *msg, int rx_chan)
     n = sscanf(msg, "SET freq_offset=%d", &freq_offset_ant);
     if (n == 1) {
         //rcprintf(rx_chan, "ant_switch: freq_offset %d\n", freq_offset_ant);
+        cfg_set_float_save("freq_offset", (double) freq_offset_ant);
         freq_offset = freq_offset_ant;
         return true;
     }
