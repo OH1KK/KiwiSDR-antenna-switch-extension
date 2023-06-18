@@ -5,7 +5,7 @@
 #
 # This is part of KiwiSDR antenna switch extension
 #
-# Copyright (c) 2017 Kari Karvonen
+# Copyright (c) 2017-2023 Kari Karvonen
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -29,23 +29,41 @@
 #
 # Connector P8
 #
-# P8 pin 11 - GPIO_45 - Antenna 1
-# P8 pin 12 - GPIO_44 - Antenna 2
-# P8 pin 13 - GPIO_23 - Antenna 3
-# P8 pin 14 - GPIO_26 - Antenna 4
-# P8 pin 15 - GPIO_47 - Antenna 5
-# P8 pin 16 - GPIO_46 - Antenna 6
-# P8 pin 17 - GPIO_27 - Antenna 7
-# P8 pin 18 - GPIO_65 - Antenna 8
-# P8 pin 19 - GPIO_22 - Antenna 9
-# P8 pin 26 - GPIO_61 - Antenna 10
+# P8 pin 11 - Antenna 1
+# P8 pin 12 - Antenna 2
+# P8 pin 13 - Antenna 3
+# P8 pin 14 - Antenna 4
+# P8 pin 15 - Antenna 5
+# P8 pin 16 - Antenna 6
+# P8 pin 17 - Antenna 7
+# P8 pin 18 - Antenna 8
+# P8 pin 19 - Antenna 9
+# P8 pin 26 - Antenna 10
 #
-SAFEGPIOS=(45 44 23 26 47 46 27 65 22 61)
-VERSION=0.5
+VERSION=0.6
+N_CH=10
+
+AntSW_Platform() {
+    MODEL=`/usr/bin/tr < /proc/device-tree/model -d '\000'`
+    if [[ ${MODEL}x == *"BeagleBone AI-64x" ]]; then
+        PLATFORM="BBAI-64"
+        SAFEGPIOS=(360 359 389 375 361 362 303 304 388 351)
+    elif [[ ${MODEL}x == *"BeagleBone AIx" ]]; then
+        PLATFORM="BBAI"
+        SAFEGPIOS=(75 74 107 109 99 125 242 105 106 124)
+    elif [[ ${MODEL}x == *"AM335x"* ]]; then
+        PLATFORM="BBG/BBB"
+        SAFEGPIOS=(45 44 23 26 47 46 27 65 22 61)
+    else
+        echo "Error. Unknown platform: "${MODEL}
+        exit 1
+    fi
+}
 
 AntSW_ShowBackend() {
-        echo "ant-switch-backend-beagle-gpio version $VERSION"
-        echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-beagle-gpio.txt"
+    AntSW_Platform
+    echo "ant-switch-backend-beagle-gpio version ${VERSION} ${N_CH} ${PLATFORM}"
+    echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-beagle-gpio.txt"
 }
 
 AntSW_Initialize() {
@@ -54,11 +72,16 @@ AntSW_Initialize() {
 		echo "This script must be run as root" 1>&2
 		exit 1
 	fi
+    AntSW_Platform
     for GPIOPIN in "${SAFEGPIOS[@]}"; do
         VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/direction 2>/dev/null`
+        #echo ${GPIOPIN}=${VAL}
 		if [ "x$VAL" != "xout" ]; then
 			# Try automatically initialize
-			echo $GPIOPIN > /sys/class/gpio/export
+			if [ "x$VAL" != "xin" ]; then
+			    # don't export multiple times because that confuses BBAI
+			    echo ${GPIOPIN} > /sys/class/gpio/export
+			fi
             echo out > /sys/class/gpio/gpio${GPIOPIN}/direction
 			
 			# Test again
@@ -81,12 +104,14 @@ AntSW_SelectAntenna() {
 	IDX=$(($1-1))
 	ANT=${SAFEGPIOS[$IDX]}
 	echo 1 > /sys/class/gpio/gpio${ANT}/value
+    #echo W$1 ${ANT}=1
 }
 
 AntSW_DeSelectAntenna() {
     IDX=$(($1-1)) 
     ANT=${SAFEGPIOS[$IDX]}
     echo 0 > /sys/class/gpio/gpio${ANT}/value 
+    #echo W$1 ${ANT}=0
 }
 
 AntSW_ToggleAntenna() {
@@ -110,7 +135,8 @@ AntSW_ShowSelected() {
 	for GPIOPIN in "${SAFEGPIOS[@]}"; do
 		antidx=$(($antidx+1))
         VAL=`cat /sys/class/gpio/gpio${GPIOPIN}/value`
-		if [ "x$VAL" == "x1" ]; then
+        #echo R${antidx} ${GPIOPIN}=${VAL}
+		if [ "x${VAL}" == "x1" ]; then
 			selectedantennas="${selectedantennas}${antidx},"
 			antennafound=$(($antennafound+1))
 		fi
