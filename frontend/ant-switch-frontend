@@ -25,11 +25,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.4
+VERSION=0.5
 
 BACKENDFILE=/root/extensions/ant_switch/backends/ant-switch-backend
 if [ -x $BACKENDFILE ]; then
 	. $BACKENDFILE
+	# unless backend sets N_CH default to 8 channels
+	N_CH=${N_CH-8}
 else
 	echo "Cannot load or execute backend file $BACKENDFILE"
 	exit 1
@@ -94,24 +96,34 @@ AntSW_ShowUsage() {
 	echo "h = help"
 }
 
+AntSW_Validate() {
+    if [[ ${1} -gt ${N_CH} ]] ; then
+        echo "Backend doesn't support antenna $1 (range 1-${N_CH})"
+        exit 1;
+    fi
+}
 
 case $1 in
 	1|2|3|4|5|6|7|8|9|10)
+		AntSW_Validate $1
 		AntSW_Initialize
         AntSW_GroundAll
 		AntSW_SelectAntenna $1
 		;;
 	+1|+2|+3|+4|+5|+6|+7|+8|+9|+10)
+		AntSW_Validate $1
 		AntSW_Initialize
 		antadd=${1//+} 
 		AntSW_SelectAntenna $antadd
 		;;
 	-1|-2|-3|-4|-5|-6|-7|-8|-9|-10)
+		AntSW_Validate $1
 		AntSW_Initialize
 		antremove=${1//-} 
 		AntSW_DeSelectAntenna $antremove
 		;;
 	t1|t2|t3|t4|t5|t6|t7|t8|t9|t10)
+		AntSW_Validate $1
 		AntSW_Initialize
         anttoggle=${1//t}
 		AntSW_ToggleAntenna $anttoggle
