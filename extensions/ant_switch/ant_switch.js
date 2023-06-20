@@ -200,7 +200,7 @@ function ant_switch_config_html()
    ext_admin_config(ant_sw.ext_name, 'Antenna switch',
       w3_div('id-ant_switch w3-text-teal w3-hide', '<b>Antenna switch configuration</b>' + '<hr>' +
          w3_div('',
-            w3_div('', 'Version: 16 Jun 2023 <br><br>' +
+            w3_div('', 'Version 0.5: 16 Jun 2023 <br><br>' +
                'If antenna switching is denied then users cannot switch antennas. <br>' +
                'Admin can always switch antennas, either from a connection on the local network, or from the <br>' +
                'KiwiSDR ssh root console using the script: <i>/root/extensions/ant_switch/frontend/ant-switch-frontend</i> <br><br>' +

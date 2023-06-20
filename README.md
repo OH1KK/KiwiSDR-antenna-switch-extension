@@ -47,7 +47,7 @@ You will need antenna switch hardware.
 
 ## Version compability
 
-* This version (16 Jun 2023) requires KiwiSDR version v1.608 or later
+* This version 0.5 (16 Jun 2023) requires KiwiSDR version v1.608 or later
 * Tested to work with MS-S7-WEB firmware v1.01
 * Tested to work with MS-S4A-WEB
 * Tested to work with Snaptekk WiFi wireless 8 antenna switch
