@@ -26,7 +26,7 @@
 # SOFTWARE.
 
 IPADDRESS=192.168.11.100
-VERSION=1.02
+VERSION=1.03
 CURLEXEC=/usr/bin/curl
 CURLOPTS=" --silent --connect-timeout 1"
 
@@ -35,7 +35,16 @@ CONFFILE=/etc/default/ms-s7-web
 
 AntSW_ShowBackend() {
 	echo "ant-switch-backend-ms-s7-web version $VERSION"
+    echo "IPADDRESS=$IPADDRESS"
 	echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-ms-s7-web.txt"
+}
+
+AntSW_SetAddress() {
+    echo -n "Enter IP address (currently $IPADDRESS): "
+    read ip
+    if [ "x$ip" != "x" ]; then
+        echo "IPADDRESS=\"$ip\"" >$CONFFILE
+    fi
 }
 
 AntSW_Get () {

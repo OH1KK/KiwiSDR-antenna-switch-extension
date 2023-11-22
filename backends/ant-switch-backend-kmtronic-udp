@@ -25,10 +25,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+VERSION=0.2
+ADDR_FILE="/etc/default/kmtronic-udp"
 
-if [ -e /etc/default/kmtronic-udp ]; then
-	. /etc/default/kmtronic-udp
+if [ -e $ADDR_FILE ]; then
+	. $ADDR_FILE
 else
     KMTRONIC_UDP_HOST_PORT="192.168.1.199 12345"
 fi
@@ -39,7 +40,16 @@ NETCAT_OPTS="-u -n"
 
 AntSW_ShowBackend() {
     echo "ant-switch-backend-kmtronic-udp version $VERSION"
+    echo "KMTRONIC_UDP_HOST_PORT=$KMTRONIC_UDP_HOST_PORT"
     echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-kmtronic-udp.txt"
+}
+
+AntSW_SetAddress() {
+    echo -n "Enter IP and port (currently $KMTRONIC_UDP_HOST_PORT): "
+    read ip_port
+    if [ "x$ip_port" != "x" ]; then
+        echo "KMTRONIC_UDP_HOST_PORT=\"$ip_port\"" >$ADDR_FILE
+    fi
 }
 
 AntSW_Initialize() {

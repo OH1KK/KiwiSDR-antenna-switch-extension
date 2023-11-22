@@ -32,6 +32,9 @@ AntSW_ShowBackend() {
 	echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-example.txt"
 }
 
+AntSW_SetAddress() {
+}
+
 AntSW_Initialize() {
 	# This function initalises extension. You can leave empty
 }

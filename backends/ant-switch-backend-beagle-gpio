@@ -66,6 +66,10 @@ AntSW_ShowBackend() {
     echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-beagle-gpio.txt"
 }
 
+AntSW_SetAddress() {
+    echo "not applicable"
+}
+
 AntSW_Initialize() {
 	# Make sure only root can run our script
 	if [[ $EUID -ne 0 ]]; then

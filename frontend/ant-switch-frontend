@@ -25,7 +25,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.5
+VERSION=0.6
 
 BACKENDFILE=/root/extensions/ant_switch/backends/ant-switch-backend
 if [ -x $BACKENDFILE ]; then
@@ -90,9 +90,10 @@ AntSW_ShowUsage() {
 	echo "tx = Antenna mixing. Toggle simultanous antenna x"
 	echo "     Example: t2 = toggles Antenna 2 state on/off"
 	echo ""
-	echo "bs = select backend"
-	echo "bi = backend information. Show selected backend"
+	echo "bs = Select backend"
+	echo "bi = Backend information. Show selected backend"
 	echo "     and it's configuration / help"
+	echo "sa = Set antenna switch address, IP or URL (if applicable)."
 	echo "h = help"
 }
 
@@ -141,6 +142,9 @@ case $1 in
 		;;
     bs)
         AntSW_SelectBackend
+        ;;
+    sa)
+        AntSW_SetAddress
         ;;
 	h|"")
 		AntSW_ShowUsage

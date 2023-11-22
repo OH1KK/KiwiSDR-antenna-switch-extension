@@ -26,9 +26,10 @@
 # SOFTWARE.
 
 VERSION=0.4
+ADDR_FILE="/etc/default/snaptekk"
 
-if [ -e /etc/default/snaptekk ]; then
-	. /etc/default/snaptekk
+if [ -e $ADDR_FILE ]; then
+	. $ADDR_FILE
 else
 	SNAPTEKK_URL="http://192.168.4.1:9999"
 fi
@@ -38,7 +39,16 @@ CURLOPTS=" --silent --connect-timeout 1 --max-time 1 "
 
 AntSW_ShowBackend() {
 	echo "ant-switch-backend-snaptekk version $VERSION"
+    echo "SNAPTEKK_URL=$SNAPTEKK_URL"
 	echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-snaptekk.txt"
+}
+
+AntSW_SetAddress() {
+    echo -n "Enter URL (currently $SNAPTEKK_URL): "
+    read url
+    if [ "x$url" != "x" ]; then
+        echo "SNAPTEKK_URL=\"$url\"" >$ADDR_FILE
+    fi
 }
 
 AntSW_Initialize() {

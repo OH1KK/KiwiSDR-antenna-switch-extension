@@ -25,17 +25,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+VERSION=0.2
+ADDR_FILE="/etc/default/netshield"
 
-if [ -e /etc/default/netshield ]; then
-	. /etc/default/netshield
+if [ -e $ADDR_FILE ]; then
+	. $ADDR_FILE
 else
     NETSHIELD_IP="192.168.0.19"
 fi
 
 AntSW_ShowBackend() {
     echo "ant-switch-backend-arduino-netshield version $VERSION"
+    echo "NETSHIELD_IP=$NETSHIELD_IP"
     echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-arduino-netshield.txt"
+}
+
+AntSW_SetAddress() {
+    echo -n "Enter IP address (currently $NETSHIELD_IP): "
+    read ip
+    if [ "x$ip" != "x" ]; then
+        echo "NETSHIELD_IP=\"$ip\"" >$ADDR_FILE
+    fi
 }
 
 AntSW_Initialize() {
