@@ -27,13 +27,19 @@
 
 VERSION=0.1
 
+if [ -e /etc/default/netshield ]; then
+	. /etc/default/netshield
+else
+    NETSHIELD_IP="192.168.0.19"
+fi
+
 AntSW_ShowBackend() {
     echo "ant-switch-backend-arduino-netshield version $VERSION"
     echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-arduino-netshield.txt"
 }
 
 AntSW_Initialize() {
-  	ARDUINOURL="http://192.168.0.19"
+  	ARDUINOURL="http://"$NETSHIELD_IP
 	CURLEXEC=`which curl`
 	CURLOPTS=" --silent --connect-timeout 1"
 }

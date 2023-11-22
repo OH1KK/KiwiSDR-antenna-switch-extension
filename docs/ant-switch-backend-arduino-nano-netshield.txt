@@ -4,9 +4,10 @@ You need:
 
 And you have to build your antenna switch hardware too.
 
-Arduino code is available at
+Arduino code is available in arduino-nano-netshield subdirectory here or at:
 https://raw.githubusercontent.com/OH1KK/KiwiSDR-antenna-switch-extension/arduino-nano-enc29J60-netshield/docs/arduino-nano-netshield/ant_switch_arduino_netshield.ino
 
 You need to modify IP address, netmask and gateway of code.
 
-You also need to update ant-switch-backend-arduino-netshield backend file to match ip address you set to code.
+Put ip address you set into file on Kiwi: /etc/default/netshield
+If that file doesn't the default ip address used will be 192.168.0.19
