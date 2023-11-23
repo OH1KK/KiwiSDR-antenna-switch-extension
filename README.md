@@ -1,6 +1,6 @@
 # KiwiSDR-antenna-switch-extension
 
-This is an antenna switch extension to the KiwiSDR software defined radio.
+This is an antenna switch extension for the KiwiSDR software defined radio.
 
 The antenna switch can control out-of-stock antenna switches and utilize Beaglebone GPIO-pins.
 You can also write your own backend for third party antenna switches.
@@ -15,13 +15,13 @@ You can also write your own backend for third party antenna switches.
 * Admin can enable/disable antenna mixing from admin panel.
 * Admin can deny antenna switching if more than one user is online.
 * Antenna switching can be time scheluded using Beaglebone's crontab.
-  * look at docs/antenna-schedules-using-crontab.txt
+  * Look at docs/antenna-schedules-using-crontab.txt
 * Switching back to default antennas when no users are online.
-  * look at docs/reset-to-default-antennas-when-no-users-online.txt
+  * Look at docs/reset-to-default-antennas-when-no-users-online.txt
 * Thunderstorm mode. In thunderstorm mode all antennas are forced to ground and switching is denied.
 * Telnet daemon (optional). You can switch antennas using telnet commands.
   * Usage scenarios: Arduino based hardware antenna control box, automating antenna grounding based lightning strikes information.
-  * look at docs/ant-switch-daemon-wrapper.txt
+  * Look at docs/ant-switch-daemon-wrapper.txt
 * The Kiwi frequency scale offset can be set for each antenna selection. Supports transverters or downconverters that are switched together with the antenna.
 * Antenna switching can be made from the http url with a parameter,  
 e.g. my\_kiwi:8073/?ext=ant,6 would select antenna #6 and  
@@ -38,7 +38,7 @@ You will need antenna switch hardware.
 
 * ms-s7-web for controlling LZ2RR's MS-S7-WEB antenna switch
 * ms-s4a-web for controlling LZ2RR's MS-S4A-WEB antenna switch
-* beagle-gpio for controlling Beaglebone green GPIO pins
+* beagle-gpio for controlling up to ten Beaglebone Green/Black/AI/AI-64 GPIO pins
 * snaptekk for controlling Snaptekk Wifi ham radio 8 antenna switch
 * kmtronic for controlling KMTronic LAN Ethernet IP 8 channels WEB Relay
 * kmtronic-udp for controlling KMTronic LAN Ethernet IP 8 channels UDP Relay
@@ -47,12 +47,13 @@ You will need antenna switch hardware.
 
 ## Version compability
 
-* This version requires KiwiSDR version v1.449 or later
+* This version 0.5 (16 Jun 2023) requires KiwiSDR version v1.608 or later
 * Tested to work with MS-S7-WEB firmware v1.01
 * Tested to work with MS-S4A-WEB
 * Tested to work with Snaptekk WiFi wireless 8 antenna switch
 * Tested to work with KMTronic LAN Ethernet IP 8 channels WEB Relay
 * Tested to work with KMTronic LAN Ethernet IP 8 channels UDP Relay
+* Tested to work with Beaglebone Green/Black/AI/AI-64 GPIO pins
 
 ## Installation
 
@@ -116,4 +117,4 @@ If you want to support this project, you can [send a donation via PayPal](https:
 
 [The MIT License (MIT)](LICENSE)
 
-Copyright (c) 2019 Kari Karvonen
+Copyright (c) 2019-2023 Kari Karvonen

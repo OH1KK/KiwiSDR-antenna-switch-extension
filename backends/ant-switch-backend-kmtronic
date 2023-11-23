@@ -25,10 +25,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION=0.1
+VERSION=0.2
+ADDR_FILE="/etc/default/kmtronic"
 
-if [ -e /etc/default/kmtronic ]; then
-	. /etc/default/kmtronic
+if [ -e $ADDR_FILE ]; then
+	. $ADDR_FILE
 else
     KMTRONIC_URL="http://192.168.1.199:80"
 fi
@@ -39,7 +40,16 @@ CURLOPTS=" --silent --connect-timeout 1 --max-time 1 "
 
 AntSW_ShowBackend() {
     echo "ant-switch-backend-kmtronic version $VERSION"
+    echo "KMTRONIC_URL=$KMTRONIC_URL"
     echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-kmtronic.txt"
+}
+
+AntSW_SetAddress() {
+    echo -n "Enter URL (currently $KMTRONIC_URL): "
+    read url
+    if [ "x$url" != "x" ]; then
+        echo "KMTRONIC_URL=\"$url\"" >$ADDR_FILE
+    fi
 }
 
 AntSW_Initialize() {

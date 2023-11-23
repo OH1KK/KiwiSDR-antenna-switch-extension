@@ -28,7 +28,7 @@
 # SOFTWARE.
 
 IPADDRESS=192.168.1.234
-VERSION=1.2
+VERSION=1.3
 CURLEXEC=/usr/bin/curl
 CURLOPTS=" --silent --connect-timeout 1"
 ANTENNAS=4 # minimal configurable number at hardware controller level = 2
@@ -38,7 +38,16 @@ CONFFILE=/etc/default/ms-s4a-web
 
 AntSW_ShowBackend() {
     echo "ant-switch-backend-ms-s4a-web version $VERSION"
+    echo "IPADDRESS=$IPADDRESS"
     echo "More info: https://github.com/OH1KK/KiwiSDR-antenna-switch-extension/blob/master/docs/ant-switch-backend-ms-s4a-web.txt"
+}
+
+AntSW_SetAddress() {
+    echo -n "Enter IP address (currently $IPADDRESS): "
+    read ip
+    if [ "x$ip" != "x" ]; then
+        echo "IPADDRESS=\"$ip\"" >$CONFFILE
+    fi
 }
 
 AntSW_Get () {

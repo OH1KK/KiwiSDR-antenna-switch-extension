@@ -96,7 +96,15 @@ cp -varf frontend /root/extensions/ant_switch/
 chmod a+rx /root/extensions/ant_switch/frontend/ant-switch-frontend
 rm -f /usr/local/bin/ant-switch-frontend
 ln -s /root/extensions/ant_switch/frontend/ant-switch-frontend /usr/local/bin
+
+
 echo ""
+echo -n "Skip rebuilding KiwiSDR server (default: no) ? "
+read ok
+if [ "x$ok" == "xy" ]; then
+    exit 0
+fi
+
 echo "Rebuilding KiwiSDR."
 echo ""
 cd /root/Beagle_SDR_GPS

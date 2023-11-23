@@ -1,10 +1,11 @@
-// Copyright (c) 2018-2019 Kari Karvonen, OH1KK
+// Copyright (c) 2018-2023 Kari Karvonen, OH1KK
 
 #include "ext.h"	// all calls to the extension interface begin with "ext_", e.g. ext_register()
 
 #include "kiwi.h"
 #include "cfg.h"
 #include "str.h"
+#include "peri.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -17,15 +18,37 @@
 //#define ANT_SWITCH_DEBUG_MSG	true
 #define ANT_SWITCH_DEBUG_MSG	false
 
+static int ver_maj, ver_min, n_ch;
+
+static void ant_backend_info() {
+	char *cmd, *reply;
+	int n;
+	asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend bi");
+	reply = non_blocking_cmd(cmd, NULL);
+	free(cmd);
+	char *sp = kstr_sp(reply);
+	n = sscanf(sp, "%*s version %d.%d %d", &ver_maj, &ver_min, &n_ch);
+	char *space = index(sp, ' ');
+	if (space) *space = '\0';
+	printf("ant_switch backend info: version %d.%d channels=%d %s\n", ver_maj, ver_min, n_ch, sp);
+	kstr_free(reply);
+	kiwi.ant_switch_nch = n_ch;
+}
+
+static void ant_switch_init(int rx_chan) {
+    ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT backend_ver=%d.%d", ver_maj, ver_min);                 
+    ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT channels=%d", n_ch);                 
+}
+
 char * ant_switch_queryantennas() {
 	char *cmd, *reply;
-	static char selected_antennas[64 + SPACE_FOR_NULL];
+    static char selected_antennas[64 + SPACE_FOR_NULL];
 	int n;
 	asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend s");
 	reply = non_blocking_cmd(cmd, NULL);
 	n = sscanf(kstr_sp(reply), "Selected antennas: %64s", selected_antennas);
 	free(cmd);
-	//printf("frontend: s n=%d reply=<%s>\n", n, kstr_sp(reply));
+	//printf("ant_switch frontend: s n=%d reply=<%s>\n", n, kstr_sp(reply));
 	if (!n) printf("ant_switch_queryantenna BAD STATUS? <%s>\n", kstr_sp(reply));
 	kstr_free(reply);
 	return(selected_antennas);
@@ -36,7 +59,7 @@ int ant_switch_setantenna(char* antenna) {
 	int status;
 	int n;
     asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend %s", antenna);
-	//printf("frontend: %s\n", antenna);
+	//printf("ant_switch frontend: %s\n", antenna);
 	reply = non_blocking_cmd(cmd, NULL);
 	free(cmd);
 	kstr_free(reply);
@@ -48,7 +71,7 @@ int ant_switch_toggleantenna(char* antenna) {
 	int status;
 	int n;
     asprintf(&cmd, "/root/extensions/ant_switch/frontend/ant-switch-frontend t%s", antenna);
-	//printf("frontend: t%s\n", antenna);
+	//printf("ant_switch frontend: t%s\n", antenna);
 	reply = non_blocking_cmd(cmd, NULL);
 	free(cmd);
 	kstr_free(reply);
@@ -74,7 +97,7 @@ bool ant_switch_read_denyswitching(int rx_chan) {
         ext_auth_e auth = ext_auth(rx_chan);
         if (deny_val == ALLOW_LOCAL_ONLY && auth != AUTH_LOCAL) deny = true;
         if (deny_val == ALLOW_LOCAL_OR_PASSWORD_ONLY && auth == AUTH_USER) deny = true;
-        //rcprintf(rx_chan, "ANTSW deny_val=%d auth=%d => deny=%d\n", deny_val, auth, deny);
+        //rcprintf(rx_chan, "ant_switch: deny_val=%d auth=%d => deny=%d\n", deny_val, auth, deny);
     #else
         // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
         if (error) deny_val = 0;
@@ -90,15 +113,16 @@ bool ant_switch_read_denymixing() {
     if (result == 1) return true; else return false;
 }
 
-bool ant_switch_read_denymultiuser() {
-    int result = cfg_int("ant_switch.denymultiuser", NULL, CFG_OPTIONAL);
-    // error handling: if deny parameter is not defined, or it is 0, then switching is allowed
-    if (result == 1) {
-        // option is set. Now check if more than 1 user online rx_util.cpp current_nusers variable
-        if (current_nusers > 1) return true; else return false;
-    } else {
-        return false;
-    }
+bool ant_switch_read_denymultiuser(int rx_chan) {
+    bool error;
+    int deny = cfg_int("ant_switch.denymultiuser", &error, CFG_OPTIONAL);
+    if (error) deny = 0;
+
+    #if (VERSION_MAJ > 1) || (VERSION_MAJ == 1 && VERSION_MIN >= 448)
+        if (ext_auth(rx_chan) == AUTH_LOCAL) deny = false;      // don't apply to local connections
+    #endif
+    
+    return (deny && current_nusers > 1)? true : false;
 }
 
 bool ant_switch_read_thunderstorm() {
@@ -116,18 +140,19 @@ bool ant_switch_msgs(char *msg, int rx_chan)
 	
 	if (strcmp(msg, "SET ext_server_init") == 0) {
 		ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT ready");
+		ant_switch_init(rx_chan);
 		return true;
 	}
 
     n = sscanf(msg, "SET Antenna=%s", antenna);
     if (n == 1) {
         //rcprintf(rx_chan, "ant_switch: %s\n", msg);
-        if (ant_switch_read_denyswitching(rx_chan) == true || ant_switch_read_denymultiuser() == true) {
-            ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
-            return true;            
-        } else {
-            ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=0");                 
-        }
+        int deny_reason = 0;
+        if (ant_switch_read_denyswitching(rx_chan) == true) deny_reason = 1;
+        else
+        if (ant_switch_read_denymultiuser(rx_chan) == true) deny_reason = 2;
+        ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=%d", deny_reason);
+        if (deny_reason != 0) return true;
 
         if (ant_switch_validate_cmd(antenna)) {
             if (ant_switch_read_denymixing() == 1) {
@@ -161,11 +186,11 @@ bool ant_switch_msgs(char *msg, int rx_chan)
             }
         #endif
 
-        if (ant_switch_read_denyswitching(rx_chan) == true || ant_switch_read_denymultiuser() == true) {
-            ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=1");
-        } else {
-            ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=0");
-        }
+        int deny_reason = 0;
+        if (ant_switch_read_denyswitching(rx_chan) == true) deny_reason = 1;
+        else
+        if (ant_switch_read_denymultiuser(rx_chan) == true) deny_reason = 2;
+        ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenySwitching=%d", deny_reason);
 
         if (ant_switch_read_denymixing() == true) {
             ext_send_msg(rx_chan, ANT_SWITCH_DEBUG_MSG, "EXT AntennaDenyMixing=1");
@@ -198,6 +223,17 @@ bool ant_switch_msgs(char *msg, int rx_chan)
         return true;
     }
     
+    int high_side_ant;
+    n = sscanf(msg, "SET high_side=%d", &high_side_ant);
+    if (n == 1) {
+        //rcprintf(rx_chan, "ant_switch: high_side %d\n", high_side_ant);
+        // if antenna switch extension is active override current inversion setting
+        // and lockout the admin config page setting until a restart
+        kiwi.spectral_inversion_lockout = true;
+        kiwi.spectral_inversion = high_side_ant? true:false;
+        return true;
+    }
+    
     return false;
 }
 
@@ -218,4 +254,18 @@ ext_t ant_switch_ext = {
 void ant_switch_main()
 {
 	ext_register(&ant_switch_ext);
+	
+	// for benefit of Beagle GPIO backend
+	GPIO_OUTPUT(P811); GPIO_WRITE_BIT(P811, 0);
+	GPIO_OUTPUT(P812); GPIO_WRITE_BIT(P812, 0);
+	GPIO_OUTPUT(P813); GPIO_WRITE_BIT(P813, 0);
+	GPIO_OUTPUT(P814); GPIO_WRITE_BIT(P814, 0);
+	GPIO_OUTPUT(P815); GPIO_WRITE_BIT(P815, 0);
+	GPIO_OUTPUT(P816); GPIO_WRITE_BIT(P816, 0);
+	GPIO_OUTPUT(P817); GPIO_WRITE_BIT(P817, 0);
+	GPIO_OUTPUT(P818); GPIO_WRITE_BIT(P818, 0);
+	GPIO_OUTPUT(P819); GPIO_WRITE_BIT(P819, 0);
+	GPIO_OUTPUT(P826); GPIO_WRITE_BIT(P826, 0);
+
+    ant_backend_info();
 }
