@@ -1,3 +1,16 @@
+
+
+
+
+
+**This extension repository is obsolete and retired. Antenna switch extension will be part of next KiwiSDR version.**
+**See [KiwiSDR](http://www.kiwisdr.com) official webpage for newer versions of antenna switch extension.**
+
+
+
+
+
+
 # KiwiSDR-antenna-switch-extension
 
 This is an antenna switch extension for the KiwiSDR software defined radio.
